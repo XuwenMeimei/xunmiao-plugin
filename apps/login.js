@@ -27,7 +27,8 @@ export class nekologin extends plugin {
 
   async nekologin(e) {
     const userId = `${e.user_id}`;
-    const today = new Date().toISOString().split('T')[0];
+    const today = new Date().toLocaleDateString('zh-CN', { timeZone: 'Asia/Shanghai' }).replace(/\//g, '-');
+    console.log(today);
 
     let userData = {};
 
