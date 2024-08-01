@@ -42,13 +42,14 @@ export class duel extends plugin {
         const {coins: coins_id1} = userData[e.user_id];
         const {coins: coins_id2} = userData[user_id2];
 
+        let message = e.message;
+
+        console.log(message);
         console.log(e.user_id);
         console.log(user_id2);
 
-        let botqq = '2582312528';
-
-        if (user_id2 == botqq) {
-            return e.reply('你不能和我决斗哦~', false, { at:true });
+        if (message.some(item => item.qq === '2582312528')) {
+            return e.reply('你不能与我进行决斗哦~', false, { at:true });
         }
 
         if (e.user_id == user_id2) {
