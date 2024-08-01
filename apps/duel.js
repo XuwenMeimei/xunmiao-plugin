@@ -45,6 +45,14 @@ export class duel extends plugin {
         console.log(e.user_id);
         console.log(user_id2);
 
+        if (e.user_id == 2582312528) {
+            return e.reply('你不能和我决斗哦~', false, { at:true });
+        }
+
+        if (e.user_id == user_id2) {
+            return e.reply('你不能与自己进行决斗哦~', false, { at:true });
+        }
+
         if (coins_id1 <= 29) {
             return e.reply('你的喵喵币不够哦，无法与他人决斗~', false, { at:true });
         }
