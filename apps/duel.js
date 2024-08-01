@@ -45,7 +45,9 @@ export class duel extends plugin {
         console.log(e.user_id);
         console.log(user_id2);
 
-        if (e.user_id == 2582312528) {
+        const botqq = '2582312528';
+
+        if (e.user_id == botqq) {
             return e.reply('你不能和我决斗哦~', false, { at:true });
         }
 
