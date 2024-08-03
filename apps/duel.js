@@ -66,6 +66,10 @@ export class duel extends plugin {
             return e.reply('你不能与我进行决斗哦~', false, { at: true });
         }
 
+        if(!user_id2){
+          return e.reply('请@你想要决斗的人哦~', false, { at: true });
+        }
+
         if (e.user_id == user_id2) {
             return e.reply('你不能与自己进行决斗哦~', false, { at: true });
         }
