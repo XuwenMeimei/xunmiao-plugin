@@ -26,9 +26,8 @@ export class duel extends plugin {
   async duel(e) {
     if (e.isGroup) {
         const now = Date.now();
-        const cooldownTime = 60 * 1000; // 1分钟的冷却时间
+        const cooldownTime = 60 * 1000;
 
-        // 检查发起者的冷却时间
         if (cooldowns[e.user_id]) {
             const timePassed = now - cooldowns[e.user_id];
             const timeLeft = cooldownTime - timePassed;
@@ -105,7 +104,6 @@ export class duel extends plugin {
 
         fs.writeFileSync(dataPath, yaml.stringify(userData));
 
-        // 更新发起者的冷却时间
         cooldowns[e.user_id] = now;
     }
   }
