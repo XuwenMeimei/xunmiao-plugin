@@ -56,10 +56,10 @@ export class duel extends plugin {
             return e.reply('你不能与自己进行决斗哦~', false, { at:true });
         }
 
-        if (coins_id1 <= 29) {
+        if (coins_id1 <= 0) {
             return e.reply('你的喵喵币不够哦，无法与他人决斗~', false, { at:true });
         }
-        if (coins_id2 <= 29) {
+        if (coins_id2 <= 0) {
             return e.reply('他的喵喵币不够哦，无法与他决斗~', false, { at:true });
         }
 
@@ -78,6 +78,14 @@ export class duel extends plugin {
 
             userData[user_id2].coins -= Duelcoins;
             userData[e.user_id].coins += Duelcoins;
+        }
+
+        if (userData[user_id2].coins <=0 ) {
+          userData[user_id2].coins = 0
+        }
+
+        if (userData[e.user_id].coins <=0 ) {
+          userData[e.user_id].coins = 0
         }
 
         fs.writeFileSync(dataPath, yaml.stringify(userData));

@@ -14,14 +14,14 @@ export class nekopoke extends plugin {
                 }
             ]
         });
-    }
+    } 
 
     async nekopoke(e) {
         const botqq = '2582312528';
         console.log(e.target_id);
         console.log(botqq);
         if (e.target_id == botqq) {
-            const shouldReply = Math.random() < 0.4 ;
+            const shouldReply = Math.random() < 0.5 ;
             if (shouldReply) {
                 const replies = ['别戳了~', '要戳坏掉了~', '你欺负人，呜呜~', '别戳了!!!', '不准戳了！！！', '再戳就坏了~'];  
                 const randomReply = replies[Math.floor(Math.random() * replies.length)];
