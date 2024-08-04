@@ -21,16 +21,15 @@ export class br extends plugin {
     
     async br(e) {
         if (e.isGroup) {
-            const player1 = e.user_id;
-            const player2 = e.at;
             const message = e.message;
-            console.log(player1,' ',player2);
             console.log(message);
-            if (message.some(item => item.qq === '2582312528')) {
-                e.reply('你不能与我进行决斗哦~', false, { at: true });
+            if (e.msg.includes('#恶魔轮盘赌') & e.isMaster & game == 0 & message.some(item => item.qq === '2582312528')) {
+                e.reply('你不能与我进行恶魔轮盘赌哦~', false, { at: true });
                 return;
             }
             if (e.msg.includes('#恶魔轮盘赌') & e.isMaster & game == 0){
+                const player1 = e.user_id;
+                const player2 = e.at;
                 e.reply([segment.at(player2), ' 有人邀请你游玩恶魔轮盘赌哦~\n发送"加入游戏"加入\n发送“拒绝游戏”拒绝\n邀请有效时间30秒哦~']);
                 game = 1;
                 time = setTimeout(function (){
