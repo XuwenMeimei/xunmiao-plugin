@@ -1,15 +1,7 @@
 import plugin from '../../../lib/plugins/plugin.js'
-import { segment } from 'oicq'
-import fs from 'fs'
-import yaml from 'yaml'
-import cfg from '../../../lib/config/config.js'
 
-const _path = process.cwd().replace(/\\/g, "/");
-const dataPath = `${_path}/plugins/xunmiao-plugin/data/br_data.yaml`;
-
-if (!fs.existsSync(dataPath)) {
-    fs.writeFileSync(dataPath, yaml.stringify({ gameInProgress: false, invites: {} }));
-}
+let game = 0
+let ready = 0
 
 export class br extends plugin {
     constructor() {
@@ -20,138 +12,51 @@ export class br extends plugin {
             priority: 5000,
             rule: [
                 {
-                    reg: '^#恶魔轮盘赌(.*)$',
-                    fnc: 'invite'
-                },
-                {
-                    reg: '^#加入游戏$',
-                    fnc: 'joinGame'
-                },
-                {
-                    reg: '^#拒绝游戏$',
-                    fnc: 'rejectGame'
-                },
-                {
-                    reg: '^#强制结束$',
-                    fnc: 'forceEnd'
-                },
-                {
-                    reg: '^#debug日志$',
-                    fnc: 'debugLog'
+                    reg: '^#加入游戏|拒绝游戏$|(.*)#恶魔轮盘赌(.*)$', 
+                    fnc: 'br'
                 }
             ]
-        });
-        this.inviteTimers = {};
+        })
     }
-
-    async invite(e) {
+    
+    async br(e) {
         if (e.isGroup) {
             const player1 = e.user_id;
             const player2 = e.at;
-
-            if (!player2) {
-                return e.reply('请@你想要邀请的人哦~', false, { at: true });
-            } else {
-                let brData = yaml.parse(fs.readFileSync(dataPath, 'utf8'));
-                
-                if (!brData) {
-                    brData = { gameInProgress: false, invites: {} };
-                }
-                    
-                if (brData.gameInProgress) {
-                    return e.reply('当前已有游戏进行中，无法发起新的邀请哦~', false, { at: true });
-                }
-
-                brData.invites[player2] = { invitedBy: player1, timestamp: Date.now() };
-                brData.gameInProgress = true;
-
-                fs.writeFileSync(dataPath, yaml.stringify(brData));
-
-                this.inviteTimers[player2] = setTimeout(() => {
-                    this.clearInvite(e, player2, player1, true);
-                }, 30000);
-
-                return e.reply([segment.at(player2), ' 有人邀请你加入恶魔轮盘赌小游戏哦~\n发送"#加入游戏"加入\n发送"#拒绝游戏"拒绝\n邀请有效时间30秒']);
+            const message = e.message;
+            console.log(player1,' ',player2);
+            console.log(message);
+            if (message.some(item => item.qq === '2582312528')) {
+                e.reply('你不能与我进行决斗哦~', false, { at: true });
+                return;
             }
-        }
-    }
-
-    async joinGame(e) {
-        const player2 = e.user_id;
-
-        let brData = yaml.parse(fs.readFileSync(dataPath, 'utf8'));
-
-        if (brData.invites[player2] && (Date.now() - brData.invites[player2].timestamp <= 30000)) {
-            const player1 = brData.invites[player2].invitedBy;
-
-            return e.reply([segment.at(player1),' ', segment.at(player2), ' 游戏要开始了哦~']);
-        } else {
-            return e.reply('啊嘞？好像没有人邀请你或者已经过期了哦~', false, { at:true });
-        }
-    }
-
-    async rejectGame(e) {
-        const player2 = e.user_id;
-
-        let brData = yaml.parse(fs.readFileSync(dataPath, 'utf8'));
-
-        if (brData.invites[player2] && (Date.now() - brData.invites[player2].timestamp <= 30000)) {
-            const player1 = brData.invites[player2].invitedBy;
-
-            await this.clearInvite(e, player2, player1, false);
-
-            return e.reply([segment.at(player2), ' 拒绝了你的邀请~', false, { at:true }]);
-        } else {
-            return e.reply('啊嘞？好像没有人邀请你或者已经过期了哦~', false, { at:true });
-        }
-    }
-
-    async forceEnd(e) {
-        const player = e.user_id;
-
-        if (!cfg.masterQQ.includes(player)) {
-            return e.reply('只有我的主人才能强制结束游戏哦~', false, { at:true });
-        }
-
-        let brData = yaml.parse(fs.readFileSync(dataPath, 'utf8'));
-
-        if (brData.gameInProgress) {
-            for (const player2 in brData.invites) {
-                await this.clearInvite(e, player2, brData.invites[player2].invitedBy, false);
+            if (e.msg.includes('#恶魔轮盘赌') & e.isMaster & game == 0){
+                e.reply([segment.at(player2), ' 有人邀请你游玩恶魔轮盘赌哦~\n发送"加入游戏"加入\n发送“拒绝游戏”拒绝\n邀请有效时间30秒哦~']);
+                game = 1;
+                time = setTimeout(function (){
+                    if (game = 1) {
+                        e.reply([segment.at(player1), ' QAQ...他好像没有理你哦~']);
+                        game = 0;
+                    }
+                }, 30000)
+           }
+           if (e.msg == "加入游戏" & game == 1 & ready == 0 & e.user_id == player2) {
+                e.reply([segment.at(player1), segment.at(player2), ' 要开始了哦~']);
+                ready = 1;
+                clearTimeout(time);
+           }
+           if (e.msg == "拒绝游戏" & game == 1 & ready == 0 & e.user_id == player2) {
+            e.reply([segment.at(player1), ' 对方拒绝了你哦~']);
+            game = 0;
+            ready = 0;
+            clearTimeout(time);
             }
-            return e.reply('恶魔轮盘赌已经被我强制结束掉啦~', false, { at:true });
-        } else {
-            return e.reply('当前没有进行中的恶魔轮盘赌哦~', false, { at:true });
-        }
-    }
-
-    async debugLog(e) {
-        const player = e.user_id;
-
-        if (!cfg.masterQQ.includes(player)) {
-            return e.reply('只有我的主人才能查看调试日志哦~', false, { at:true });
-        }
-
-        let brData = yaml.parse(fs.readFileSync(dataPath, 'utf8'));
-        const dataText = yaml.stringify(brData);
-
-        return e.reply(`当前的游戏数据如下：\n${dataText}`, false, { at:true });
-    }
-
-    async clearInvite(e, player2, player1, timeout) {
-        let brData = yaml.parse(fs.readFileSync(dataPath, 'utf8'));
-
-        if (brData.invites[player2]) {
-            delete brData.invites[player2];
-            brData.gameInProgress = false;
-            fs.writeFileSync(dataPath, yaml.stringify(brData));
-
-            clearTimeout(this.inviteTimers[player2]);
-            delete this.inviteTimers[player2];
-
-            if (timeout) {
-                e.reply([segment.at(player1), ' QAQ...对方好像没有理你哦~']);
+           if (e.msg == "#恶魔轮盘赌" & game == 1) {
+            e.reply('已经有人在玩恶魔轮盘赌了哦~', false, { at:true });
+            return;
             }
+        }else{
+            e.reply('你只能在群里进行恶魔轮盘赌哦~');
         }
     }
 }
