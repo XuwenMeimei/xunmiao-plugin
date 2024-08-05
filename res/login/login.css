@@ -16,13 +16,12 @@ body, html {
     font-family: 'LcCute', sans-serif;
     background: url('./img/bg.png') no-repeat center center fixed;
     background-size: cover;
-    aspect-ratio: 16 / 9;
 }
 
 .card {
     width: 80vw;
     height: calc(80vw / (16 / 9));
-    padding: 20px;
+    padding: 40px;
     background: rgba(255, 255, 255, 0.6);
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
