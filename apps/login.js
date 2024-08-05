@@ -1,6 +1,7 @@
-import plugin from '../../../lib/plugins/plugin.js'
-import fs from 'fs'
-import yaml from 'yaml'
+import plugin from '../../../lib/plugins/plugin.js';
+import fs from 'fs';
+import yaml from 'yaml';
+import puppeteer from '../../../lib/puppeteer/puppeteer.js';
 
 const _path = process.cwd().replace(/\\/g, "/");
 const dataPath = `${_path}/plugins/xunmiao-plugin/data/user_data.yaml`;
@@ -22,7 +23,7 @@ export class nekologin extends plugin {
           fnc: 'info'
         }
       ]
-    })
+    });
   }
 
   async nekologin(e) {
@@ -31,6 +32,13 @@ export class nekologin extends plugin {
     console.log(today);
 
     let userData = {};
+    let coinsChange = 0;
+    let coins = 0;
+    let favorabilityChange = 0;
+    let favorability = 0;
+    let luck = Math.floor(Math.random() * 102);
+    let rp = '';
+    let sgined = '';
 
     if (!fs.existsSync(dataPath)) {
       fs.writeFileSync(dataPath, yaml.stringify({}));
@@ -47,81 +55,100 @@ export class nekologin extends plugin {
     }
 
     if (userData[userId] && userData[userId].lastSignIn === today) {
-      const { luck, rp, favorability, coins, favorabilityChange, coinsChange } = userData[userId];
-      return this.reply(`你今天已经签到了哦~
-你今天获得了${coinsChange}个喵喵币和${favorabilityChange}点好感度
-今天的人品是：${luck}
-当前好感度：${favorability}
-当前喵喵币：${coins}
-${rp}`, false, { at: true });
-    }
+      sgined = '今日已签到';
+      coins = userData[userId].coins;
+      favorability = userData[userId].favorability;
+      luck = userData[userId].luck;
+      rp = userData[userId].rp;
+      coinsChange = userData[userId].coinsChange;
+      favorabilityChange = userData[userId].favorabilityChange;
+    } else {
+      const maxCoins = 50;
+      const maxFavorability = 3;
 
-    let luck = Math.floor(Math.random() * 102);
+      sgined = '签到成功！';
 
-    const maxCoins = 50;
-    const maxFavorability = 3;
-
-    let coinsChange;
-    let coins;
-    let favorabilityChange;
-    let favorability;
-
-    if (luck == 101) {
-      favorabilityChange = 10;
-      coins = 100;
-    }else{
-      coinsChange = Math.round(maxCoins * (luck / 100));
-      favorabilityChange = Math.round(maxFavorability * (luck / 100));
-      coins = userData[userId].coins + coinsChange
-      favorability = userData[userId].favorability + favorabilityChange;
-    }
-    
-    let rp = '';
-
-    const luckMessages = [
-      { range: [0, 0], message: 'QAQ...寻喵不是故意的...' },
-      { range: [1, 19], message: '运势很差呢，摸摸...' },
-      { range: [20, 39], message: '运势欠佳哦，一定会好起来的！' },
-      { range: [40, 59], message: '运势普普通通，不好也不坏噢~' },
-      { range: [60, 79], message: '运势不错~会有什么好事发生吗？' },
-      { range: [80, 89], message: '运势旺盛！今天是个好日子~' },
-      { range: [90, 99], message: '好运爆棚！一定会有好事发生吧！' },
-      { range: [100, 100], message: '100！今天说不定能发大财！！！' },
-      { range: [101, 101], message: '999！是隐藏的999运势！', overrideLuck: 999 }
-    ];
-
-    for (const luckMessage of luckMessages) {
-      if (luck >= luckMessage.range[0] && luck <= luckMessage.range[1]) {
-        rp = luckMessage.message;
-        if (luckMessage.overrideLuck) {
-          luck = luckMessage.overrideLuck;
-        }
-        break;
+      if (luck == 101) {
+        favorabilityChange = 10;
+        coinsChange = 100;
+        coins = userData[userId].coins + coinsChange;
+        favorability = userData[userId].favorability + favorabilityChange;
+      } else {
+        coinsChange = Math.round(maxCoins * (luck / 100));
+        favorabilityChange = Math.round(maxFavorability * (luck / 100));
+        coins = userData[userId].coins + coinsChange;
+        favorability = userData[userId].favorability + favorabilityChange;
       }
+
+      const luckMessages = [
+        { range: [0, 0], message: 'QAQ...寻喵不是故意的...' },
+        { range: [1, 19], message: '运势很差呢，摸摸...' },
+        { range: [20, 39], message: '运势欠佳哦，一定会好起来的！' },
+        { range: [40, 59], message: '运势普普通通，不好也不坏噢~' },
+        { range: [60, 79], message: '运势不错~会有什么好事发生吗？' },
+        { range: [80, 89], message: '运势旺盛！今天是个好日子~' },
+        { range: [90, 99], message: '好运爆棚！一定会有好事发生吧！' },
+        { range: [100, 100], message: '100！今天说不定能发大财！！！' },
+        { range: [101, 101], message: '999！是隐藏的999运势！', overrideLuck: 999 }
+      ];
+
+      for (const luckMessage of luckMessages) {
+        if (luck >= luckMessage.range[0] && luck <= luckMessage.range[1]) {
+          rp = luckMessage.message;
+          if (luckMessage.overrideLuck) {
+            luck = luckMessage.overrideLuck;
+          }
+          break;
+        }
+      }
+
+      if (favorability > 100) {
+        favorability = 100;
+      }
+
+      userData[userId] = {
+        lastSignIn: today,
+        luck: luck,
+        rp: rp,
+        coins: coins,
+        coinsChange: coinsChange,
+        favorability: favorability,
+        favorabilityChange: favorabilityChange
+      };
+
+      fs.writeFileSync(dataPath, yaml.stringify(userData));
     }
 
-    if (favorability > 100) {
-      favorability = 100;
-    }
+    let touxiang = Bot.pickUser(this.e.user_id).getAvatarUrl()
 
-    userData[userId] = {
-      lastSignIn: today,
-      luck: luck,
-      rp: rp,
-      coins: coins,
-      coinsChange: coinsChange,
-      favorability: favorability,
-      favorabilityChange: favorabilityChange
+    let serder = e.sender
+
+    console.log(serder);
+
+    const data = {
+      luck,
+      rp,
+      favorability,
+      coins,
+      coinsChange,
+      favorabilityChange,
+      sgined,
+      id: serder.nickname,
+      touxiang,
     };
 
-    fs.writeFileSync(dataPath, yaml.stringify(userData));
+    const base64 = await puppeteer.screenshot('xunmiao-plugin', {
+      saveId: 'login',
+      imgType: 'png',
+      tplFile: `${_path}/plugins/xunmiao-plugin/res/login/login.html`,
+      pluginResources: `${_path}/plugins/xunmiao-plugin/res/login/login.css`,
+      data: data
+    });
 
-    return this.reply(`今天的人品是：${luck}
-你获得了${coinsChange}个喵喵币和${favorabilityChange}点好感度
-当前好感度：${favorability}
-当前喵喵币：${userData[userId].coins}
-${rp}`, false, { at: true });
-    }
+    console.log(data);
+
+    return await e.reply(base64);
+  }
 
   async info(e) {
     const userId = `${e.user_id}`;
@@ -134,7 +161,6 @@ ${rp}`, false, { at: true });
 
     const { favorability = 0, coins = 0 } = userData[userId] || {};
 
-    return this.reply(`好感度：${favorability}
-喵喵币：${coins}`, false, { at: true });
+    return this.reply(`好感度：${favorability}\n喵喵币：${coins}`, false, { at: true });
   }
 }

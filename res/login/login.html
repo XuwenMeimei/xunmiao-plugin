@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{pluginResources}}">
+    <link rel="stylesheet" href="./login.css">
+    <title>签到卡片</title>
+</head>
+<body>
+    <div class="card">
+        <div class="user-info">
+            <div>
+                <h1>{{data.sgined}}</h1>
+                <p>今日人品：{{data.luck}}</p>
+            </div>
+            <div class="user-avatar">
+                <img src="{{data.touxiang}}">
+                <div class="nickname">{{data.id}}</div>
+            </div>
+        </div>
+        <div class="details">
+            <div class="details-left">
+                <p>{{data.rp}}</p>
+                <p>获得了{{data.coinsChange}}个喵喵币和{{data.favorabilityChange}}点好感度</p>
+            </div>
+            <div class="details-right">
+                <p>当前喵喵币：{{data.coins}}</p>
+                <p>当前好感度：{{data.favorability}}</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

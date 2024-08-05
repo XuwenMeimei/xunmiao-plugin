@@ -1,0 +1,97 @@
+@font-face {
+    font-family: 'LcCute';
+    src: url('./font/LcCute.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'LcCute', sans-serif;
+    background: url('./img/bg.png') no-repeat center center fixed;
+    background-size: cover;
+    aspect-ratio: 16 / 9;
+}
+
+.card {
+    width: 80vw;
+    height: calc(80vw / (16 / 9));
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+}
+
+.card h1 {
+    margin: 0;
+    font-size: 30px;
+}
+
+.card p {
+    margin: 10px 0;
+    font-size: 24px;
+}
+
+.user-info {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+}
+
+.user-avatar {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.user-avatar img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: contain;
+}
+
+.nickname {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 20px;
+    text-align: center;
+    margin-top: 10px;
+    white-space: nowrap;
+}
+
+.details {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.details-left {
+    align-self: flex-end;
+    text-align: left;
+}
+
+.details-right {
+    align-self: flex-end;
+    text-align: left;
+}
+
+.rp-details {
+    margin-top: 10px;
+    align-self: flex-end;
+}
