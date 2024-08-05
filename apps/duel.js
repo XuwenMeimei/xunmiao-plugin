@@ -62,6 +62,14 @@ export class duel extends plugin {
         console.log(e.user_id);
         console.log(user_id2);
 
+        if (message.some(item => item.qq === 'all')) {
+          return e.reply('6', false, { at: true });
+        }
+
+        if (message.filter(item => item.type === 'at').length > 1) {
+          return e.reply('不能同时与多个人决斗哦~', false, { at: true });
+        }
+
         if (message.some(item => item.qq === '2582312528')) {
             return e.reply('你不能与我进行决斗哦~', false, { at: true });
         }
