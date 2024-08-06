@@ -120,8 +120,8 @@ export class nekologin extends plugin {
     }
 
     let touxiang = Bot.pickUser(this.e.user_id).getAvatarUrl()
-
     let serder = e.sender
+    let id = serder.card
 
     console.log(serder);
 
@@ -133,7 +133,7 @@ export class nekologin extends plugin {
       coinsChange,
       favorabilityChange,
       sgined,
-      id: serder.nickname,
+      id,
       touxiang,
     };
 
