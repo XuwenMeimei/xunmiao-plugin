@@ -5,7 +5,7 @@ import yaml from 'yaml';
 const _path = process.cwd().replace(/\\/g, "/");
 const dataPath = `${_path}/plugins/xunmiao-plugin/data/user_data.yaml`;
 
-const cooldowns = {}; // 存储每个用户的冷却时间
+const cooldowns = {};
 
 export class duel extends plugin {
   constructor() {
@@ -89,34 +89,38 @@ export class duel extends plugin {
             return e.reply('他的喵喵币不够哦，无法与他决斗~', false, { at: true });
         }
 
-        let i = Math.floor(Math.random() * 100);
+        let i = Math.floor(Math.random() * 2);
         let Duelcoins = Math.floor(Math.random() * 30);
 
-        if (i <= 50) {
-            e.reply(`你输了! 你损失了${Duelcoins}个喵喵币
+        if (i) {
+          Duelcoins = Math.min(Duelcoins, coins_id1);
+          e.reply(`你输了! 你损失了${Duelcoins}个喵喵币
 他获得了${Duelcoins}个喵喵币`, false, { at: true });
 
-            userData[user_id2].coins += Duelcoins;
-            userData[e.user_id].coins -= Duelcoins;
-        } else {
-            e.reply(`你赢了! 你获得了${Duelcoins}个喵喵币
+          userData[user_id2].coins += Duelcoins;
+          userData[e.user_id].coins -= Duelcoins;
+
+          if (userData[e.user_id].coins <= 0) {
+              userData[e.user_id].coins = 0;
+              e.reply([segment.at(e.user_id), ' 破产了！']);
+          }
+      } else {
+          Duelcoins = Math.min(Duelcoins, coins_id2);
+          e.reply(`你赢了! 你获得了${Duelcoins}个喵喵币
 他损失了${Duelcoins}个喵喵币`, false, { at: true });
 
-            userData[user_id2].coins -= Duelcoins;
-            userData[e.user_id].coins += Duelcoins;
-        }
+          userData[user_id2].coins -= Duelcoins;
+          userData[e.user_id].coins += Duelcoins;
 
-        if (userData[user_id2].coins <= 0) {
-            userData[user_id2].coins = 0;
-        }
+          if (userData[user_id2].coins <= 0) {
+              userData[user_id2].coins = 0;
+              e.reply([segment.at(user_id2), ' 破产了！']);
+          }
+      }
 
-        if (userData[e.user_id].coins <= 0) {
-            userData[e.user_id].coins = 0;
-        }
+      fs.writeFileSync(dataPath, yaml.stringify(userData));
 
-        fs.writeFileSync(dataPath, yaml.stringify(userData));
-
-        cooldowns[e.user_id] = now;
-    }
+      cooldowns[e.user_id] = now;
   }
+}
 }
