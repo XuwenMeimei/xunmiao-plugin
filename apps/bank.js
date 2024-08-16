@@ -93,7 +93,7 @@ export class duel extends plugin {
         console.log(userData[e.user_id].bank);
         console.log(userData[e.user_id].coins);
 
-        const { coins: coins_id1 } = userData[e.user_id];
+        const { bank: bank_id1 } = userData[e.user_id];
         
         const regex = /#取钱\s*(\d+)$/;
         const match = e.msg.match(regex);
@@ -101,7 +101,7 @@ export class duel extends plugin {
         if (match) {
             Takecoins = parseInt(match[1], 10);
     
-            if (Takecoins > coins_id1) {
+            if (Takecoins > bank_id1) {
               return e.reply('你没有那么多喵喵币取出哦~', false, { at: true });
             }
 
