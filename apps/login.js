@@ -159,8 +159,8 @@ export class nekologin extends plugin {
       userData = yaml.parse(fileContent) || {};
     }
 
-    const { favorability = 0, coins = 0 } = userData[userId] || {};
+    const { favorability = 0, coins = 0, bank = 0 } = userData[userId] || {};
 
-    return this.reply(`好感度：${favorability}\n喵喵币：${coins}`, false, { at: true });
+    return this.reply(`好感度：${favorability}\n喵喵币：${coins}\n银行存款：${bank}`, false, { at: true });
   }
 }

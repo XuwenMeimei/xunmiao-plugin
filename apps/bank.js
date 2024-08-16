@@ -11,8 +11,8 @@ let Takecoins = 0;
 export class duel extends plugin {
   constructor() {
     super({
-      name: '寻喵决斗',
-      dsc: '寻喵决斗功能',
+      name: '寻喵银行',
+      dsc: '寻喵银行功能',
       event: 'message',
       priority: 5000,
       rule: [
@@ -69,6 +69,14 @@ export class duel extends plugin {
               coins: 0,
               bank: 0
             };
+        }
+
+        if (userData[e.user_id].bank === undefined) {
+            userData[e.user_id].bank = 0;
+        }
+
+        if (userData[e.user_id].coins === undefined) {
+            userData[e.user_id].coins = 0;
         }
 
         const { coins: coins_id1 } = userData[e.user_id];
