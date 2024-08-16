@@ -54,7 +54,7 @@ export class duel extends plugin {
             userData[e.user_id].coins -= Savecoins;
             
             return e.reply(`你成功存入了${Savecoins}个喵喵币哦~
-你还剩${UserData[e.user_id].coins}个喵喵币
+你还剩${userData[e.user_id].coins}个喵喵币
 银行存款有${userData[e.user_id].bank}个喵喵币 `, false, { at: true });
         }
         fs.writeFileSync(dataPath, yaml.stringify(userData));
