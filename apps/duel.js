@@ -60,8 +60,6 @@ export class duel extends plugin {
 
       const regex = /#决斗\s*(\d+)$/;
       const match = e.msg.match(regex);
-      
-      let paycoins = null;
 
         console.log(message);
         console.log(e.user_id);
@@ -107,7 +105,7 @@ export class duel extends plugin {
         if (Duelcoins > coins_id2) {
           return e.reply('他没有那么多喵喵币哦~', false, { at: true });
         }
-        
+
         }else{
         Duelcoins = Math.floor(Math.random() * 30);
         }
