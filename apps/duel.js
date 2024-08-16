@@ -58,13 +58,10 @@ export class duel extends plugin {
 
         let message = e.message;
 
-        const regex = /#决斗\s*(\d+)$/;
-        const match = e.msg.match(regex);
-        
-        let paycoins = null;
-        if (match) {
-          paycoins = parseInt(match[1], 10);
-        }
+      const regex = /#决斗\s*(\d+)$/;
+      const match = e.msg.match(regex);
+      
+      let paycoins = null;
 
         console.log(message);
         console.log(e.user_id);
@@ -97,14 +94,23 @@ export class duel extends plugin {
             return e.reply('他的喵喵币不够哦，无法与他决斗~', false, { at: true });
         }
 
-        let Duelcoins = paycoins !== null ? paycoins : Math.floor(Math.random() * 30);
+        let i = Math.floor(Math.random() * 2);
 
-      if (Duelcoins > coins_id1 || Duelcoins > coins_id2) {
-        return e.reply('你们其中一人的喵喵币不足以支持这个赌注哦~', false, { at: true });
-      }
-      
-      let i = Math.floor(Math.random() * 2);
+        let Duelcoins = 0;
 
+        if (match) {
+        Duelcoins = parseInt(match[1], 10);
+
+        if (Duelcoins > coins_id1) {
+          return e.reply('你没有那么多喵喵币哦~', false, { at: true });
+        }
+        if (Duelcoins > coins_id2) {
+          return e.reply('他没有那么多喵喵币哦~', false, { at: true });
+        }
+        
+        }else{
+        Duelcoins = Math.floor(Math.random() * 30);
+        }
 
         if (i) {
           Duelcoins = Math.min(Duelcoins, coins_id1);
