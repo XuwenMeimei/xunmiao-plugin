@@ -5,6 +5,9 @@ import yaml from 'yaml';
 const _path = process.cwd().replace(/\\/g, "/");
 const dataPath = `${_path}/plugins/xunmiao-plugin/data/user_data.yaml`;
 
+let Savecoins = 0;
+let Takecoins = 0;
+
 export class duel extends plugin {
   constructor() {
     super({
