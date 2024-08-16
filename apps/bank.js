@@ -38,6 +38,17 @@ export class duel extends plugin {
             };
         }
 
+        if (userData[e.user_id].bank === undefined) {
+            userData[e.user_id].bank = 0;
+        }
+
+        if (userData[e.user_id].coins === undefined) {
+            userData[e.user_id].coins = 0;
+        }
+
+        console.log(userData[e.user_id].bank);
+        console.log(userData[e.user_id].coins);
+
         const { coins: coins_id1 } = userData[e.user_id];
         
         const regex = /#存钱\s*(\d+)$/;
@@ -78,6 +89,9 @@ export class duel extends plugin {
         if (userData[e.user_id].coins === undefined) {
             userData[e.user_id].coins = 0;
         }
+
+        console.log(userData[e.user_id].bank);
+        console.log(userData[e.user_id].coins);
 
         const { coins: coins_id1 } = userData[e.user_id];
         
