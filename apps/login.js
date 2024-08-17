@@ -50,7 +50,8 @@ export class nekologin extends plugin {
     if (!userData[userId]) {
       userData[userId] = {
         coins: 0,
-        favorability: 0
+        favorability: 0,
+        bank: 0
       };
     }
 
@@ -107,6 +108,7 @@ export class nekologin extends plugin {
       }
 
       userData[userId] = {
+        ...userData[userId],
         lastSignIn: today,
         luck: luck,
         rp: rp,
