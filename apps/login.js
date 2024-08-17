@@ -1,12 +1,12 @@
-import plugin from'../../../lib/plugins/plugin.js';
-import fs from'fs';
-import yaml from'yaml';
-import puppeteer from'../../../lib/puppeteer/puppeteer.js';
+import plugin from '../../../lib/plugins/plugin.js';
+import fs from 'fs';
+import yaml from 'yaml';
+import puppeteer from '../../../lib/puppeteer/puppeteer.js';
 
 const _path = process.cwd().replace(/\\/g, "/");
 const dataPath = `${_path}/plugins/xunmiao-plugin/data/user_data.yaml`;
 
-exportclassnekologinextendsplugin {
+export class nekologin extends plugin {
   constructor() {
     super({
       name: '寻喵签到',
@@ -26,9 +26,9 @@ exportclassnekologinextendsplugin {
     });
   }
 
-  asyncnekologin(e) {
+  async nekologin(e) {
     const userId = `${e.user_id}`;
-    const today = newDate().toLocaleDateString('zh-CN', { timeZone: 'Asia/Shanghai' }).replace(/\//g, '-');
+    const today = new Date().toLocaleDateString('zh-CN', { timeZone: 'Asia/Shanghai' }).replace(/\//g, '-');
     console.log(today);
 
     let userData = {};
@@ -122,7 +122,10 @@ exportclassnekologinextendsplugin {
     }
 
     let touxiang = Bot.pickUser(this.e.user_id).getAvatarUrl()
-    let serder = e.senderlet id = serder.cardconsole.log(serder);
+    let serder = e.sender
+    let id = serder.card
+
+    console.log(serder);
 
     const data = {
       luck,
@@ -146,10 +149,10 @@ exportclassnekologinextendsplugin {
 
     console.log(data);
 
-    returnawait e.reply(base64);
+    return await e.reply(base64);
   }
 
-  asyncinfo(e) {
+  async info(e) {
     const userId = `${e.user_id}`;
 
     let userData = {};
@@ -160,6 +163,6 @@ exportclassnekologinextendsplugin {
 
     const { favorability = 0, coins = 0, bank = 0 } = userData[userId] || {};
 
-    returnthis.reply(`好感度：${favorability}\n喵喵币：${coins}\n银行存款：${bank}`, false, { at: true });
+    return this.reply(`好感度：${favorability}\n喵喵币：${coins}\n银行存款：${bank}`, false, { at: true });
   }
 }
