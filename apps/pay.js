@@ -24,18 +24,6 @@ export class duel extends plugin {
     }
     async pay (e) {
     if (e.isGroup) {
-        const now = Date.now();
-        const cooldownTime = 600 * 1000;
-
-        if (cooldowns[e.user_id]) {
-            const timePassed = now - cooldowns[e.user_id];
-            const timeLeft = cooldownTime - timePassed;
-            if (timeLeft > 0) {
-                const secondsLeft = Math.ceil(timeLeft / 1000);
-                return e.reply(`你需要等待${secondsLeft}秒后才能再次转账哦~`, false, { at: true });
-            }
-        }
-
         const fileContent = fs.readFileSync(dataPath, 'utf8');
         let userData = yaml.parse(fileContent) || {};
 
@@ -71,7 +59,7 @@ export class duel extends plugin {
         }
 
         if (message.some(item => item.qq === '2582312528')) {
-            return e.reply('你要给我钱嘛?~', false, { at: true });
+            return e.reply('难道你要给我钱嘛?~', false, { at: true });
         }
 
         if(!user_id2){
@@ -96,8 +84,6 @@ export class duel extends plugin {
         }
 
           fs.writeFileSync(dataPath, yaml.stringify(userData));
-
-          cooldowns[e.user_id] = now;
 
           return e.reply(`你成功给他转了${paycoins}个喵喵币哦~`, false, { at: true });
         }else{
