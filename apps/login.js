@@ -141,8 +141,6 @@ export class nekologin extends plugin {
         totalSignCount: totalSignCount
       };
 
-      console.log(userData[userId]);
-
       fs.writeFileSync(dataPath, yaml.stringify(userData));
     }
 
@@ -163,6 +161,8 @@ export class nekologin extends plugin {
       dailySignOrder,
       totalSignCount
     };
+
+    console.log(data);
 
     const base64 = await puppeteer.screenshot('xunmiao-plugin', {
       saveId: 'login',
