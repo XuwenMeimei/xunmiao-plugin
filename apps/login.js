@@ -29,7 +29,6 @@ export class nekologin extends plugin {
   async nekologin(e) {
     const userId = `${e.user_id}`;
     const today = new Date().toLocaleDateString('zh-CN', { timeZone: 'Asia/Shanghai' }).replace(/\//g, '-');
-    console.log(today);
 
     let userData = {};
     let coinsChange = 0;
@@ -39,6 +38,8 @@ export class nekologin extends plugin {
     let luck = Math.floor(Math.random() * 102);
     let rp = '';
     let sgined = '';
+    let dailySignOrder = 1;
+    let totalSignCount = 1;
 
     if (!fs.existsSync(dataPath)) {
       fs.writeFileSync(dataPath, yaml.stringify({}));
@@ -47,11 +48,23 @@ export class nekologin extends plugin {
     const fileContent = fs.readFileSync(dataPath, 'utf8');
     userData = yaml.parse(fileContent) || {};
 
+    if (!userData.dailySignOrder) {
+      userData.dailySignOrder = {};
+    }
+
+    if (!userData.dailySignOrder[today]) {
+      userData.dailySignOrder[today] = 1;
+    } else {
+      userData.dailySignOrder[today]++;
+    }
+    dailySignOrder = userData.dailySignOrder[today];
+
     if (!userData[userId]) {
       userData[userId] = {
         coins: 0,
         favorability: 0,
-        bank: 0
+        bank: 0,
+        totalSignCount: 0
       };
     }
 
@@ -63,11 +76,14 @@ export class nekologin extends plugin {
       rp = userData[userId].rp;
       coinsChange = userData[userId].coinsChange;
       favorabilityChange = userData[userId].favorabilityChange;
+      dailySignOrder = userData[userId].dailySignOrder;
+      totalSignCount = userData[userId].totalSignCount;
     } else {
       const maxCoins = 50;
       const maxFavorability = 3;
 
       sgined = '签到成功！';
+      totalSignCount = userData[userId].totalSignCount + 1;
 
       if (luck == 101) {
         favorabilityChange = 10;
@@ -115,17 +131,17 @@ export class nekologin extends plugin {
         coins: coins,
         coinsChange: coinsChange,
         favorability: favorability,
-        favorabilityChange: favorabilityChange
+        favorabilityChange: favorabilityChange,
+        dailySignOrder: dailySignOrder,
+        totalSignCount: totalSignCount
       };
 
       fs.writeFileSync(dataPath, yaml.stringify(userData));
     }
 
-    let touxiang = Bot.pickUser(this.e.user_id).getAvatarUrl()
-    let serder = e.sender
-    let id = serder.card
-
-    console.log(serder);
+    let touxiang = Bot.pickUser(this.e.user_id).getAvatarUrl();
+    let serder = e.sender;
+    let id = serder.card;
 
     const data = {
       luck,
@@ -137,6 +153,8 @@ export class nekologin extends plugin {
       sgined,
       id,
       touxiang,
+      dailySignOrder,
+      totalSignCount
     };
 
     const base64 = await puppeteer.screenshot('xunmiao-plugin', {
@@ -146,8 +164,6 @@ export class nekologin extends plugin {
       pluginResources: `${_path}/plugins/xunmiao-plugin/res/login/login.css`,
       data: data
     });
-
-    console.log(data);
 
     return await e.reply(base64);
   }
@@ -161,8 +177,8 @@ export class nekologin extends plugin {
       userData = yaml.parse(fileContent) || {};
     }
 
-    const { favorability = 0, coins = 0, bank = 0 } = userData[userId] || {};
+    const { favorability = 0, coins = 0, bank = 0, totalSignCount = 0 } = userData[userId] || {};
 
-    return this.reply(`好感度：${favorability}\n喵喵币：${coins}\n银行存款：${bank}`, false, { at: true });
+    return this.reply(`好感度：${favorability}\n喵喵币：${coins}\n银行存款：${bank}\n累计签到：${totalSignCount}`, false, { at: true });
   }
 }
