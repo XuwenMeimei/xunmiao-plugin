@@ -141,6 +141,8 @@ export class nekologin extends plugin {
         totalSignCount: totalSignCount
       };
 
+      console.log(userData[userId]);
+
       fs.writeFileSync(dataPath, yaml.stringify(userData));
     }
 
