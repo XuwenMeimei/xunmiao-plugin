@@ -39,7 +39,7 @@ export class nekologin extends plugin {
     let rp = '';
     let sgined = '';
     let dailySignOrder = 1;
-    let totalSignCount = 1;
+    let totalSignCount = 0;
 
     if (!fs.existsSync(dataPath)) {
       fs.writeFileSync(dataPath, yaml.stringify({}));
@@ -68,6 +68,11 @@ export class nekologin extends plugin {
       };
     }
 
+    if (typeof userData[userId].totalSignCount === 'undefined' || isNaN(userData[userId].totalSignCount)) {
+      userData[userId].totalSignCount = 0;
+    }
+    totalSignCount = userData[userId].totalSignCount;
+
     if (userData[userId] && userData[userId].lastSignIn === today) {
       sgined = '今日已签到';
       coins = userData[userId].coins;
@@ -83,7 +88,7 @@ export class nekologin extends plugin {
       const maxFavorability = 3;
 
       sgined = '签到成功！';
-      totalSignCount = userData[userId].totalSignCount + 1;
+      totalSignCount += 1;
 
       if (luck == 101) {
         favorabilityChange = 10;
@@ -177,7 +182,11 @@ export class nekologin extends plugin {
       userData = yaml.parse(fileContent) || {};
     }
 
-    const { favorability = 0, coins = 0, bank = 0, totalSignCount = 0 } = userData[userId] || {};
+    let { favorability = 0, coins = 0, bank = 0, totalSignCount = 0 } = userData[userId] || {};
+
+    if (typeof totalSignCount === 'undefined' || isNaN(totalSignCount)) {
+      totalSignCount = 0;
+    }
 
     return this.reply(`好感度：${favorability}\n喵喵币：${coins}\n银行存款：${bank}\n累计签到：${totalSignCount}`, false, { at: true });
   }
