@@ -36,7 +36,8 @@ export class duel extends plugin {
 今日人品：${userData[id].luck}
 喵喵币：${userData[id].coins}
 好感度：${userData[id].favorability}
-银行存款：${userData[id].bank}`)
+银行存款：${userData[id].bank}
+累计签到：${userData[id].totalSignCount}`)
         }
     }
 }

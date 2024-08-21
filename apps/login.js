@@ -190,6 +190,6 @@ export class nekologin extends plugin {
       totalSignCount = 0;
     }
 
-    return this.reply(`好感度：${favorability}\n喵喵币：${coins}\n银行存款：${bank}\n累计签到：${totalSignCount}`, false, { at: true });
+    return this.reply(`好感度：${favorability}\n喵喵币：${coins}\n银行存款：${bank}\n累计签到：${totalSignCount}天`, false, { at: true });
   }
 }
