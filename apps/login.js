@@ -169,7 +169,15 @@ export class nekologin extends plugin {
       imgType: 'png',
       tplFile: `${_path}/plugins/xunmiao-plugin/res/login/login.html`,
       pluginResources: `${_path}/plugins/xunmiao-plugin/res/login/login.css`,
-      data: data
+      data: data,
+      waitForSelector: '.user-avatar img',
+      waitForFunction: `
+        (selector) => {
+          const img = document.querySelector(selector);
+          return img && img.complete && img.naturalWidth > 0;
+        }
+      `,
+      waitForFunctionArgs: ['.user-avatar img']
     });
 
     return await e.reply(base64);
