@@ -196,7 +196,7 @@ export class nekologin extends plugin {
 
     console.log({
       ...data,
-      touxiang: touxiang ? touxiang.slice(0, 10) + '...' : ''
+      touxiang: touxiang ? touxiang.slice(0, 32) + '...' : ''
     });
 
     const base64 = await puppeteer.screenshot('xunmiao-plugin', {
