@@ -18,8 +18,6 @@ if (!fs.existsSync(userDataPath)) {
   }
 }
 
-//测试
-
 logger.info('---------^_^---------')
 logger.info('主人！寻喵酱打卡上班啦！')
 logger.info('---------------------')
