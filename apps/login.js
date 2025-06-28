@@ -194,7 +194,10 @@ export class nekologin extends plugin {
       continueSignCount
     };
 
-    console.log(data);
+    console.log({
+      ...data,
+      touxiang: touxiang ? touxiang.slice(0, 10) + '...' : ''
+    });
 
     const base64 = await puppeteer.screenshot('xunmiao-plugin', {
       saveId: 'login',
