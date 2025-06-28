@@ -21,6 +21,10 @@ export class duel extends plugin {
           {
             reg: '^#重置签到(.*)$',
             fnc: 'resetSign'
+          },
+          {
+            reg: '^#重置全部签到$',
+            fnc: 'resetAllSign'
           }
         ]
       })
@@ -41,7 +45,8 @@ export class duel extends plugin {
 喵喵币：${userData[id]?.coins ?? 0}
 好感度：${userData[id]?.favorability ?? 0}
 银行存款：${userData[id]?.bank ?? 0}
-累计签到：${userData[id]?.totalSignCount ?? 0}`)
+累计签到：${userData[id]?.totalSignCount ?? 0}
+连续签到：${userData[id]?.continueSignCount ?? 0}`)
         }
     }
 
@@ -54,7 +59,7 @@ export class duel extends plugin {
 
         const id = e.at;
         if (!id || !userData[id]) {
-            return e.reply('请@需要重置签到的用户，且该用户有签到记录。', false, { at:true });
+            return e.reply('请@需要重置签到的用户哦~', false, { at:true });
         }
 
         // 重置签到状态
@@ -66,5 +71,26 @@ export class duel extends plugin {
         fs.writeFileSync(dataPath, yaml.stringify(userData));
 
         return e.reply(`已重置${id}的每日签到状态。`, false, { at:true });
+    }
+
+    async resetAllSign(e) {
+        if (!cfg.masterQQ.includes(e.user_id)) {
+            return e.reply('只有我的主人才能重置所有人的签到哦~', false, { at: true });
+        }
+        const fileContent = fs.readFileSync(dataPath, 'utf8');
+        let userData = yaml.parse(fileContent) || {};
+
+        let count = 0;
+        for (const id in userData) {
+            if (id === 'dailySignOrder') continue;
+            userData[id].lastSignIn = '';
+            userData[id].coinsChange = 0;
+            userData[id].favorabilityChange = 0;
+            userData[id].luck = 0;
+            userData[id].rp = '';
+            count++;
+        }
+        fs.writeFileSync(dataPath, yaml.stringify(userData));
+        return e.reply(`已重置${count}个用户的每日签到状态。`, false, { at: true });
     }
 }
