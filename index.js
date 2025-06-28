@@ -2,17 +2,26 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-console.log('当前工作目录 process.cwd():', process.cwd())
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
-console.log('当前脚本所在目录 __dirname:', __dirname)
+const dataDir = path.join(__dirname, 'data')
+
+const templatePath = path.join(dataDir, 'user_data.template.yaml')
+const userDataPath = path.join(dataDir, 'user_data.yaml')
+
+if (!fs.existsSync(userDataPath)) {
+  if (fs.existsSync(templatePath)) {
+    fs.copyFileSync(templatePath, userDataPath)
+    console.log('从模板复制了 user_data.yaml')
+  } else {
+    console.warn('未找到模板文件：', templatePath)
+  }
+}
 
 logger.info('---------^_^---------')
 logger.info('主人！寻喵酱打卡上班啦！')
 logger.info('---------------------')
 
-//if (!fs.existsSync('./data/user_data.yaml')) {
- // fs.copyFileSync('./data/user_data.template.yaml', './data/user_data.yaml')
-//}
 
 const files = fs.readdirSync('./plugins/xunmiao-plugin/apps').filter(file => file.endsWith('.js'))
 
