@@ -2,7 +2,7 @@ import plugin from '../../../lib/plugins/plugin.js';
 import fs from 'fs';
 import yaml from 'yaml';
 import puppeteer from '../../../lib/puppeteer/puppeteer.js';
-import axios from 'axios'; // 新增依赖
+import axios from 'axios';
 
 const _path = process.cwd().replace(/\\/g, "/");
 const dataPath = `${_path}/plugins/xunmiao-plugin/data/user_data.yaml`;
@@ -79,7 +79,6 @@ export class nekologin extends plugin {
     totalSignCount = userData[userId].totalSignCount;
     let continueSignCount = userData[userId].continueSignCount;
 
-    // 获取昨天日期字符串
     function getYesterdayStr() {
       const d = new Date();
       d.setDate(d.getDate() - 1);
@@ -165,7 +164,6 @@ export class nekologin extends plugin {
       fs.writeFileSync(dataPath, yaml.stringify(userData));
     }
 
-    // 获取头像并转为base64
     let touxiangUrl = Bot.pickUser(this.e.user_id).getAvatarUrl();
     let touxiang = '';
     try {
