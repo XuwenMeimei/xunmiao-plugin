@@ -2,6 +2,7 @@ import plugin from '../../../lib/plugins/plugin.js';
 import fs from 'fs';
 import yaml from 'yaml';
 import puppeteer from '../../../lib/puppeteer/puppeteer.js';
+import axios from 'axios'; // 新增依赖
 
 const _path = process.cwd().replace(/\\/g, "/");
 const dataPath = `${_path}/plugins/xunmiao-plugin/data/user_data.yaml`;
@@ -164,7 +165,19 @@ export class nekologin extends plugin {
       fs.writeFileSync(dataPath, yaml.stringify(userData));
     }
 
-    let touxiang = Bot.pickUser(this.e.user_id).getAvatarUrl();
+    // 获取头像并转为base64
+    let touxiangUrl = Bot.pickUser(this.e.user_id).getAvatarUrl();
+    let touxiang = '';
+    try {
+      const response = await axios.get(touxiangUrl, { responseType: 'arraybuffer' });
+      const base64 = Buffer.from(response.data, 'binary').toString('base64');
+      const mime = response.headers['content-type'] || 'image/png';
+      touxiang = `data:${mime};base64,${base64}`;
+    } catch (err) {
+      console.error('头像获取失败:', err);
+      touxiang = '';
+    }
+
     let serder = e.sender;
     let id = serder.card;
 
@@ -190,16 +203,7 @@ export class nekologin extends plugin {
       imgType: 'png',
       tplFile: `${_path}/plugins/xunmiao-plugin/res/login/login.html`,
       pluginResources: `${_path}/plugins/xunmiao-plugin/res/login/login.css`,
-      data: data,
-      waitForSelector: '.user-avatar img',
-      waitForFunction: `
-        (selector) => {
-          const img = document.querySelector(selector);
-          return img && img.complete && img.naturalWidth > 0;
-        }
-      `,
-      waitForFunctionArgs: ['.user-avatar img'],
-      viewport: { width: 1280, height: 720 } // 关键：设置为16:9
+      data: data
     });
 
     return await e.reply(base64);
