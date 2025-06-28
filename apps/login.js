@@ -101,14 +101,13 @@ export class nekologin extends plugin {
       const maxFavorability = 3;
 
       sgined = '签到成功！';
-      totalSignCount += 1;
 
-      // 判断是否连续签到
       if (userData[userId].lastSignIn === getYesterdayStr()) {
         continueSignCount += 1;
       } else {
         continueSignCount = 1;
       }
+      totalSignCount += 1;
 
       if (luck == 101) {
         favorabilityChange = 10;

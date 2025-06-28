@@ -68,13 +68,6 @@ export class duel extends plugin {
         userData[id].luck = 0;
         userData[id].rp = '';
 
-        // 累计签到天数减1，最小为0
-        if (typeof userData[id].totalSignCount === 'number') {
-            userData[id].totalSignCount = Math.max(0, userData[id].totalSignCount - 1);
-        } else {
-            userData[id].totalSignCount = 0;
-        }
-
         const today = new Date().toLocaleDateString('zh-CN', { timeZone: 'Asia/Shanghai' }).replace(/\//g, '-');
         if (userData.dailySignOrder && userData.dailySignOrder[today]) {
             userData.dailySignOrder[today] = Math.max(0, userData.dailySignOrder[today] - 1);
