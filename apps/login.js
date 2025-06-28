@@ -159,7 +159,7 @@ export class nekologin extends plugin {
         favorabilityChange: favorabilityChange,
         dailySignOrder: dailySignOrder,
         totalSignCount: totalSignCount,
-        continueSignCount: continueSignCount // 保存连续签到天数
+        continueSignCount: continueSignCount
       };
 
       fs.writeFileSync(dataPath, yaml.stringify(userData));
@@ -181,7 +181,7 @@ export class nekologin extends plugin {
       touxiang,
       dailySignOrder,
       totalSignCount,
-      continueSignCount // 传递到模板
+      continueSignCount
     };
 
     console.log(data);

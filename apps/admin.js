@@ -62,12 +62,18 @@ export class duel extends plugin {
             return e.reply('请@需要重置签到的用户哦~', false, { at:true });
         }
 
-        // 重置签到状态
         userData[id].lastSignIn = '';
         userData[id].coinsChange = 0;
         userData[id].favorabilityChange = 0;
         userData[id].luck = 0;
         userData[id].rp = '';
+
+
+        const today = new Date().toLocaleDateString('zh-CN', { timeZone: 'Asia/Shanghai' }).replace(/\//g, '-');
+        if (userData.dailySignOrder && userData.dailySignOrder[today]) {
+            userData.dailySignOrder[today] = Math.max(0, userData.dailySignOrder[today] - 1);
+        }
+
         fs.writeFileSync(dataPath, yaml.stringify(userData));
 
         return e.reply(`已重置${id}的每日签到状态。`, false, { at:true });
@@ -90,6 +96,12 @@ export class duel extends plugin {
             userData[id].rp = '';
             count++;
         }
+
+        const today = new Date().toLocaleDateString('zh-CN', { timeZone: 'Asia/Shanghai' }).replace(/\//g, '-');
+        if (userData.dailySignOrder && userData.dailySignOrder[today]) {
+            userData.dailySignOrder[today] = 0;
+        }
+
         fs.writeFileSync(dataPath, yaml.stringify(userData));
         return e.reply(`已重置${count}个用户的每日签到状态。`, false, { at: true });
     }
