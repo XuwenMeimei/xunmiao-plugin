@@ -65,7 +65,7 @@ export class nekologin extends plugin {
         favorability: 0,
         bank: 0,
         totalSignCount: 0,
-        continueSignCount: 0 // 新增字段
+        continueSignCount: 0
       };
     }
 
@@ -101,13 +101,13 @@ export class nekologin extends plugin {
       const maxFavorability = 3;
 
       sgined = '签到成功！';
+      totalSignCount += 1;
 
       if (userData[userId].lastSignIn === getYesterdayStr()) {
         continueSignCount += 1;
       } else {
         continueSignCount = 1;
       }
-      totalSignCount += 1;
 
       if (luck == 101) {
         favorabilityChange = 10;
