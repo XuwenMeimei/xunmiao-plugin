@@ -1,6 +1,10 @@
 import plugin from '../../../lib/plugins/plugin.js';
-import { getUserData, saveUserData } from './userUtil.js';
+import fs from 'fs';
+import yaml from 'yaml';
 import puppeteer from '../../../lib/puppeteer/puppeteer.js';
+
+const _path = process.cwd().replace(/\\/g, "/");
+const dataPath = `${_path}/plugins/xunmiao-plugin/data/user_data.yaml`;
 
 export class nekologin extends plugin {
   constructor() {
@@ -26,7 +30,7 @@ export class nekologin extends plugin {
     const userId = `${e.user_id}`;
     const today = new Date().toLocaleDateString('zh-CN', { timeZone: 'Asia/Shanghai' }).replace(/\//g, '-');
 
-    let userData = getUserData(userId);
+    let userData = {};
     let coinsChange = 0;
     let coins = 0;
     let favorabilityChange = 0;
@@ -35,17 +39,44 @@ export class nekologin extends plugin {
     let rp = '';
     let sgined = '';
     let dailySignOrder = 1;
-    let totalSignCount = userData[userId].totalSignCount;
-    let continueSignCount = userData[userId].continueSignCount;
+    let totalSignCount = 0;
 
-    // dailySignOrder 逻辑
-    if (!userData.dailySignOrder) userData.dailySignOrder = {};
+    if (!fs.existsSync(dataPath)) {
+      fs.writeFileSync(dataPath, yaml.stringify({}));
+    }
+
+    const fileContent = fs.readFileSync(dataPath, 'utf8');
+    userData = yaml.parse(fileContent) || {};
+
+    if (!userData.dailySignOrder) {
+      userData.dailySignOrder = {};
+    }
+
     if (!userData.dailySignOrder[today]) {
       userData.dailySignOrder[today] = 1;
     } else {
       userData.dailySignOrder[today]++;
     }
     dailySignOrder = userData.dailySignOrder[today];
+
+    if (!userData[userId]) {
+      userData[userId] = {
+        coins: 0,
+        favorability: 0,
+        bank: 0,
+        totalSignCount: 0,
+        continueSignCount: 0 // 新增字段
+      };
+    }
+
+    if (typeof userData[userId].totalSignCount === 'undefined' || isNaN(userData[userId].totalSignCount)) {
+      userData[userId].totalSignCount = 0;
+    }
+    if (typeof userData[userId].continueSignCount === 'undefined' || isNaN(userData[userId].continueSignCount)) {
+      userData[userId].continueSignCount = 0;
+    }
+    totalSignCount = userData[userId].totalSignCount;
+    let continueSignCount = userData[userId].continueSignCount;
 
     // 获取昨天日期字符串
     function getYesterdayStr() {
@@ -113,9 +144,10 @@ export class nekologin extends plugin {
         }
       }
 
-      if (favorability > 100) favorability = 100;
+      if (favorability > 100) {
+        favorability = 100;
+      }
 
-      // 只更新当前用户数据
       userData[userId] = {
         ...userData[userId],
         lastSignIn: today,
@@ -127,11 +159,10 @@ export class nekologin extends plugin {
         favorabilityChange: favorabilityChange,
         dailySignOrder: dailySignOrder,
         totalSignCount: totalSignCount,
-        continueSignCount: continueSignCount
+        continueSignCount: continueSignCount // 保存连续签到天数
       };
 
-      // 写入
-      saveUserData(userData, userId);
+      fs.writeFileSync(dataPath, yaml.stringify(userData));
     }
 
     let touxiang = Bot.pickUser(this.e.user_id).getAvatarUrl();
@@ -150,7 +181,7 @@ export class nekologin extends plugin {
       touxiang,
       dailySignOrder,
       totalSignCount,
-      continueSignCount
+      continueSignCount // 传递到模板
     };
 
     console.log(data);
@@ -176,9 +207,19 @@ export class nekologin extends plugin {
 
   async info(e) {
     const userId = `${e.user_id}`;
-    let userData = getUserData(userId);
+
+    let userData = {};
+    if (fs.existsSync(dataPath)) {
+      const fileContent = fs.readFileSync(dataPath, 'utf8');
+      userData = yaml.parse(fileContent) || {};
+    }
+
     let { favorability = 0, coins = 0, bank = 0, totalSignCount = 0 } = userData[userId] || {};
-    if (typeof totalSignCount === 'undefined' || isNaN(totalSignCount)) totalSignCount = 0;
+
+    if (typeof totalSignCount === 'undefined' || isNaN(totalSignCount)) {
+      totalSignCount = 0;
+    }
+
     return this.reply(`好感度：${favorability}\n喵喵币：${coins}\n银行存款：${bank}\n累计签到：${totalSignCount}天`, false, { at: true });
   }
 }
