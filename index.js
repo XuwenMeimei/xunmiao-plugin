@@ -1,4 +1,10 @@
 import fs from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+console.log('当前工作目录 process.cwd():', process.cwd())
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+console.log('当前脚本所在目录 __dirname:', __dirname)
 
 logger.info('---------^_^---------')
 logger.info('主人！寻喵酱打卡上班啦！')
