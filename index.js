@@ -4,6 +4,10 @@ logger.info('---------^_^---------')
 logger.info('主人！寻喵酱打卡上班啦！')
 logger.info('---------------------')
 
+if (!fs.existsSync('user_data.yaml')) {
+  fs.copyFileSync('user_data.template.yaml', 'user_data.yaml')
+}
+
 const files = fs.readdirSync('./plugins/xunmiao-plugin/apps').filter(file => file.endsWith('.js'))
 
 let ret = []
