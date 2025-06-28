@@ -198,7 +198,8 @@ export class nekologin extends plugin {
           return img && img.complete && img.naturalWidth > 0;
         }
       `,
-      waitForFunctionArgs: ['.user-avatar img']
+      waitForFunctionArgs: ['.user-avatar img'],
+      viewport: { width: 1280, height: 720 } // 关键：设置为16:9
     });
 
     return await e.reply(base64);
