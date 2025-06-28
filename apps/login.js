@@ -1,10 +1,6 @@
 import plugin from '../../../lib/plugins/plugin.js';
-import fs from 'fs';
-import yaml from 'yaml';
+import { getUserData, saveUserData } from './userUtil.js';
 import puppeteer from '../../../lib/puppeteer/puppeteer.js';
-
-const _path = process.cwd().replace(/\\/g, "/");
-const dataPath = `${_path}/plugins/xunmiao-plugin/data/user_data.yaml`;
 
 export class nekologin extends plugin {
   constructor() {
@@ -30,7 +26,7 @@ export class nekologin extends plugin {
     const userId = `${e.user_id}`;
     const today = new Date().toLocaleDateString('zh-CN', { timeZone: 'Asia/Shanghai' }).replace(/\//g, '-');
 
-    let userData = {};
+    let userData = getUserData(userId);
     let coinsChange = 0;
     let coins = 0;
     let favorabilityChange = 0;
@@ -39,19 +35,11 @@ export class nekologin extends plugin {
     let rp = '';
     let sgined = '';
     let dailySignOrder = 1;
-    let totalSignCount = 0;
+    let totalSignCount = userData[userId].totalSignCount;
+    let continueSignCount = userData[userId].continueSignCount;
 
-    if (!fs.existsSync(dataPath)) {
-      fs.writeFileSync(dataPath, yaml.stringify({}));
-    }
-
-    const fileContent = fs.readFileSync(dataPath, 'utf8');
-    userData = yaml.parse(fileContent) || {};
-
-    if (!userData.dailySignOrder) {
-      userData.dailySignOrder = {};
-    }
-
+    // dailySignOrder 逻辑
+    if (!userData.dailySignOrder) userData.dailySignOrder = {};
     if (!userData.dailySignOrder[today]) {
       userData.dailySignOrder[today] = 1;
     } else {
@@ -59,19 +47,12 @@ export class nekologin extends plugin {
     }
     dailySignOrder = userData.dailySignOrder[today];
 
-    if (!userData[userId]) {
-      userData[userId] = {
-        coins: 0,
-        favorability: 0,
-        bank: 0,
-        totalSignCount: 0
-      };
+    // 获取昨天日期字符串
+    function getYesterdayStr() {
+      const d = new Date();
+      d.setDate(d.getDate() - 1);
+      return d.toLocaleDateString('zh-CN', { timeZone: 'Asia/Shanghai' }).replace(/\//g, '-');
     }
-
-    if (typeof userData[userId].totalSignCount === 'undefined' || isNaN(userData[userId].totalSignCount)) {
-      userData[userId].totalSignCount = 0;
-    }
-    totalSignCount = userData[userId].totalSignCount;
 
     if (userData[userId] && userData[userId].lastSignIn === today) {
       sgined = '今日已签到';
@@ -83,12 +64,20 @@ export class nekologin extends plugin {
       favorabilityChange = userData[userId].favorabilityChange;
       dailySignOrder = userData[userId].dailySignOrder;
       totalSignCount = userData[userId].totalSignCount;
+      continueSignCount = userData[userId].continueSignCount;
     } else {
       const maxCoins = 50;
       const maxFavorability = 3;
 
       sgined = '签到成功！';
       totalSignCount += 1;
+
+      // 判断是否连续签到
+      if (userData[userId].lastSignIn === getYesterdayStr()) {
+        continueSignCount += 1;
+      } else {
+        continueSignCount = 1;
+      }
 
       if (luck == 101) {
         favorabilityChange = 10;
@@ -124,10 +113,9 @@ export class nekologin extends plugin {
         }
       }
 
-      if (favorability > 100) {
-        favorability = 100;
-      }
+      if (favorability > 100) favorability = 100;
 
+      // 只更新当前用户数据
       userData[userId] = {
         ...userData[userId],
         lastSignIn: today,
@@ -138,10 +126,12 @@ export class nekologin extends plugin {
         favorability: favorability,
         favorabilityChange: favorabilityChange,
         dailySignOrder: dailySignOrder,
-        totalSignCount: totalSignCount
+        totalSignCount: totalSignCount,
+        continueSignCount: continueSignCount
       };
 
-      fs.writeFileSync(dataPath, yaml.stringify(userData));
+      // 写入
+      saveUserData(userData, userId);
     }
 
     let touxiang = Bot.pickUser(this.e.user_id).getAvatarUrl();
@@ -159,7 +149,8 @@ export class nekologin extends plugin {
       id,
       touxiang,
       dailySignOrder,
-      totalSignCount
+      totalSignCount,
+      continueSignCount
     };
 
     console.log(data);
@@ -185,19 +176,9 @@ export class nekologin extends plugin {
 
   async info(e) {
     const userId = `${e.user_id}`;
-
-    let userData = {};
-    if (fs.existsSync(dataPath)) {
-      const fileContent = fs.readFileSync(dataPath, 'utf8');
-      userData = yaml.parse(fileContent) || {};
-    }
-
+    let userData = getUserData(userId);
     let { favorability = 0, coins = 0, bank = 0, totalSignCount = 0 } = userData[userId] || {};
-
-    if (typeof totalSignCount === 'undefined' || isNaN(totalSignCount)) {
-      totalSignCount = 0;
-    }
-
+    if (typeof totalSignCount === 'undefined' || isNaN(totalSignCount)) totalSignCount = 0;
     return this.reply(`好感度：${favorability}\n喵喵币：${coins}\n银行存款：${bank}\n累计签到：${totalSignCount}天`, false, { at: true });
   }
 }
