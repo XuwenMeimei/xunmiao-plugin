@@ -45,6 +45,13 @@ export class rank extends plugin {
     let userList = Object.entries(userData)
       .filter(([uid, data]) => /^\d+$/.test(uid) && typeof data === 'object')
       .map(([uid, data]) => {
+        let nickname = data.id || '';
+        // 如果没有昵称，或者昵称和QQ号一样，显示 匿名(QQ号)
+        if (!nickname || nickname === uid) {
+          nickname = `匿名(${uid})`;
+        } else {
+          nickname = `${nickname}(${uid})`;
+        }
         if (type === '喵喵币') {
           // coins + bank
           const coins = Number(data.coins || 0);
@@ -54,32 +61,20 @@ export class rank extends plugin {
             value: coins + bank,
             coins,
             bank,
-            nickname: data.id || uid
+            nickname
           }
         } else {
           return {
             uid,
             value: data[key] || 0,
-            nickname: data.id || uid
+            nickname
           }
         }
       });
 
-    // 排序取前10
+    // 排序，显示所有用户
     userList.sort((a, b) => b.value - a.value);
-    const topList = userList.slice(0, 10);
-
-    // 获取昵称（如有 card 字段则用 card，否则用 QQ 号）
-    for (let user of topList) {
-      if (!user.nickname || user.nickname === user.uid) {
-        try {
-          const info = await Bot.pickUser(user.uid).getInfo();
-          user.nickname = info.card || info.nickname || user.uid;
-        } catch {
-          user.nickname = user.uid;
-        }
-      }
-    }
+    const topList = userList; // 不再 slice 取前10
 
     // 构造渲染数据
     const data = {
