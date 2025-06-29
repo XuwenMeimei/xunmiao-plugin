@@ -21,8 +21,8 @@ function getShopItems() {
   return yaml.parse(content) || [];
 }
 
-const MAX_STAMINA = 100; // 自然恢复上限
-const MAX_STAMINA_OVERFLOW = 500; // 物品使用最大体力上限
+const MAX_STAMINA = 200; // 自然恢复上限
+const MAX_STAMINA_OVERFLOW = 999999999; // 物品使用最大体力上限
 const RECOVER_INTERVAL = 60 * 1000; // 每分钟恢复
 const RECOVER_AMOUNT = 1;
 
@@ -118,7 +118,6 @@ export class inv extends plugin {
       userData[userId].stamina = Math.min(MAX_STAMINA_OVERFLOW, before + shopItem.use.value * realUse);
       invData[userId][itemId] -= realUse;
       if (invData[userId][itemId] <= 0) delete invData[userId][itemId];
-      // 格式：溢出时显示 体力xxx/100，否则xxx/100
       let staminaShow = userData[userId].stamina > MAX_STAMINA
         ? `${userData[userId].stamina}/${MAX_STAMINA}`
         : `${userData[userId].stamina}/${MAX_STAMINA}`;

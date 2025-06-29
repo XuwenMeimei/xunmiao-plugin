@@ -6,8 +6,8 @@ import axios from 'axios'
 
 const _path = process.cwd().replace(/\\/g, "/");
 const dataPath = `${_path}/plugins/xunmiao-plugin/data/user_data.yaml`;
-const MAX_STAMINA = 100;
-const MAX_STAMINA_OVERFLOW = 500; // 新增，供物品使用时参考
+const MAX_STAMINA = 200;
+const MAX_STAMINA_OVERFLOW = 999999999; // 新增，供物品使用时参考
 const RECOVER_INTERVAL = 60 * 1000;
 const RECOVER_AMOUNT = 5;
 
