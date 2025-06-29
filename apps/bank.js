@@ -49,6 +49,24 @@ export class duel extends plugin {
             userData[e.user_id].coins = 0;
         }
 
+        // 新增：格式化QQ号，只显示前三位和后两位
+        function maskQQ(qq) {
+          const qqStr = String(qq);
+          if (qqStr.length <= 5) return qqStr;
+          return qqStr.slice(0, 3) + '*'.repeat(qqStr.length - 5) + qqStr.slice(-2);
+        }
+        let nickname = '';
+        if (e.sender && e.sender.card) {
+          nickname = e.sender.card;
+        } else if (e.nickname) {
+          nickname = e.nickname;
+        } else {
+          nickname = '';
+        }
+        const userShow = nickname
+          ? `${maskQQ(e.user_id)}(${nickname})`
+          : maskQQ(e.user_id);
+
         const { coins: coins_id1 } = userData[e.user_id];
         
         // 支持“全部”或数字
@@ -78,7 +96,7 @@ export class duel extends plugin {
                 leftCoin: userData[e.user_id].coins,
                 leftBank: userData[e.user_id].bank,
                 time: new Date().toLocaleString('zh-CN', { hour12: false }),
-                user: e.user_id
+                user: userShow
             };
             const base64 = await puppeteer.screenshot('xunmiao-plugin', {
                 saveId: 'bank_save',
@@ -111,6 +129,24 @@ export class duel extends plugin {
             userData[e.user_id].coins = 0;
         }
 
+        // 新增：格式化QQ号，只显示前三位和后两位
+        function maskQQ(qq) {
+          const qqStr = String(qq);
+          if (qqStr.length <= 5) return qqStr;
+          return qqStr.slice(0, 3) + '*'.repeat(qqStr.length - 5) + qqStr.slice(-2);
+        }
+        let nickname = '';
+        if (e.sender && e.sender.card) {
+          nickname = e.sender.card;
+        } else if (e.nickname) {
+          nickname = e.nickname;
+        } else {
+          nickname = '';
+        }
+        const userShow = nickname
+          ? `${maskQQ(e.user_id)}(${nickname})`
+          : maskQQ(e.user_id);
+
         const { bank: bank_id1 } = userData[e.user_id];
         
         // 支持“全部”或数字
@@ -140,7 +176,7 @@ export class duel extends plugin {
                 leftCoin: userData[e.user_id].coins,
                 leftBank: userData[e.user_id].bank,
                 time: new Date().toLocaleString('zh-CN', { hour12: false }),
-                user: e.user_id
+                user: userShow
             };
             const base64 = await puppeteer.screenshot('xunmiao-plugin', {
                 saveId: 'bank_take',
