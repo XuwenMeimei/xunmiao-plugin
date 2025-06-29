@@ -55,7 +55,7 @@ export class inv extends plugin {
       cron: [],
       rule: [
         { reg: '^#*背包$', fnc: 'showInv' },
-        { reg: '^#*使用(\\d+)$', fnc: 'useItem' }
+        { reg: '^#*使用(\\d+)(?:\\s+(\\d+))?$', fnc: 'useItem' }
       ]
     })
   }
@@ -76,16 +76,20 @@ export class inv extends plugin {
         msg += `#${item.id} ${item.name} x${count}\n`;
       }
     }
-    msg += '\n发送 #使用物品编号 进行使用，如 #使用1';
+    msg += '\n发送 #使用物品编号 或 #使用物品编号 数量 进行使用，如 #使用1 或 #使用1 3';
     return e.reply(msg, false, { at: true });
   }
 
   async useItem(e) {
     const userId = `${e.user_id}`;
-    const match = e.msg.match(/^#*使用(\d+)$/);
-    if (!match) return e.reply('格式错误，请发送 #使用物品编号', false, { at: true });
+    // 支持 #使用1 或 #使用1 3
+    const match = e.msg.match(/^#*使用(\d+)(?:\s+(\d+))?$/);
+    if (!match) return e.reply('格式错误，请发送 #使用物品编号 或 #使用物品编号 数量', false, { at: true });
 
     const itemId = parseInt(match[1]);
+    let useCount = match[2] ? parseInt(match[2]) : 1;
+    if (useCount < 1) useCount = 1;
+
     const shopItems = getShopItems();
     const shopItem = shopItems.find(i => i.id === itemId);
     if (!shopItem) return e.reply('没有这个物品编号哦~', false, { at: true });
@@ -101,26 +105,31 @@ export class inv extends plugin {
     if (!userData[userId]) userData[userId] = { stamina: 100 };
     recoverStamina(userData[userId]);
 
-    // 物品效果
     let effectMsg = '';
     if (shopItem.use && shopItem.use.type === 'stamina') {
       const before = userData[userId].stamina || 0;
       if (before >= MAX_STAMINA) {
         return e.reply('你的体力已经满了，无法使用该物品。', false, { at: true });
       }
-      userData[userId].stamina = Math.min(MAX_STAMINA, before + shopItem.use.value);
-      effectMsg = `体力恢复${shopItem.use.value}点，当前体力${userData[userId].stamina}/100`;
+      // 计算最多可用数量
+      const need = Math.ceil((MAX_STAMINA - before) / shopItem.use.value);
+      const realUse = Math.min(useCount, invData[userId][itemId], need);
+      userData[userId].stamina = Math.min(MAX_STAMINA, before + shopItem.use.value * realUse);
+      invData[userId][itemId] -= realUse;
+      if (invData[userId][itemId] <= 0) delete invData[userId][itemId];
+      effectMsg = `体力恢复${shopItem.use.value * realUse}点，当前体力${userData[userId].stamina}/${MAX_STAMINA}`;
+      fs.writeFileSync(invDataPath, yaml.stringify(invData));
+      fs.writeFileSync(userDataPath, yaml.stringify(userData));
+      return e.reply(`你使用了${realUse}个【${shopItem.name}】\n${effectMsg}`, false, { at: true });
     } else {
-      effectMsg = '该物品暂不可使用或无效果。';
+      // 其他类型物品，默认一次性使用指定数量
+      const realUse = Math.min(useCount, invData[userId][itemId]);
+      invData[userId][itemId] -= realUse;
+      if (invData[userId][itemId] <= 0) delete invData[userId][itemId];
+      effectMsg = `你使用了${realUse}个【${shopItem.name}】，但该物品暂不可使用或无效果。`;
+      fs.writeFileSync(invDataPath, yaml.stringify(invData));
+      fs.writeFileSync(userDataPath, yaml.stringify(userData));
+      return e.reply(effectMsg, false, { at: true });
     }
-
-    // 扣除物品
-    invData[userId][itemId] -= 1;
-    if (invData[userId][itemId] <= 0) delete invData[userId][itemId];
-
-    fs.writeFileSync(invDataPath, yaml.stringify(invData));
-    fs.writeFileSync(userDataPath, yaml.stringify(userData));
-
-    return e.reply(`你使用了【${shopItem.name}】\n${effectMsg}`, false, { at: true });
   }
 }
