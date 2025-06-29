@@ -75,15 +75,15 @@ html, body {
 
 .details {
     position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
+    bottom: 70px; /* 与 h1 顶部间距一致 */
+    left: 70px;
+    width: calc(100% - 140px); /* 保持左右内边距 */
     display: flex;
     justify-content: space-between;
-    align-items: flex-end; /* 确保左右两边都贴底 */
-    padding: 0 70px 16px 70px;
+    align-items: flex-end;
     box-sizing: border-box;
 }
+
 
 
 .details-left,
