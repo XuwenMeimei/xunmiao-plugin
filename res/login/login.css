@@ -76,18 +76,20 @@ html, body {
 .details {
     display: flex;
     justify-content: space-between;
-    width: 100%;
-    height: 100%;              /* 让它填满 card 内部 */
-    align-items: flex-end;     /* 让子元素垂直靠底 */
-    box-sizing: border-box;    /* 保证 padding 不撑破 */
+    width: calc(100% - 140px); /* 减去 padding: 70px*2，保持左右边距对齐 */
+    position: absolute;
+    bottom: 70px;              /* 贴到 .card 底部 padding 的边缘 */
+    left: 70px;                /* 保持与 padding 对齐 */
 }
+
 
 
 .details-left,
 .details-right {
     text-align: left;
-    margin-bottom: 8px;
+    margin: 0;
 }
+
 
 .rp-details {
     margin-top: 10px;
