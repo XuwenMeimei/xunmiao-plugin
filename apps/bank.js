@@ -20,11 +20,11 @@ export class duel extends plugin {
       priority: 5000,
       rule: [
         {
-          reg: '^#存钱|存入(.*)$',
+          reg: '^#(存钱|存入)(.*)$',
           fnc: 'save'
         },
         {
-        reg: '^#取钱|取出(.*)$',
+        reg: '^#(取钱|取出)(.*)$',
         fnc: 'take'
         }
       ]
