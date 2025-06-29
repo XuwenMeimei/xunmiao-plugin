@@ -276,10 +276,15 @@ export class moyu extends plugin {
       });
     }
 
-    // 生成合并转发消息（兼容Yunzai/Trss等）
+        // 生成合并转发消息
     if (typeof Bot.makeForwardMsg === 'function') {
-      // Yunzai
-      return e.reply(await Bot.makeForwardMsg(e, msgArr, `摸鱼记录`));
+      // Yunzai / oicq（使用消息段）
+      const forwardMsg = await Bot.makeForwardMsg(e, msgArr.map(item => ({
+        message: item.message,
+        nickname: item.nickname,
+        user_id: item.user_id
+      })), `摸鱼记录`);
+      return e.reply(forwardMsg);
     } else if (typeof Bot.makeForwardArray === 'function') {
       // Trss
       return e.reply(await Bot.makeForwardArray(msgArr.map(m => m.message)));
