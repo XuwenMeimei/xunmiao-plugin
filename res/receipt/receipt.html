@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>购物小票</title>
+  <link rel="stylesheet" href="{{pluginResources}}">
+</head>
+<body>
+  <div class="receipt">
+    <div class="receipt-title">寻喵便利店购物小票</div>
+    <div class="receipt-line">------------------------------</div>
+    <div class="receipt-row">顾客：{{data.user}}</div>
+    <div class="receipt-row">时间：{{data.time}}</div>
+    <div class="receipt-line">------------------------------</div>
+    <div class="receipt-row">商品：{{data.itemName}}</div>
+    <div class="receipt-row">数量：{{data.itemCount}}</div>
+    <div class="receipt-row">单价：{{data.itemPrice}} 喵喵币</div>
+    <div class="receipt-row">合计：{{data.totalPrice}} 喵喵币</div>
+    <div class="receipt-line">------------------------------</div>
+    <div class="receipt-row">支付（余额）：{{data.payCoin}} 喵喵币</div>
+    <div class="receipt-row">支付（银行）：{{data.payBank}} 喵喵币</div>
+    <div class="receipt-row">余额：{{data.leftCoin}} 喵喵币</div>
+    <div class="receipt-row">银行：{{data.leftBank}} 喵喵币</div>
+    <div class="receipt-line">------------------------------</div>
+    <div class="receipt-footer">感谢您的购买，欢迎下次光临！</div>
+  </div>
+</body>
+</html>

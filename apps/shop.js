@@ -49,7 +49,6 @@ export class shop extends plugin {
 
   async buyItem(e) {
     const userId = `${e.user_id}`;
-    // 支持 #购买1 或 #购买1 3 形式
     const match = e.msg.match(/^#*购买(\d+)(?:\s+(\d+))?$/);
     if (!match) return e.reply('格式错误，请发送 #购买商品编号 或 #购买商品编号 数量', false, { at: true });
 
@@ -76,7 +75,6 @@ export class shop extends plugin {
       return e.reply('你的喵喵币和银行存款都不足，无法购买~', false, { at: true });
     }
 
-    // 优先扣完喵喵币，不足部分从银行扣除
     let needFromBank = 0;
     if (coins < totalPrice) {
       needFromBank = totalPrice - coins;
@@ -90,10 +88,29 @@ export class shop extends plugin {
     fs.writeFileSync(userDataPath, yaml.stringify(userData));
     fs.writeFileSync(invDataPath, yaml.stringify(invData));
 
-    let msg = `你成功购买了${buyCount}个【${item.name}】，已放入你的背包~`;
-    if (needFromBank > 0) {
-      msg = `你的喵喵币不足，已从银行扣除${needFromBank}喵喵币。\n` + msg;
-    }
-    return e.reply(msg, false, { at: true });
+    // 生成小票数据
+    const receiptData = {
+      user: e.nickname || e.user_id,
+      itemName: item.name,
+      itemCount: buyCount,
+      itemPrice: item.price,
+      totalPrice,
+      payCoin: coins < totalPrice ? coins : totalPrice,
+      payBank: needFromBank,
+      leftCoin: userData[userId].coins,
+      leftBank: userData[userId].bank,
+      time: new Date().toLocaleString('zh-CN', { hour12: false })
+    };
+
+    // 渲染html为图片（假设有 puppeteer.screenshot 方法，和 info/login 一致）
+    const base64 = await puppeteer.screenshot('xunmiao-plugin', {
+      saveId: 'receipt',
+      imgType: 'png',
+      tplFile: `${_path}/plugins/xunmiao-plugin/res/receipt/receipt.html`,
+      pluginResources: `${_path}/plugins/xunmiao-plugin/res/receipt/receipt.css`,
+      data: receiptData
+    });
+
+    return e.reply(base64, false, { at: true });
   }
 }
