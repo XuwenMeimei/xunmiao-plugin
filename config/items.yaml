@@ -5,3 +5,4 @@
   use:
     type: stamina
     value: 10
+  max_per_day: 50

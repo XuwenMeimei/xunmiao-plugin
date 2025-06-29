@@ -23,6 +23,16 @@ function getInvData() {
   return yaml.parse(fs.readFileSync(invDataPath, 'utf8')) || {};
 }
 
+// 新增：每日库存数据存储
+const stockPath = `${_path}/plugins/xunmiao-plugin/data/shop_stock.yaml`;
+function getShopStock() {
+  if (!fs.existsSync(stockPath)) fs.writeFileSync(stockPath, yaml.stringify({}));
+  return yaml.parse(fs.readFileSync(stockPath, 'utf8')) || {};
+}
+function saveShopStock(stock) {
+  fs.writeFileSync(stockPath, yaml.stringify(stock));
+}
+
 export class shop extends plugin {
   constructor() {
     super({
@@ -41,9 +51,20 @@ export class shop extends plugin {
   async showShop(e) {
     const shopItems = getShopItems();
     if (!shopItems.length) return e.reply('商店暂无商品~', false, { at: true });
+
+    // 获取库存
+    const nowDate = new Date().toLocaleDateString('zh-CN', { timeZone: 'Asia/Shanghai' }).replace(/\//g, '-');
+    let shopStock = getShopStock();
+    if (!shopStock[nowDate]) shopStock[nowDate] = {};
+
     let msg = '【寻喵商店】\n';
     shopItems.forEach(item => {
-      msg += `#${item.id} ${item.name} - ${item.price}喵喵币\n  ${item.desc}\n`;
+      let stockStr = '';
+      if (item.max_per_day) {
+        const sold = shopStock[nowDate][item.id] || 0;
+        stockStr = `（今日剩余${item.max_per_day - sold}）`;
+      }
+      msg += `#${item.id} ${item.name} - ${item.price}喵喵币${stockStr}\n  ${item.desc}\n`;
     });
     msg += '\n发送 #购买商品编号 进行购买，如 #购买1';
     return e.reply(msg, false, { at: true });
@@ -61,6 +82,20 @@ export class shop extends plugin {
     const shopItems = getShopItems();
     const item = shopItems.find(i => i.id === itemId);
     if (!item) return e.reply('没有这个商品编号哦~', false, { at: true });
+
+    // 获取库存
+    const nowDate = new Date().toLocaleDateString('zh-CN', { timeZone: 'Asia/Shanghai' }).replace(/\//g, '-');
+    let shopStock = getShopStock();
+    if (!shopStock[nowDate]) shopStock[nowDate] = {};
+    if (!shopStock[nowDate][itemId]) shopStock[nowDate][itemId] = 0;
+
+    // 检查每日限购
+    if (item.max_per_day) {
+      const sold = shopStock[nowDate][itemId];
+      if (sold + buyCount > item.max_per_day) {
+        return e.reply(`【${item.name}】今天最多只能卖${item.max_per_day}个，已售${sold}个，剩余${item.max_per_day - sold}个。`, false, { at: true });
+      }
+    }
 
     let userData = getUserData();
     let invData = getInvData();
@@ -86,6 +121,12 @@ export class shop extends plugin {
       userData[userId].coins -= totalPrice;
     }
     invData[userId][item.id] = (invData[userId][item.id] || 0) + buyCount;
+
+    // 更新库存
+    if (item.max_per_day) {
+      shopStock[nowDate][itemId] += buyCount;
+      saveShopStock(shopStock);
+    }
 
     fs.writeFileSync(userDataPath, yaml.stringify(userData));
     fs.writeFileSync(invDataPath, yaml.stringify(invData));
