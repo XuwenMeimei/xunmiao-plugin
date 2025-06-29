@@ -39,7 +39,7 @@ export class info extends plugin {
       priority: 5000,
       rule: [
         {
-          reg: '^#我的信息$',
+          reg: '^#(我的信息|个人信息)$',
           fnc: 'info'
         }
       ]
