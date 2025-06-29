@@ -23,17 +23,17 @@ body, html {
     justify-content: center;
     align-items: center;
     font-family: 'LcCute', sans-serif;
-    background: url('./img/bg.png') no-repeat center center fixed;
-    background-size: cover; /* 让背景图片完全覆盖 root 尺寸 */
+    background: url('./img/bg.png') no-repeat center center;
+    background-size: 1280px 720px;
     overflow: hidden;
 }
 
 .card {
-    width: 90vw;  /* 更大一点 */
+    width: 100vw;
     max-width: 1280px;
     height: calc(90vw / (16 / 9));
     max-height: 720px;
-    padding: 60px; /* 内容更大 */
+    padding: 70px;
     background: rgba(255, 255, 255, 0.7);
     border-radius: 16px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
