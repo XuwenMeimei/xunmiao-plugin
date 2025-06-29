@@ -41,9 +41,6 @@ export class help extends plugin {
       title: '寻喵插件帮助菜单',
       list: helpList
     };
-    await puppeteer.init({
-      deviceScaleFactor: 2
-    });
     const base64 = await puppeteer.screenshot('xunmiao-plugin', {
       saveId: 'help',
       imgType: 'png',
