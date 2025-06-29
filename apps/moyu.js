@@ -15,7 +15,8 @@ const fishTypes = [
   { name: '鲈鱼',    minLen: 15, maxLen: 40, minW: 0.3, maxW: 1.5, weight: 8,  priceRate: 1.5 },
   { name: '猫猫鱼',  minLen: 10, maxLen: 25, minW: 0.2, maxW: 0.8, weight: 5,  priceRate: 2.5 }, // 稀有
   { name: '金龙鱼',  minLen: 40, maxLen: 100,minW: 2,   maxW: 10,  weight: 3,  priceRate: 5.0 }, // 极稀有
-  { name: '神秘鱼',  minLen: 50, maxLen: 120,minW: 5,   maxW: 20,  weight: 1,  priceRate: 10.0 } // 传说
+  { name: '神秘鱼',  minLen: 50, maxLen: 120,minW: 5,   maxW: 20,  weight: 1,  priceRate: 10.0 }, // 传说
+  { name: '几把鱼',  minLen: 5,  maxLen: 15, minW: 0.1, maxW: 0.5, weight: 1, priceRate: 0.1 } // 隐藏
 ];
 
 // 体力恢复相关设置
