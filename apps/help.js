@@ -46,7 +46,8 @@ export class help extends plugin {
       imgType: 'png',
       tplFile: `${_path}/plugins/xunmiao-plugin/res/help/help.html`,
       pluginResources: `${_path}/plugins/xunmiao-plugin/res/help/help.css`,
-      data
+      data,
+      deviceScaleFactor: 3
     });
     return e.reply(base64, false, { at: true });
   }
