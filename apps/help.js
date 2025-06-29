@@ -1,5 +1,5 @@
 import plugin from '../../../lib/plugins/plugin.js'
-import puppeteer from '../../../lib/puppeteer/puppeteer.js'
+import puppeteer from '../lib/puppeteer/puppeteer.js'
 
 const _path = process.cwd().replace(/\\/g, "/");
 
@@ -47,7 +47,7 @@ export class help extends plugin {
       tplFile: `${_path}/plugins/xunmiao-plugin/res/help/help.html`,
       pluginResources: `${_path}/plugins/xunmiao-plugin/res/help/help.css`,
       data,
-      deviceScaleFactor: 3
+      quality: 100
     });
     return e.reply(base64, false, { at: true });
   }
