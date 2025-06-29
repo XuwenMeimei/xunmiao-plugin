@@ -28,6 +28,7 @@ export class inv extends plugin {
       dsc: '背包系统',
       event: 'message',
       priority: 5000,
+      cron: [],
       rule: [
         { reg: '^#*背包$', fnc: 'showInv' },
         { reg: '^#*使用(\\d+)$', fnc: 'useItem' }

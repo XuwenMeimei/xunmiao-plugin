@@ -21,6 +21,7 @@ export class shop extends plugin {
       dsc: '商店系统',
       event: 'message',
       priority: 5000,
+      cron: [],
       rule: [
         { reg: '^#*商店$', fnc: 'showShop' },
         { reg: '^#*购买(\\d+)$', fnc: 'buyItem' }
