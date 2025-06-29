@@ -46,10 +46,12 @@ export class rank extends plugin {
       .filter(([uid, data]) => /^\d+$/.test(uid) && typeof data === 'object')
       .map(([uid, data]) => {
         let nickname = data.id || '';
-        // 如果没有昵称，或者昵称和QQ号一样，显示 匿名(QQ号)
+        // 如果没有昵称，或者昵称和QQ号一样，显示 QQ号
         if (!nickname || nickname === uid) {
-          nickname = `匿名(${uid})`;
-        } else {
+          nickname = uid;
+        }
+        // 始终显示 昵称(QQ号)
+        else {
           nickname = `${nickname}(${uid})`;
         }
         if (type === '喵喵币') {
