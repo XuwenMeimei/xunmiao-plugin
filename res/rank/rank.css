@@ -1,0 +1,43 @@
+body, html {
+  margin: 0;
+  padding: 0;
+  width: 600px;
+  height: auto;
+  font-family: 'LcCute', sans-serif;
+  background: #f8f8ff;
+}
+.rank-card {
+  width: 560px;
+  margin: 30px auto;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  padding: 32px 24px;
+}
+.rank-card h1 {
+  text-align: center;
+  font-size: 36px;
+  margin-bottom: 24px;
+}
+.rank-card table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 24px;
+}
+.rank-card th, .rank-card td {
+  border-bottom: 1px solid #eee;
+  padding: 12px 0;
+  text-align: center;
+}
+.rank-card tr:nth-child(2) td {
+  color: #e6b800;
+  font-weight: bold;
+}
+.rank-card tr:nth-child(3) td {
+  color: #b5b5b5;
+  font-weight: bold;
+}
+.rank-card tr:nth-child(4) td {
+  color: #cd7f32;
+  font-weight: bold;
+}

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>{{data.type}}排行榜</title>
+  <link rel="stylesheet" href="{{pluginResources}}">
+</head>
+<body>
+  <div class="rank-card">
+    <h1>{{data.type}}排行榜</h1>
+    <table>
+      <tr>
+        <th>排名</th>
+        <th>昵称</th>
+        <th>{{data.type}}</th>
+      </tr>
+      {{each data.list as item}}
+      <tr>
+        <td>{{item.rank}}</td>
+        <td>{{item.nickname}}</td>
+        <td>{{item.value}}</td>
+      </tr>
+      {{/each}}
+    </table>
+  </div>
+</body>
+</html>
