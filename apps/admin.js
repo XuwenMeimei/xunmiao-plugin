@@ -25,6 +25,10 @@ export class duel extends plugin {
           {
             reg: '^#重置全部签到$',
             fnc: 'resetAllSign'
+          },
+          {
+            reg: '^#设置体力(.*)$',
+            fnc: 'setStamina'
           }
         ]
       })
@@ -103,5 +107,35 @@ export class duel extends plugin {
 
         fs.writeFileSync(dataPath, yaml.stringify(userData));
         return e.reply(`已重置${count}个用户的每日签到状态。`, false, { at: true });
+    }
+
+    async setStamina(e) {
+        if (!cfg.masterQQ.includes(e.user_id)) {
+            return e.reply('只有我的主人才能设置体力哦~', false, { at: true });
+        }
+        const match = e.msg.match(/^#设置体力\s*<at qq="(\d+)"\/>\s*(\d+)$/);
+        let id, stamina;
+        if (match) {
+            id = match[1];
+            stamina = parseInt(match[2], 10);
+        } else if (e.at && /\d+/.test(e.at)) {
+            // 兼容 @用户 123 这种格式
+            const numMatch = e.msg.match(/\s(\d+)$/);
+            id = e.at;
+            stamina = numMatch ? parseInt(numMatch[1], 10) : null;
+        }
+        if (!id || typeof stamina !== 'number' || isNaN(stamina)) {
+            return e.reply('格式错误，请使用 #设置体力 @对象 数值', false, { at: true });
+        }
+
+        const fileContent = fs.readFileSync(dataPath, 'utf8');
+        let userData = yaml.parse(fileContent) || {};
+
+        if (!userData[id]) userData[id] = {};
+        userData[id].stamina = stamina;
+        userData[id].lastStaminaTime = Date.now();
+
+        fs.writeFileSync(dataPath, yaml.stringify(userData));
+        return e.reply(`已将${id}的体力设置为${stamina}。`, false, { at: true });
     }
 }
