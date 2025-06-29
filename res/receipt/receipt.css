@@ -9,7 +9,7 @@ body, html {
   margin: 0;
   padding: 0;
   width: 420px;
-  height: 600px;
+  height: auto;
   background: #fff;
   font-family: 'LcCute', 'Courier New', Courier, monospace;
 }
