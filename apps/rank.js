@@ -45,24 +45,19 @@ export class rank extends plugin {
     let userList = Object.entries(userData)
       .filter(([uid, data]) => /^\d+$/.test(uid) && typeof data === 'object')
       .map(([uid, data]) => {
-        // 优先显示实际昵称，没有则显示QQ号
-        let nickname = data.id || uid;
         if (type === '喵喵币') {
-          // coins + bank
           const coins = Number(data.coins || 0);
           const bank = Number(data.bank || 0);
           return {
             uid,
             value: coins + bank,
             coins,
-            bank,
-            nickname
+            bank
           }
         } else {
           return {
             uid,
-            value: data[key] || 0,
-            nickname
+            value: data[key] || 0
           }
         }
       });
@@ -70,6 +65,16 @@ export class rank extends plugin {
     // 排序，显示所有用户
     userList.sort((a, b) => b.value - a.value);
     const topList = userList; // 不再 slice 取前10
+
+    // 批量获取昵称（群名片/昵称/QQ号）
+    for (let u of topList) {
+      try {
+        const info = await Bot.pickUser(u.uid).getInfo();
+        u.nickname = info.card || info.nickname || u.uid;
+      } catch {
+        u.nickname = u.uid;
+      }
+    }
 
     // 构造渲染数据
     const data = {
