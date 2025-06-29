@@ -118,7 +118,11 @@ export class inv extends plugin {
       userData[userId].stamina = Math.min(MAX_STAMINA_OVERFLOW, before + shopItem.use.value * realUse);
       invData[userId][itemId] -= realUse;
       if (invData[userId][itemId] <= 0) delete invData[userId][itemId];
-      effectMsg = `体力恢复${shopItem.use.value * realUse}点，当前体力${userData[userId].stamina}/${MAX_STAMINA_OVERFLOW}`;
+      // 格式：溢出时显示 体力xxx/100，否则xxx/100
+      let staminaShow = userData[userId].stamina > MAX_STAMINA
+        ? `${userData[userId].stamina}/${MAX_STAMINA}`
+        : `${userData[userId].stamina}/${MAX_STAMINA}`;
+      effectMsg = `体力恢复${shopItem.use.value * realUse}点，当前体力${staminaShow}`;
       fs.writeFileSync(invDataPath, yaml.stringify(invData));
       fs.writeFileSync(userDataPath, yaml.stringify(userData));
       return e.reply(`你使用了${realUse}个【${shopItem.name}】\n${effectMsg}`, false, { at: true });
