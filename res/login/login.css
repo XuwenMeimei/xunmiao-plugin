@@ -23,7 +23,7 @@ body, html {
     justify-content: center;
     align-items: center;
     font-family: 'LcCute', sans-serif;
-    background: url('./img/bg.png') no-repeat center center;
+    background: url('./img/bg_new.png') no-repeat center center;
     background-size: contain;
     overflow: hidden;
 }
