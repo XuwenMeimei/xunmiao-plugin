@@ -41,3 +41,9 @@ body, html {
   color: #cd7f32;
   font-weight: bold;
 }
+.rank-summary {
+  text-align: center;
+  font-size: 20px;
+  color: #888;
+  margin-bottom: 8px;
+}

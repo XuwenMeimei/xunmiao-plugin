@@ -54,18 +54,29 @@ export class rank extends plugin {
             value: coins + bank,
             coins,
             bank,
+            favorability: Number(data.favorability || 0),
+            catchFishCount: Number(data.catchFishCount || 0),
             nickname: data.id || uid
           }
         } else {
           return {
             uid,
             value: data[key] || 0,
+            coins: Number(data.coins || 0),
+            bank: Number(data.bank || 0),
+            favorability: Number(data.favorability || 0),
+            catchFishCount: Number(data.catchFishCount || 0),
             nickname: data.id || uid
           }
         }
       });
 
-    // 排序取前10
+    // 统计总和
+    const totalCoins = userList.reduce((sum, u) => sum + (Number(u.coins) || 0) + (Number(u.bank) || 0), 0);
+    const totalFavorability = userList.reduce((sum, u) => sum + (Number(u.favorability) || 0), 0);
+    const totalCatchFish = userList.reduce((sum, u) => sum + (Number(u.catchFishCount) || 0), 0);
+
+    // 排序
     userList.sort((a, b) => b.value - a.value);
     const topList = userList; // 显示全部用户
 
@@ -84,6 +95,7 @@ export class rank extends plugin {
     // 构造渲染数据
     const data = {
       type: label,
+      summary: `一共有${totalCoins}个喵喵币，一共有${totalFavorability}点好感度，一共摸了${totalCatchFish}次鱼`,
       list: topList.map((u, idx) => {
         if (type === '喵喵币') {
           return {
