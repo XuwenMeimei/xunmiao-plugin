@@ -5,7 +5,3 @@
   use:
     type: stamina
     value: 10
-- id: 2
-  name: 高级鱼竿
-  price: 200
-  desc: 提升摸鱼收益（暂未实装）
