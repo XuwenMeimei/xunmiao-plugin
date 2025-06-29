@@ -18,10 +18,6 @@ export class nekologin extends plugin {
         {
           reg: '^#*签到$',
           fnc: 'nekologin'
-        },
-        {
-          reg: '^#*我的信息$',
-          fnc: 'info'
         }
       ]
     });
@@ -204,76 +200,6 @@ export class nekologin extends plugin {
       imgType: 'png',
       tplFile: `${_path}/plugins/xunmiao-plugin/res/login/login.html`,
       pluginResources: `${_path}/plugins/xunmiao-plugin/res/login/login.css`,
-      data: data
-    });
-
-    return await e.reply(base64);
-  }
-
-  async info(e) {
-    const userId = `${e.user_id}`;
-
-    let userData = {};
-    if (fs.existsSync(dataPath)) {
-      const fileContent = fs.readFileSync(dataPath, 'utf8');
-      userData = yaml.parse(fileContent) || {};
-    }
-
-    let {
-      favorability = 0,
-      coins = 0,
-      bank = 0,
-      totalSignCount = 0,
-      continueSignCount = 0,
-      stamina = 100,
-      catchFishCount = 0 // 新增字段
-    } = userData[userId] || {};
-
-    if (typeof totalSignCount === 'undefined' || isNaN(totalSignCount)) {
-      totalSignCount = 0;
-    }
-    if (typeof continueSignCount === 'undefined' || isNaN(continueSignCount)) {
-      continueSignCount = 0;
-    }
-    if (typeof stamina !== 'number') {
-      stamina = 100;
-    }
-    if (typeof catchFishCount !== 'number') {
-      catchFishCount = 0;
-    }
-
-    let touxiangUrl = Bot.pickUser(this.e.user_id).getAvatarUrl();
-    let touxiang = '';
-    try {
-      const response = await axios.get(touxiangUrl, { responseType: 'arraybuffer' });
-      const base64 = Buffer.from(response.data, 'binary').toString('base64');
-      const mime = response.headers['content-type'] || 'image/png';
-      touxiang = `data:${mime};base64,${base64}`;
-    } catch (err) {
-      console.error('头像获取失败:', err);
-      touxiang = '';
-    }
-
-    let serder = e.sender;
-    let id = serder.card;
-
-    const data = {
-      favorability,
-      coins,
-      bank,
-      totalSignCount,
-      continueSignCount,
-      stamina,
-      catchFishCount, // 传递到模板
-      id,
-      touxiang
-    };
-
-    const base64 = await puppeteer.screenshot('xunmiao-plugin', {
-      saveId: 'info',
-      imgType: 'png',
-      tplFile: `${_path}/plugins/xunmiao-plugin/res/login/info.html`,
-      pluginResources: `${_path}/plugins/xunmiao-plugin/res/login/info.css`,
       data: data
     });
 

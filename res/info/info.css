@@ -1,6 +1,6 @@
 @font-face {
     font-family: 'LcCute';
-    src: url('./font/LcCute.ttf') format('truetype');
+    src: url('../asset/font/LcCute.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
@@ -23,7 +23,7 @@ body, html {
     justify-content: center;
     align-items: center;
     font-family: 'LcCute', sans-serif;
-    background: url('./img/bg_new.png') no-repeat center center;
+    background: url('../asset/img/bg_new.png') no-repeat center center;
     background-size: cover;
     overflow: hidden;
 }
