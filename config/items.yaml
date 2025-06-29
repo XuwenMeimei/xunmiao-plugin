@@ -5,7 +5,7 @@
   use:
     type: stamina
     value: 10
-  max_per_day: 50
+  max_per_day: 500
 - id: 2
   name: 大包小鱼干
   price: 50
@@ -13,4 +13,4 @@
   use:
     type: stamina
     value: 30
-  max_per_day: 20
+  max_per_day: 200
