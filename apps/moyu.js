@@ -21,7 +21,7 @@ const fishTypes = [
 
 // 体力恢复相关设置
 const MAX_STAMINA = 100;
-const MAX_STAMINA_OVERFLOW = 300; // 新增，供物品使用时参考
+const MAX_STAMINA_OVERFLOW = 500; // 新增，供物品使用时参考
 const RECOVER_INTERVAL = 60 * 1000; // 每分钟恢复
 const RECOVER_AMOUNT = 5; // 每分钟恢复1点
 

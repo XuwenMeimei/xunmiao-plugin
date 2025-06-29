@@ -22,7 +22,7 @@ function getShopItems() {
 }
 
 const MAX_STAMINA = 100; // 自然恢复上限
-const MAX_STAMINA_OVERFLOW = 300; // 物品使用最大体力上限
+const MAX_STAMINA_OVERFLOW = 500; // 物品使用最大体力上限
 const RECOVER_INTERVAL = 60 * 1000; // 每分钟恢复
 const RECOVER_AMOUNT = 1;
 
@@ -112,7 +112,7 @@ export class inv extends plugin {
       if (before >= MAX_STAMINA_OVERFLOW) {
         return e.reply('你的体力已经达到最大上限，无法继续使用该物品。', false, { at: true });
       }
-      // 计算最多可用数量（最多溢出到300）
+      // 计算最多可用数量（最多溢出到500）
       const need = Math.ceil((MAX_STAMINA_OVERFLOW - before) / shopItem.use.value);
       const realUse = Math.min(useCount, invData[userId][itemId], need);
       userData[userId].stamina = Math.min(MAX_STAMINA_OVERFLOW, before + shopItem.use.value * realUse);
