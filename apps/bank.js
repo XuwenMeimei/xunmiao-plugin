@@ -69,15 +69,17 @@ export class duel extends plugin {
 
         const { coins: coins_id1 } = userData[e.user_id];
         
-        // 支持“全部”或数字
-        const regex = /#存钱\s*(\d+|全部)$/;
+        // 支持“全部”或数字，兼容“存钱/存入/取钱/取出”，允许无空格
+        const regex = /#(存钱|存入)\s*(\d+|全部)?/;
         const match = e.msg.match(regex);
 
         if (match) {
-            if (match[1] === '全部') {
+            if (match[2] === '全部') {
                 Savecoins = coins_id1;
+            } else if (match[2]) {
+                Savecoins = parseInt(match[2], 10);
             } else {
-                Savecoins = parseInt(match[1], 10);
+                return e.reply('请输入要存入的喵喵币数量或“全部”~', false, { at: true });
             }
     
             if (Savecoins > coins_id1) {
@@ -149,15 +151,17 @@ export class duel extends plugin {
 
         const { bank: bank_id1 } = userData[e.user_id];
         
-        // 支持“全部”或数字
-        const regex = /#取钱\s*(\d+|全部)$/;
+        // 支持“全部”或数字，兼容“存钱/存入/取钱/取出”，允许无空格
+        const regex = /#(取钱|取出)\s*(\d+|全部)?/;
         const match = e.msg.match(regex);
 
         if (match) {
-            if (match[1] === '全部') {
+            if (match[2] === '全部') {
                 Takecoins = bank_id1;
+            } else if (match[2]) {
+                Takecoins = parseInt(match[2], 10);
             } else {
-                Takecoins = parseInt(match[1], 10);
+                return e.reply('请输入要取出的喵喵币数量或“全部”~', false, { at: true });
             }
     
             if (Takecoins > bank_id1) {
