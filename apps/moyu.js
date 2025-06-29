@@ -252,45 +252,33 @@ export class moyu extends plugin {
     // 构造合并转发消息
     let msgArr = [];
     // 第一条为汇总
-    msgArr.push({
-      message: `你本次连续摸鱼${totalCount}次，获得${totalCoins}个喵喵币，消耗体力${totalStaminaCost}，当前体力${userData[userId].stamina}`,
-      nickname: e.sender?.nickname || e.member?.card || e.user_id,
-      user_id: e.user_id
-    });
+    msgArr.push(`你本次连续摸鱼${totalCount}次，获得${totalCoins}个喵喵币，消耗体力${totalStaminaCost}，当前体力${userData[userId].stamina}`);
     // 后续为每条鱼
     for (let i = 0; i < fishList.length; i++) {
-      msgArr.push({
-        message: fishList[i],
-        nickname: e.sender?.nickname || e.member?.card || e.user_id,
-        user_id: e.user_id
-      });
+      msgArr.push(fishList[i]);
     }
 
     // 只展示前100条，防止刷屏
     if (msgArr.length > 101) {
       msgArr = msgArr.slice(0, 101);
-      msgArr.push({
-        message: '（仅展示前100条，剩余请在数据中查看）',
-        nickname: e.sender?.nickname || e.member?.card || e.user_id,
-        user_id: e.user_id
-      });
+      msgArr.push('（仅展示前100条，剩余请在数据中查看）');
     }
 
-        // 生成合并转发消息
-    if (typeof Bot.makeForwardMsg === 'function') {
+    // 生成合并转发消息
+    if (typeof Bot.makeForwardArray === 'function') {
+      // Trss
+      return e.reply(await Bot.makeForwardArray(msgArr));
+    } else if (typeof Bot.makeForwardMsg === 'function') {
       // Yunzai / oicq（使用消息段）
-      const forwardMsg = await Bot.makeForwardMsg(e, msgArr.map(item => ({
-        message: item.message,
-        nickname: item.nickname,
-        user_id: item.user_id
+      const forwardMsg = await Bot.makeForwardMsg(e, msgArr.map(message => ({
+        message,
+        nickname: e.sender?.nickname || e.member?.card || e.user_id,
+        user_id: e.user_id
       })), `摸鱼记录`);
       return e.reply(forwardMsg);
-    } else if (typeof Bot.makeForwardArray === 'function') {
-      // Trss
-      return e.reply(await Bot.makeForwardArray(msgArr.map(m => m.message)));
     } else {
       // 兜底普通消息
-      return e.reply(msgArr.map(m => m.message).join('\n\n'), false, { at: true });
+      return e.reply(msgArr.join('\n\n'), false, { at: true });
     }
   }
 }
