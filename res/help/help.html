@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>{{data.title}}</title>
+  <link rel="stylesheet" href="{{pluginResources}}">
+</head>
+<body>
+  <div class="card">
+    <h1>{{data.title}}</h1>
+    <ul class="help-list">
+      {{each data.list item}}
+      <li>
+        <span class="cmd">{{item.cmd}}</span>
+        <span class="desc">{{item.desc}}</span>
+      </li>
+      {{/each}}
+    </ul>
+  </div>
+</body>
+</html>

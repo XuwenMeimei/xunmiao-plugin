@@ -1,0 +1,93 @@
+@font-face {
+  font-family: 'LcCute';
+  src: url('../asset/font/LcCute.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+:root {
+  width: 1280px;
+  height: 720px;
+}
+
+body, html {
+  margin: 0;
+  padding: 0;
+  width: 1280px;
+  height: 720px;
+  min-width: 1280px;
+  min-height: 720px;
+  max-width: 1280px;
+  max-height: 720px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'LcCute', 'Microsoft YaHei', sans-serif;
+  background: url('../asset/img/bg_new.png') no-repeat center center;
+  background-size: cover;
+  overflow: hidden;
+}
+
+.card {
+  width: 100vw;
+  max-width: 900px;
+  height: auto;
+  min-height: 600px;
+  max-height: 90vh;
+  padding: 60px 60px 40px 60px;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 24px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-y: auto;
+}
+
+.card h1 {
+  margin: 0 0 32px 0;
+  font-size: 48px;
+  color: #4e7cff;
+  letter-spacing: 2px;
+  text-shadow: 0 2px 8px #e0eaff;
+}
+
+.help-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+}
+
+.help-list li {
+  display: flex;
+  align-items: center;
+  margin-bottom: 18px;
+  font-size: 28px;
+  background: rgba(255,255,255,0.85);
+  border-radius: 16px;
+  padding: 18px 28px;
+  box-shadow: 0 2px 8px rgba(78,124,255,0.06);
+  border: 2px dashed #b3c6ff;
+  transition: background 0.2s;
+  position: relative;
+}
+
+.help-list li:not(:last-child) {
+  margin-bottom: 24px;
+}
+
+.help-list .cmd {
+  flex: 0 0 220px;
+  color: #4e7cff;
+  font-weight: bold;
+  font-size: 30px;
+  letter-spacing: 1px;
+}
+
+.help-list .desc {
+  flex: 1;
+  color: #333;
+  font-size: 26px;
+  margin-left: 24px;
+}
