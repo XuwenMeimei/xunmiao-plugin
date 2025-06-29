@@ -1,0 +1,52 @@
+@font-face {
+  font-family: 'LcCute';
+  src: url('../asset/font/LcCute.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+body, html {
+  margin: 0;
+  padding: 0;
+  width: 420px;
+  height: auto;
+  background: #fff;
+  font-family: 'LcCute', 'Courier New', Courier, monospace;
+}
+
+.receipt {
+  width: 380px;
+  margin: 20px auto;
+  background: #fff;
+  color: #222;
+  font-size: 18px;
+  border: 1px dashed #bbb;
+  padding: 24px 18px;
+  box-shadow: 0 2px 8px #eee;
+}
+
+.receipt-title {
+  text-align: center;
+  font-weight: bold;
+  font-size: 22px;
+  margin-bottom: 10px;
+}
+
+.receipt-line {
+  text-align: center;
+  letter-spacing: 2px;
+  color: #888;
+  margin: 6px 0;
+}
+
+.receipt-row {
+  margin: 2px 0;
+  letter-spacing: 1px;
+}
+
+.receipt-footer {
+  text-align: center;
+  margin-top: 12px;
+  font-size: 16px;
+  color: #666;
+}

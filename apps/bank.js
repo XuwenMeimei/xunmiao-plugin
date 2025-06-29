@@ -1,9 +1,12 @@
 import plugin from '../../../lib/plugins/plugin.js'
 import fs from 'fs';
 import yaml from 'yaml';
+import puppeteer from '../../../lib/puppeteer/puppeteer.js'
 
 const _path = process.cwd().replace(/\\/g, "/");
 const dataPath = `${_path}/plugins/xunmiao-plugin/data/user_data.yaml`;
+const receiptTpl = `${_path}/plugins/xunmiao-plugin/res/receipt/bank_receipt.html`;
+const receiptCss = `${_path}/plugins/xunmiao-plugin/res/receipt/bank_receipt.css`;
 
 let Savecoins = 0;
 let Takecoins = 0;
@@ -46,16 +49,18 @@ export class duel extends plugin {
             userData[e.user_id].coins = 0;
         }
 
-        console.log(userData[e.user_id].bank);
-        console.log(userData[e.user_id].coins);
-
         const { coins: coins_id1 } = userData[e.user_id];
         
-        const regex = /#存钱\s*(\d+)$/;
+        // 支持“全部”或数字
+        const regex = /#存钱\s*(\d+|全部)$/;
         const match = e.msg.match(regex);
 
         if (match) {
-            Savecoins = parseInt(match[1], 10);
+            if (match[1] === '全部') {
+                Savecoins = coins_id1;
+            } else {
+                Savecoins = parseInt(match[1], 10);
+            }
     
             if (Savecoins > coins_id1) {
               return e.reply('你没有那么多喵喵币存入哦~', false, { at: true });
@@ -63,10 +68,26 @@ export class duel extends plugin {
 
             userData[e.user_id].bank += Savecoins;
             userData[e.user_id].coins -= Savecoins;
-            
-            e.reply(`你成功存入了${Savecoins}个喵喵币哦~
-你还剩${userData[e.user_id].coins}个喵喵币
-银行存款有${userData[e.user_id].bank}个喵喵币 `, false, { at: true });
+
+            fs.writeFileSync(dataPath, yaml.stringify(userData));
+
+            // 生成账单图片
+            const receiptData = {
+                type: '存入',
+                amount: Savecoins,
+                leftCoin: userData[e.user_id].coins,
+                leftBank: userData[e.user_id].bank,
+                time: new Date().toLocaleString('zh-CN', { hour12: false }),
+                user: e.user_id
+            };
+            const base64 = await puppeteer.screenshot('xunmiao-plugin', {
+                saveId: 'bank_save',
+                imgType: 'png',
+                tplFile: receiptTpl,
+                pluginResources: receiptCss,
+                data: receiptData
+            });
+            return e.reply(base64, false, { at: true });
         }
         fs.writeFileSync(dataPath, yaml.stringify(userData));
     }
@@ -90,16 +111,18 @@ export class duel extends plugin {
             userData[e.user_id].coins = 0;
         }
 
-        console.log(userData[e.user_id].bank);
-        console.log(userData[e.user_id].coins);
-
         const { bank: bank_id1 } = userData[e.user_id];
         
-        const regex = /#取钱\s*(\d+)$/;
+        // 支持“全部”或数字
+        const regex = /#取钱\s*(\d+|全部)$/;
         const match = e.msg.match(regex);
 
         if (match) {
-            Takecoins = parseInt(match[1], 10);
+            if (match[1] === '全部') {
+                Takecoins = bank_id1;
+            } else {
+                Takecoins = parseInt(match[1], 10);
+            }
     
             if (Takecoins > bank_id1) {
               return e.reply('你没有那么多喵喵币取出哦~', false, { at: true });
@@ -107,10 +130,26 @@ export class duel extends plugin {
 
             userData[e.user_id].bank -= Takecoins;
             userData[e.user_id].coins += Takecoins;
-            
-            e.reply(`你成功取出了${Takecoins}个喵喵币哦~
-你现在有${userData[e.user_id].coins}个喵喵币
-银行存款有${userData[e.user_id].bank}个喵喵币 `, false, { at: true });
+
+            fs.writeFileSync(dataPath, yaml.stringify(userData));
+
+            // 生成账单图片
+            const receiptData = {
+                type: '取出',
+                amount: Takecoins,
+                leftCoin: userData[e.user_id].coins,
+                leftBank: userData[e.user_id].bank,
+                time: new Date().toLocaleString('zh-CN', { hour12: false }),
+                user: e.user_id
+            };
+            const base64 = await puppeteer.screenshot('xunmiao-plugin', {
+                saveId: 'bank_take',
+                imgType: 'png',
+                tplFile: receiptTpl,
+                pluginResources: receiptCss,
+                data: receiptData
+            });
+            return e.reply(base64, false, { at: true });
         }
         fs.writeFileSync(dataPath, yaml.stringify(userData));
     }

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>银行账单</title>
+  <link rel="stylesheet" href="{{pluginResources}}">
+</head>
+<body>
+  <div class="receipt">
+    <div class="receipt-title">寻喵银行账单</div>
+    <div class="receipt-line">------------------------------</div>
+    <div class="receipt-row">用户：{{data.user}}</div>
+    <div class="receipt-row">时间：{{data.time}}</div>
+    <div class="receipt-line">------------------------------</div>
+    <div class="receipt-row">类型：{{data.type}}</div>
+    <div class="receipt-row">金额：{{data.amount}} 喵喵币</div>
+    <div class="receipt-line">------------------------------</div>
+    <div class="receipt-row">余额：{{data.leftCoin}} 喵喵币</div>
+    <div class="receipt-row">银行：{{data.leftBank}} 喵喵币</div>
+    <div class="receipt-line">------------------------------</div>
+    <div class="receipt-footer">感谢使用寻喵银行！</div>
+  </div>
+</body>
+</html>
