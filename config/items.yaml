@@ -6,3 +6,11 @@
     type: stamina
     value: 10
   max_per_day: 50
+- id: 2
+  name: 大包小鱼干
+  price: 50
+  desc: 喵最爱的零食，回复25体力
+  use:
+    type: stamina
+    value: 25
+  max_per_day: 20
