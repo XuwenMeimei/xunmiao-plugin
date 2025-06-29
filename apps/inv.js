@@ -46,12 +46,11 @@ export class inv extends plugin {
     }
 
     let msg = '【你的背包】\n';
-    let idx = 1;
-    for (const [item, count] of Object.entries(invData[userId])) {
-      const shopItem = shopItems.find(i => i.name === item);
-      const idStr = shopItem ? `#${shopItem.id}` : `#${idx}`;
-      msg += `${idStr} ${item} x${count}\n`;
-      idx++;
+    for (const item of shopItems) {
+      const count = invData[userId][item.id] || 0;
+      if (count > 0) {
+        msg += `#${item.id} ${item.name} x${count}\n`;
+      }
     }
     msg += '\n发送 #使用物品编号 进行使用，如 #使用1';
     return e.reply(msg, false, { at: true });
@@ -70,7 +69,7 @@ export class inv extends plugin {
     let invData = getInvData();
     let userData = getUserData();
 
-    if (!invData[userId] || !invData[userId][shopItem.name] || invData[userId][shopItem.name] <= 0) {
+    if (!invData[userId] || !invData[userId][itemId] || invData[userId][itemId] <= 0) {
       return e.reply(`你的背包里没有【${shopItem.name}】`, false, { at: true });
     }
 
@@ -86,8 +85,8 @@ export class inv extends plugin {
     }
 
     // 扣除物品
-    invData[userId][shopItem.name] -= 1;
-    if (invData[userId][shopItem.name] <= 0) delete invData[userId][shopItem.name];
+    invData[userId][itemId] -= 1;
+    if (invData[userId][itemId] <= 0) delete invData[userId][itemId];
 
     fs.writeFileSync(invDataPath, yaml.stringify(invData));
     fs.writeFileSync(userDataPath, yaml.stringify(userData));

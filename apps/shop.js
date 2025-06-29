@@ -7,11 +7,18 @@ const userDataPath = `${_path}/plugins/xunmiao-plugin/data/user_data.yaml`;
 const invDataPath = `${_path}/plugins/xunmiao-plugin/data/inv_data.yaml`;
 const itemsPath = `${_path}/plugins/xunmiao-plugin/config/items.yaml`;
 
-// 读取商店物品列表
-export function getShopItems() {
+function getShopItems() {
   if (!fs.existsSync(itemsPath)) return [];
   const content = fs.readFileSync(itemsPath, 'utf8');
   return yaml.parse(content) || [];
+}
+function getUserData() {
+  if (!fs.existsSync(userDataPath)) fs.writeFileSync(userDataPath, yaml.stringify({}));
+  return yaml.parse(fs.readFileSync(userDataPath, 'utf8')) || {};
+}
+function getInvData() {
+  if (!fs.existsSync(invDataPath)) fs.writeFileSync(invDataPath, yaml.stringify({}));
+  return yaml.parse(fs.readFileSync(invDataPath, 'utf8')) || {};
 }
 
 export class shop extends plugin {
@@ -31,6 +38,7 @@ export class shop extends plugin {
 
   async showShop(e) {
     const shopItems = getShopItems();
+    if (!shopItems.length) return e.reply('商店暂无商品~', false, { at: true });
     let msg = '【寻喵商店】\n';
     shopItems.forEach(item => {
       msg += `#${item.id} ${item.name} - ${item.price}喵喵币\n  ${item.desc}\n`;
@@ -55,26 +63,16 @@ export class shop extends plugin {
     if (!userData[userId]) userData[userId] = { coins: 0 };
     if (!invData[userId]) invData[userId] = {};
 
-    if (userData[userId].coins < item.price) {
+    if ((userData[userId].coins || 0) < item.price) {
       return e.reply('你的喵喵币不足，无法购买~', false, { at: true });
     }
 
     userData[userId].coins -= item.price;
-    invData[userId][item.name] = (invData[userId][item.name] || 0) + 1;
+    invData[userId][item.id] = (invData[userId][item.id] || 0) + 1;
 
     fs.writeFileSync(userDataPath, yaml.stringify(userData));
     fs.writeFileSync(invDataPath, yaml.stringify(invData));
 
     return e.reply(`你成功购买了1个【${item.name}】，已放入你的背包~`, false, { at: true });
   }
-}
-
-// 工具函数
-function getUserData() {
-  if (!fs.existsSync(userDataPath)) fs.writeFileSync(userDataPath, yaml.stringify({}));
-  return yaml.parse(fs.readFileSync(userDataPath, 'utf8')) || {};
-}
-function getInvData() {
-  if (!fs.existsSync(invDataPath)) fs.writeFileSync(invDataPath, yaml.stringify({}));
-  return yaml.parse(fs.readFileSync(invDataPath, 'utf8')) || {};
 }
