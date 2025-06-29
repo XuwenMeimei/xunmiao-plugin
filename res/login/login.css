@@ -12,7 +12,7 @@
 
 body, html {
     margin: 0;
-    padding: 40px; /* 四周留白，数值可调 */
+    padding: 80px; /* 四周留白，数值可调 */
     width: auto;
     height: auto;
     font-family: 'LcCute', sans-serif;
@@ -25,7 +25,7 @@ body, html {
 .card {
     width: auto;
     height: auto;
-    margin: 40px auto;
+    margin: 80px auto;
     padding: 70px;
     background: rgba(255, 255, 255, 0.7);
     border-radius: 16px;
