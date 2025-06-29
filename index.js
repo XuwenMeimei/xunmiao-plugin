@@ -13,6 +13,9 @@ const userDataPath = path.join(dataDir, 'user_data.yaml')
 const invTemplatePath = path.join(dataDir, 'inv_data.template.yaml')
 const invDataPath = path.join(dataDir, 'inv_data.yaml')
 
+const shopTemplatePath = path.join(dataDir, 'shop_stock.template.yaml')
+const shopDataPath = path.join(dataDir, 'shop_stock.yaml')
+
 // 初始化 user_data.yaml
 if (!fs.existsSync(userDataPath)) {
   if (fs.existsSync(templatePath)) {
@@ -20,6 +23,18 @@ if (!fs.existsSync(userDataPath)) {
     console.log('从模板复制了 user_data.yaml')
   } else {
     console.warn('未找到模板文件：', templatePath)
+  }
+}
+
+//初始化 shop_stock.yaml
+if (!fs.existsSync(shopDataPath)) {
+  if (fs.existsSync(shopTemplatePath)) {
+    fs.copyFileSync(shopTemplatePath, shopDataPath)
+    console.log('从模板复制了 shop_stock.yaml')
+  } else {
+    // 没有模板则创建空文件
+    fs.writeFileSync(shopDataPath, '')
+    console.log('创建了空的 shop_stock.yaml')
   }
 }
 
