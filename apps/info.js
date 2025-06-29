@@ -6,6 +6,28 @@ import axios from 'axios'
 
 const _path = process.cwd().replace(/\\/g, "/");
 const dataPath = `${_path}/plugins/xunmiao-plugin/data/user_data.yaml`;
+const MAX_STAMINA = 100;
+const RECOVER_INTERVAL = 60 * 1000;
+const RECOVER_AMOUNT = 5;
+
+function recoverStamina(user) {
+  const now = Date.now();
+  if (!user.lastStaminaTime) {
+    user.lastStaminaTime = now;
+    return;
+  }
+  if (user.stamina >= MAX_STAMINA) {
+    user.lastStaminaTime = now;
+    return;
+  }
+  const elapsed = now - user.lastStaminaTime;
+  const recoverTimes = Math.floor(elapsed / RECOVER_INTERVAL);
+  if (recoverTimes > 0) {
+    user.stamina = Math.min(MAX_STAMINA, user.stamina + recoverTimes * RECOVER_AMOUNT);
+    user.lastStaminaTime += recoverTimes * RECOVER_INTERVAL;
+    if (user.lastStaminaTime > now) user.lastStaminaTime = now;
+  }
+}
 
 export class info extends plugin {
   constructor() {
@@ -30,6 +52,12 @@ export class info extends plugin {
     if (fs.existsSync(dataPath)) {
       const fileContent = fs.readFileSync(dataPath, 'utf8');
       userData = yaml.parse(fileContent) || {};
+    }
+
+    // 自动恢复体力
+    if (userData[userId]) {
+      recoverStamina(userData[userId]);
+      fs.writeFileSync(dataPath, yaml.stringify(userData));
     }
 
     let {

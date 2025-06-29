@@ -39,7 +39,7 @@ export class moyu extends plugin {
     })
   }
 
-  // 体力自动恢复逻辑
+  // 体力自动恢复逻辑（每分钟恢复 RECOVER_AMOUNT 点体力）
   recoverStamina(user) {
     const now = Date.now();
     if (!user.lastStaminaTime) {
@@ -50,11 +50,14 @@ export class moyu extends plugin {
       user.lastStaminaTime = now;
       return;
     }
+    // 计算距离上次更新时间过去了多少分钟
     const elapsed = now - user.lastStaminaTime;
-    const recoverPoints = Math.floor(elapsed / RECOVER_INTERVAL) * RECOVER_AMOUNT;
-    if (recoverPoints > 0) {
-      user.stamina = Math.min(MAX_STAMINA, user.stamina + recoverPoints);
-      user.lastStaminaTime += recoverPoints * RECOVER_INTERVAL;
+    const recoverTimes = Math.floor(elapsed / RECOVER_INTERVAL);
+    if (recoverTimes > 0) {
+      user.stamina = Math.min(MAX_STAMINA, user.stamina + recoverTimes * RECOVER_AMOUNT);
+      user.lastStaminaTime += recoverTimes * RECOVER_INTERVAL;
+      // 防止 lastStaminaTime 超过 now
+      if (user.lastStaminaTime > now) user.lastStaminaTime = now;
     }
   }
 
@@ -77,7 +80,7 @@ export class moyu extends plugin {
         continueSignCount: 0,
         stamina: MAX_STAMINA,
         lastStaminaTime: Date.now(),
-        catchFishCount: 0 // 新增字段
+        catchFishCount: 0
       };
     }
     if (typeof userData[userId].stamina !== 'number') {
@@ -90,7 +93,7 @@ export class moyu extends plugin {
       userData[userId].catchFishCount = 0;
     }
 
-    // 自动恢复体力
+    // 自动恢复体力（重写后）
     this.recoverStamina(userData[userId]);
 
     // 体力不足
