@@ -219,12 +219,48 @@ export class nekologin extends plugin {
       userData = yaml.parse(fileContent) || {};
     }
 
-    let { favorability = 0, coins = 0, bank = 0, totalSignCount = 0 } = userData[userId] || {};
+    let { favorability = 0, coins = 0, bank = 0, totalSignCount = 0, continueSignCount = 0 } = userData[userId] || {};
 
     if (typeof totalSignCount === 'undefined' || isNaN(totalSignCount)) {
       totalSignCount = 0;
     }
+    if (typeof continueSignCount === 'undefined' || isNaN(continueSignCount)) {
+      continueSignCount = 0;
+    }
 
-    return this.reply(`好感度：${favorability}\n喵喵币：${coins}\n银行存款：${bank}\n累计签到：${totalSignCount}天`, false, { at: true });
+    let touxiangUrl = Bot.pickUser(this.e.user_id).getAvatarUrl();
+    let touxiang = '';
+    try {
+      const response = await axios.get(touxiangUrl, { responseType: 'arraybuffer' });
+      const base64 = Buffer.from(response.data, 'binary').toString('base64');
+      const mime = response.headers['content-type'] || 'image/png';
+      touxiang = `data:${mime};base64,${base64}`;
+    } catch (err) {
+      console.error('头像获取失败:', err);
+      touxiang = '';
+    }
+
+    let serder = e.sender;
+    let id = serder.card;
+
+    const data = {
+      favorability,
+      coins,
+      bank,
+      totalSignCount,
+      continueSignCount,
+      id,
+      touxiang
+    };
+
+    const base64 = await puppeteer.screenshot('xunmiao-plugin', {
+      saveId: 'info',
+      imgType: 'png',
+      tplFile: `${_path}/plugins/xunmiao-plugin/res/login/info.html`,
+      pluginResources: `${_path}/plugins/xunmiao-plugin/res/login/info.css`,
+      data: data
+    });
+
+    return await e.reply(base64);
   }
 }
