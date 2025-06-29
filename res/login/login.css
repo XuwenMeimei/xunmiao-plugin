@@ -74,15 +74,15 @@ html, body {
 }
 
 .details {
+    position: absolute;
+    bottom: 0;              /* 贴紧 .card 的底部边缘 */
+    left: 0;
+    width: 100%;
     display: flex;
     justify-content: space-between;
-    width: calc(100% - 140px); /* 减去 padding: 70px*2，保持左右边距对齐 */
-    position: absolute;
-    bottom: 70px;              /* 贴到 .card 底部 padding 的边缘 */
-    left: 70px;                /* 保持与 padding 对齐 */
+    padding: 0 70px 16px 70px;  /* 左右对齐 card 的 padding，底部留点距离 */
+    box-sizing: border-box;
 }
-
-
 
 .details-left,
 .details-right {
