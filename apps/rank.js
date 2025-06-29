@@ -67,7 +67,7 @@ export class rank extends plugin {
 
     // 排序取前10
     userList.sort((a, b) => b.value - a.value);
-    const topList = userList.slice(0, 10);
+    const topList = userList; // 显示全部用户
 
     // 获取昵称（如有 card 字段则用 card，否则用 QQ 号）
     for (let user of topList) {
