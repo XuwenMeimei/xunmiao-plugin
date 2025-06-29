@@ -32,8 +32,8 @@ export class shop extends plugin {
       priority: 5000,
       cron: [],
       rule: [
-        { reg: '^#*商店$', fnc: 'showShop' },
-        { reg: '^#*购买(\\d+)(?:\\s+(\\d+))?$', fnc: 'buyItem' }
+        { reg: '^#商店$', fnc: 'showShop' },
+        { reg: '^#购买(\\d+)(?:\\s+(\\d+))?$', fnc: 'buyItem' }
       ]
     })
   }

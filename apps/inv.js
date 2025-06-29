@@ -55,8 +55,8 @@ export class inv extends plugin {
       priority: 5000,
       cron: [],
       rule: [
-        { reg: '^#*背包$', fnc: 'showInv' },
-        { reg: '^#*使用(\\d+)(?:\\s+(\\d+))?$', fnc: 'useItem' }
+        { reg: '^#背包$', fnc: 'showInv' },
+        { reg: '^#使用(\\d+)(?:\\s+(\\d+))?$', fnc: 'useItem' }
       ]
     })
   }
