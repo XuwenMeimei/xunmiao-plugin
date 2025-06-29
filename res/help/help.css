@@ -36,6 +36,7 @@ body, html {
   font-size: 48px;
   color: #4e7cff;
   letter-spacing: 2px;
+  text-shadow: 0 2px 8px #e0eaff;
 }
 
 .help-list {
@@ -66,7 +67,7 @@ body, html {
 .help-list .cmd {
   flex: 0 0 220px;
   color: #4e7cff;
-  font-weight: bold;
+  font-weight: normal;
   font-size: 30px;
   letter-spacing: 1px;
 }
