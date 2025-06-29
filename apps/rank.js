@@ -92,6 +92,13 @@ export class rank extends plugin {
       }
     }
 
+    // 新增：格式化QQ号，只显示前三位和后两位
+    function maskQQ(qq) {
+      const qqStr = String(qq);
+      if (qqStr.length <= 5) return qqStr;
+      return qqStr.slice(0, 3) + '*'.repeat(qqStr.length - 5) + qqStr.slice(-2);
+    }
+
     // 构造渲染数据
     let summary = '';
     if (type === '喵喵币') {
@@ -106,16 +113,20 @@ export class rank extends plugin {
       type: label,
       summary: summary,
       list: topList.map((u, idx) => {
+        // 新增：QQ号(昵称)格式
+        const userShow = u.nickname && u.nickname !== u.uid
+          ? `${maskQQ(u.uid)}(${u.nickname})`
+          : maskQQ(u.uid);
         if (type === '喵喵币') {
           return {
             rank: idx + 1,
-            nickname: u.nickname,
+            nickname: userShow,
             value: `${u.coins} + ${u.bank}`
           }
         } else {
           return {
             rank: idx + 1,
-            nickname: u.nickname,
+            nickname: userShow,
             value: u.value
           }
         }
