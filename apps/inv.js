@@ -1,11 +1,11 @@
 import plugin from '../../../lib/plugins/plugin.js'
 import fs from 'fs'
 import yaml from 'yaml'
-import { getShopItems } from './shop.js'
 
 const _path = process.cwd().replace(/\\/g, "/");
 const invDataPath = `${_path}/plugins/xunmiao-plugin/data/inv_data.yaml`;
 const userDataPath = `${_path}/plugins/xunmiao-plugin/data/user_data.yaml`;
+const itemsPath = `${_path}/plugins/xunmiao-plugin/config/items.yaml`;
 
 function getInvData() {
   if (!fs.existsSync(invDataPath)) fs.writeFileSync(invDataPath, yaml.stringify({}));
@@ -14,6 +14,11 @@ function getInvData() {
 function getUserData() {
   if (!fs.existsSync(userDataPath)) fs.writeFileSync(userDataPath, yaml.stringify({}));
   return yaml.parse(fs.readFileSync(userDataPath, 'utf8')) || {};
+}
+function getShopItems() {
+  if (!fs.existsSync(itemsPath)) return [];
+  const content = fs.readFileSync(itemsPath, 'utf8');
+  return yaml.parse(content) || [];
 }
 
 export class inv extends plugin {
