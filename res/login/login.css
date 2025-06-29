@@ -5,34 +5,26 @@
     font-style: normal;
 }
 
-:root {
+:root, html, body {
+    margin: 0;
+    padding: 0;
     width: 1280px;
     height: 720px;
-}
-
-body, html {
-    margin: 0;
-    padding: 80px; /* 四周留白，数值可调 */
-    width: auto;
-    height: auto;
     font-family: 'LcCute', sans-serif;
     background: url('../asset/img/bg_new.png') no-repeat center center;
     background-size: cover;
     overflow: hidden;
-    /* 去掉flex相关属性 */
 }
 
 .card {
-    width: auto;
-    height: auto;
-    margin: 80px auto;
+    width: calc(100% - 160px); /* 1280 - 2*80 */
+    height: calc(100% - 160px); /* 720 - 2*80 */
+    margin: 80px;
     padding: 70px;
     background: rgba(255, 255, 255, 0.7);
     border-radius: 16px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    display: block;
     position: relative;
 }
 
@@ -85,11 +77,7 @@ body, html {
     width: 100%;
 }
 
-.details-left {
-    align-self: flex-end;
-    text-align: left;
-}
-
+.details-left,
 .details-right {
     align-self: flex-end;
     text-align: left;

@@ -5,58 +5,49 @@
     font-style: normal;
 }
 
-:root {
+:root, html, body {
+    margin: 0;
+    padding: 0;
     width: 1280px;
     height: 720px;
-}
-
-body, html {
-    margin: 0;
-    padding: 80px; /* 四周留白，数值可调 */
-    width: auto;
-    height: auto;
     font-family: 'LcCute', sans-serif;
     background: url('../asset/img/bg_new.png') no-repeat center center;
     background-size: cover;
     overflow: hidden;
-    /* 去掉flex相关属性 */
 }
 
 .card {
-    width: auto;
-    height: auto;
-    margin: 80px auto;
+    width: calc(100% - 160px); /* 1280 - 2*80 */
+    height: calc(100% - 160px); /* 720 - 2*80 */
+    margin: 80px;
     padding: 70px;
     background: rgba(255, 255, 255, 0.7);
     border-radius: 16px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    display: block;
     position: relative;
 }
 
 .card h1 {
-    margin: 0 0 24px 0;
+    margin: 0;
     font-size: 48px;
 }
 
 .card p {
-    margin: 12px 0;
+    margin: 16px 0;
     font-size: 32px;
 }
 
 .user-info {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 80px;
+    justify-content: space-between;
+    position: relative;
 }
 
 .user-avatar {
     position: relative;
-    width: 120px;
-    height: 120px;
+    width: 80px;
+    height: 80px;
     background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
@@ -78,4 +69,21 @@ body, html {
     text-align: center;
     margin-top: 16px;
     white-space: nowrap;
+}
+
+.details {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.details-left,
+.details-right {
+    align-self: flex-end;
+    text-align: left;
+}
+
+.rp-details {
+    margin-top: 10px;
+    align-self: flex-end;
 }
