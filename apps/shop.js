@@ -91,8 +91,19 @@ export class shop extends plugin {
     fs.writeFileSync(invDataPath, yaml.stringify(invData));
 
     // 生成小票数据
+    // 格式化QQ号，只显示前三位和后两位
+    function maskQQ(qq) {
+      const qqStr = String(qq);
+      if (qqStr.length <= 5) return qqStr; // 太短不处理
+      return qqStr.slice(0, 3) + '*'.repeat(qqStr.length - 5) + qqStr.slice(-2);
+    }
+    const maskedQQ = maskQQ(e.user_id);
+    const userShow = e.nickname
+      ? `${maskedQQ}(${e.nickname})`
+      : maskedQQ;
+
     const receiptData = {
-      user: e.nickname || e.user_id,
+      user: userShow,
       itemName: item.name,
       itemCount: buyCount,
       itemPrice: item.price,
