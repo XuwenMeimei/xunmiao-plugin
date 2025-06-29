@@ -21,6 +21,30 @@ function getShopItems() {
   return yaml.parse(content) || [];
 }
 
+const MAX_STAMINA = 100;
+const RECOVER_INTERVAL = 60 * 1000; // 每分钟恢复
+const RECOVER_AMOUNT = 1;
+
+// 体力自动恢复逻辑
+function recoverStamina(user) {
+  const now = Date.now();
+  if (!user.lastStaminaTime) {
+    user.lastStaminaTime = now;
+    return;
+  }
+  if (user.stamina >= MAX_STAMINA) {
+    user.lastStaminaTime = now;
+    return;
+  }
+  const elapsed = now - user.lastStaminaTime;
+  const recoverTimes = Math.floor(elapsed / RECOVER_INTERVAL);
+  if (recoverTimes > 0) {
+    user.stamina = Math.min(MAX_STAMINA, user.stamina + recoverTimes * RECOVER_AMOUNT);
+    user.lastStaminaTime += recoverTimes * RECOVER_INTERVAL;
+    if (user.lastStaminaTime > now) user.lastStaminaTime = now;
+  }
+}
+
 export class inv extends plugin {
   constructor() {
     super({
@@ -73,12 +97,18 @@ export class inv extends plugin {
       return e.reply(`你的背包里没有【${shopItem.name}】`, false, { at: true });
     }
 
+    // 体力物品前先自动恢复体力
+    if (!userData[userId]) userData[userId] = { stamina: 100 };
+    recoverStamina(userData[userId]);
+
     // 物品效果
     let effectMsg = '';
     if (shopItem.use && shopItem.use.type === 'stamina') {
-      if (!userData[userId]) userData[userId] = { stamina: 100 };
       const before = userData[userId].stamina || 0;
-      userData[userId].stamina = Math.min(100, before + shopItem.use.value);
+      if (before >= MAX_STAMINA) {
+        return e.reply('你的体力已经满了，无法使用该物品。', false, { at: true });
+      }
+      userData[userId].stamina = Math.min(MAX_STAMINA, before + shopItem.use.value);
       effectMsg = `体力恢复${shopItem.use.value}点，当前体力${userData[userId].stamina}/100`;
     } else {
       effectMsg = '该物品暂不可使用或无效果。';
