@@ -219,13 +219,16 @@ export class nekologin extends plugin {
       userData = yaml.parse(fileContent) || {};
     }
 
-    let { favorability = 0, coins = 0, bank = 0, totalSignCount = 0, continueSignCount = 0 } = userData[userId] || {};
+    let { favorability = 0, coins = 0, bank = 0, totalSignCount = 0, continueSignCount = 0, stamina = 100 } = userData[userId] || {};
 
     if (typeof totalSignCount === 'undefined' || isNaN(totalSignCount)) {
       totalSignCount = 0;
     }
     if (typeof continueSignCount === 'undefined' || isNaN(continueSignCount)) {
       continueSignCount = 0;
+    }
+    if (typeof stamina !== 'number') {
+      stamina = 100;
     }
 
     let touxiangUrl = Bot.pickUser(this.e.user_id).getAvatarUrl();
@@ -249,6 +252,7 @@ export class nekologin extends plugin {
       bank,
       totalSignCount,
       continueSignCount,
+      stamina,
       id,
       touxiang
     };

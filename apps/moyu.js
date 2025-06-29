@@ -34,10 +34,6 @@ export class moyu extends plugin {
         {
           reg: '^#*摸鱼$',
           fnc: 'moyu'
-        },
-        {
-          reg: '^#*体力$',
-          fnc: 'stamina'
         }
       ]
     })
@@ -140,41 +136,5 @@ export class moyu extends plugin {
       false,
       { at: true }
     );
-  }
-
-  async stamina(e) {
-    const userId = `${e.user_id}`;
-    let userData = {};
-
-    if (!fs.existsSync(dataPath)) {
-      fs.writeFileSync(dataPath, yaml.stringify({}));
-    }
-    const fileContent = fs.readFileSync(dataPath, 'utf8');
-    userData = yaml.parse(fileContent) || {};
-
-    if (!userData[userId]) {
-      userData[userId] = {
-        coins: 0,
-        favorability: 0,
-        bank: 0,
-        totalSignCount: 0,
-        continueSignCount: 0,
-        stamina: MAX_STAMINA,
-        lastStaminaTime: Date.now()
-      };
-    }
-    if (typeof userData[userId].stamina !== 'number') {
-      userData[userId].stamina = MAX_STAMINA;
-    }
-    if (!userData[userId].lastStaminaTime) {
-      userData[userId].lastStaminaTime = Date.now();
-    }
-
-    // 自动恢复体力
-    this.recoverStamina(userData[userId]);
-
-    fs.writeFileSync(dataPath, yaml.stringify(userData));
-
-    return e.reply(`你当前体力为：${userData[userId].stamina} / ${MAX_STAMINA}`, false, { at: true });
   }
 }
