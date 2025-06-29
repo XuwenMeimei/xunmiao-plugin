@@ -5,19 +5,13 @@ import yaml from 'yaml'
 const _path = process.cwd().replace(/\\/g, "/");
 const userDataPath = `${_path}/plugins/xunmiao-plugin/data/user_data.yaml`;
 const invDataPath = `${_path}/plugins/xunmiao-plugin/data/inv_data.yaml`;
+const itemsPath = `${_path}/plugins/xunmiao-plugin/config/items.yaml`;
 
-// 商品列表
-const shopItems = [
-  { id: 1, name: '小鱼干', price: 20, desc: '喵最爱的零食，回复10体力' }
-];
-
-function getUserData() {
-  if (!fs.existsSync(userDataPath)) fs.writeFileSync(userDataPath, yaml.stringify({}));
-  return yaml.parse(fs.readFileSync(userDataPath, 'utf8')) || {};
-}
-function getInvData() {
-  if (!fs.existsSync(invDataPath)) fs.writeFileSync(invDataPath, yaml.stringify({}));
-  return yaml.parse(fs.readFileSync(invDataPath, 'utf8')) || {};
+// 读取商店物品列表
+export function getShopItems() {
+  if (!fs.existsSync(itemsPath)) return [];
+  const content = fs.readFileSync(itemsPath, 'utf8');
+  return yaml.parse(content) || [];
 }
 
 export class shop extends plugin {
@@ -35,6 +29,7 @@ export class shop extends plugin {
   }
 
   async showShop(e) {
+    const shopItems = getShopItems();
     let msg = '【寻喵商店】\n';
     shopItems.forEach(item => {
       msg += `#${item.id} ${item.name} - ${item.price}喵喵币\n  ${item.desc}\n`;
@@ -49,6 +44,7 @@ export class shop extends plugin {
     if (!match) return e.reply('格式错误，请发送 #购买商品编号', false, { at: true });
 
     const itemId = parseInt(match[1]);
+    const shopItems = getShopItems();
     const item = shopItems.find(i => i.id === itemId);
     if (!item) return e.reply('没有这个商品编号哦~', false, { at: true });
 
@@ -70,4 +66,14 @@ export class shop extends plugin {
 
     return e.reply(`你成功购买了1个【${item.name}】，已放入你的背包~`, false, { at: true });
   }
+}
+
+// 工具函数
+function getUserData() {
+  if (!fs.existsSync(userDataPath)) fs.writeFileSync(userDataPath, yaml.stringify({}));
+  return yaml.parse(fs.readFileSync(userDataPath, 'utf8')) || {};
+}
+function getInvData() {
+  if (!fs.existsSync(invDataPath)) fs.writeFileSync(invDataPath, yaml.stringify({}));
+  return yaml.parse(fs.readFileSync(invDataPath, 'utf8')) || {};
 }

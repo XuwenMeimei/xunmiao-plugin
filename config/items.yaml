@@ -1,0 +1,11 @@
+- id: 1
+  name: 小鱼干
+  price: 20
+  desc: 喵最爱的零食，回复10体力
+  use:
+    type: stamina
+    value: 10
+- id: 2
+  name: 高级鱼竿
+  price: 200
+  desc: 提升摸鱼收益（暂未实装）
