@@ -13,14 +13,18 @@
 body, html {
     margin: 0;
     padding: 0;
-    width: 1280px;  /* 继承 root 的宽高 */
+    width: 1280px;
     height: 720px;
+    min-width: 1280px;
+    min-height: 720px;
+    max-width: 1280px;
+    max-height: 720px;
     display: flex;
     justify-content: center;
     align-items: center;
     font-family: 'LcCute', sans-serif;
     background: url('./img/bg.png') no-repeat center center fixed;
-    background-size: contain; /* 让背景图片自适应 root 尺寸 */
+    background-size: cover; /* 让背景图片完全覆盖 root 尺寸 */
     overflow: hidden;
 }
 
