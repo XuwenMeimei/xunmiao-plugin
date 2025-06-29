@@ -251,13 +251,29 @@ export class moyu extends plugin {
 
     // 构造合并转发消息
     let msgArr = [];
-    msgArr.push(`你本次连续摸鱼${totalCount}次，获得${totalCoins}个喵喵币，消耗体力${totalStaminaCost}，当前体力${userData[userId].stamina}`);
+    // 第一条为汇总
+    msgArr.push({
+      message: `你本次连续摸鱼${totalCount}次，获得${totalCoins}个喵喵币，消耗体力${totalStaminaCost}，当前体力${userData[userId].stamina}`,
+      nickname: e.sender?.nickname || e.member?.card || e.user_id,
+      user_id: e.user_id
+    });
+    // 后续为每条鱼
     for (let i = 0; i < fishList.length; i++) {
-      msgArr.push(fishList[i]);
+      msgArr.push({
+        message: fishList[i],
+        nickname: e.sender?.nickname || e.member?.card || e.user_id,
+        user_id: e.user_id
+      });
     }
 
-    if (msgArr.length > 100) {
-      msgArr = msgArr.slice(0, 100);
+    // 只展示前100条，防止刷屏
+    if (msgArr.length > 101) {
+      msgArr = msgArr.slice(0, 101);
+      msgArr.push({
+        message: '（仅展示前100条，剩余请在数据中查看）',
+        nickname: e.sender?.nickname || e.member?.card || e.user_id,
+        user_id: e.user_id
+      });
     }
 
     // 生成合并转发消息（兼容Yunzai/Trss等）
@@ -266,10 +282,10 @@ export class moyu extends plugin {
       return e.reply(await Bot.makeForwardMsg(e, msgArr, `摸鱼记录`));
     } else if (typeof Bot.makeForwardArray === 'function') {
       // Trss
-      return e.reply(await Bot.makeForwardArray(msgArr));
+      return e.reply(await Bot.makeForwardArray(msgArr.map(m => m.message)));
     } else {
       // 兜底普通消息
-      return e.reply(msgArr.join('\n\n'), false, { at: true });
+      return e.reply(msgArr.map(m => m.message).join('\n\n'), false, { at: true });
     }
   }
 }
