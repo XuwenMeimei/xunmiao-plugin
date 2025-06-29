@@ -93,9 +93,18 @@ export class rank extends plugin {
     }
 
     // 构造渲染数据
+    let summary = '';
+    if (type === '喵喵币') {
+      summary = `一共有${totalCoins}个喵喵币`;
+    } else if (type === '好感度') {
+      summary = `一共有${totalFavorability}点好感度`;
+    } else if (type === '摸鱼次数') {
+      summary = `一共摸了${totalCatchFish}次鱼`;
+    }
+
     const data = {
       type: label,
-      summary: `一共有${totalCoins}个喵喵币，一共有${totalFavorability}点好感度，一共摸了${totalCatchFish}次鱼`,
+      summary: summary,
       list: topList.map((u, idx) => {
         if (type === '喵喵币') {
           return {
