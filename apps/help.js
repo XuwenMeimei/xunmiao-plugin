@@ -48,6 +48,6 @@ export class help extends plugin {
       pluginResources: `${_path}/plugins/xunmiao-plugin/res/help/help.css`,
       data
     });
-    return e.reply(base64, false, { at: true });
+    return e.reply(base64, false, { at: false });
   }
 }

@@ -8,12 +8,8 @@
 body, html {
     margin: 0;
     padding: 40px; /* 四周留白，数值可调 */
-    width: 1280px;
-    height: 720px;
-    min-width: 1280px;
-    min-height: 720px;
-    max-width: 1280px;
-    max-height: 720px;
+    width: auto;
+    height: auto;
     font-family: 'LcCute', sans-serif;
     background: url('../asset/img/bg_new.png') no-repeat center center;
     background-size: cover;
@@ -22,8 +18,8 @@ body, html {
 }
 
 .card {
-    width: 1140px;
-    height: 580px;
+    width: auto;
+    height: auto;
     margin: 40px auto;
     padding: 70px;
     background: rgba(255, 255, 255, 0.7);
@@ -34,7 +30,6 @@ body, html {
     justify-content: space-between;
     position: relative;
 }
-
 
 .card h1 {
     margin: 0;
