@@ -70,9 +70,11 @@ export class rank extends plugin {
     for (let u of topList) {
       try {
         const info = await Bot.pickUser(u.uid).getInfo();
-        u.nickname = info.card || info.nickname || u.uid;
+        // 优先群名片，其次昵称，最后QQ号
+        let name = info.card || info.nickname || u.uid;
+        u.nickname = `${name}(${u.uid})`;
       } catch {
-        u.nickname = u.uid;
+        u.nickname = `(${u.uid})`;
       }
     }
 
