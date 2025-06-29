@@ -113,16 +113,12 @@ export class duel extends plugin {
         if (!cfg.masterQQ.includes(e.user_id)) {
             return e.reply('只有我的主人才能设置体力哦~', false, { at: true });
         }
-        const match = e.msg.match(/^#设置体力\s*<at qq="(\d+)"\/>\s*(\d+)$/);
-        let id, stamina;
+        // 兼容 #设置体力 @对象 数值
+        const id = e.at;
+        const match = e.msg.match(/#设置体力\s*(\d+)$/);
+        let stamina = null;
         if (match) {
-            id = match[1];
-            stamina = parseInt(match[2], 10);
-        } else if (e.at && /\d+/.test(e.at)) {
-            // 兼容 @用户 123 这种格式
-            const numMatch = e.msg.match(/\s(\d+)$/);
-            id = e.at;
-            stamina = numMatch ? parseInt(numMatch[1], 10) : null;
+            stamina = parseInt(match[1], 10);
         }
         if (!id || typeof stamina !== 'number' || isNaN(stamina)) {
             return e.reply('格式错误，请使用 #设置体力 @对象 数值', false, { at: true });
