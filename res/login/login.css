@@ -75,21 +75,23 @@ html, body {
 
 .details {
     position: absolute;
-    bottom: 0;              /* 贴紧 .card 的底部边缘 */
+    bottom: 0;
     left: 0;
     width: 100%;
     display: flex;
     justify-content: space-between;
-    padding: 0 70px 16px 70px;  /* 左右对齐 card 的 padding，底部留点距离 */
+    align-items: flex-end; /* 确保左右两边都贴底 */
+    padding: 0 70px 16px 70px;
     box-sizing: border-box;
 }
+
 
 .details-left,
 .details-right {
     text-align: left;
-    margin: 0;
+    margin: 0;           /* 避免 margin 顶起 */
+    padding: 0;
 }
-
 
 .rp-details {
     margin-top: 10px;
