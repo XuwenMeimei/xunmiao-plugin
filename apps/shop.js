@@ -98,8 +98,16 @@ export class shop extends plugin {
       return qqStr.slice(0, 3) + '*'.repeat(qqStr.length - 5) + qqStr.slice(-2);
     }
     const maskedQQ = maskQQ(e.user_id);
-    const userShow = e.nickname
-      ? `${maskedQQ}(${e.nickname})`
+    let nickname = '';
+    if (e.sender && e.sender.card) {
+      nickname = e.sender.card;
+    } else if (e.nickname) {
+      nickname = e.nickname;
+    } else {
+      nickname = '';
+    }
+    const userShow = nickname
+      ? `${maskedQQ}(${nickname})`
       : maskedQQ;
 
     const receiptData = {
