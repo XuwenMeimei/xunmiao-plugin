@@ -45,15 +45,8 @@ export class rank extends plugin {
     let userList = Object.entries(userData)
       .filter(([uid, data]) => /^\d+$/.test(uid) && typeof data === 'object')
       .map(([uid, data]) => {
-        let nickname = data.id || '';
-        // 如果没有昵称，或者昵称和QQ号一样，显示 QQ号
-        if (!nickname || nickname === uid) {
-          nickname = uid;
-        }
-        // 始终显示 昵称(QQ号)
-        else {
-          nickname = `${nickname}(${uid})`;
-        }
+        // 优先显示实际昵称，没有则显示QQ号
+        let nickname = data.id || uid;
         if (type === '喵喵币') {
           // coins + bank
           const coins = Number(data.coins || 0);
