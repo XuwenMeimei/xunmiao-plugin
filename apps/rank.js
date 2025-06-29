@@ -46,35 +46,38 @@ export class rank extends plugin {
       .filter(([uid, data]) => /^\d+$/.test(uid) && typeof data === 'object')
       .map(([uid, data]) => {
         if (type === '喵喵币') {
+          // coins + bank
           const coins = Number(data.coins || 0);
           const bank = Number(data.bank || 0);
           return {
             uid,
             value: coins + bank,
             coins,
-            bank
+            bank,
+            nickname: data.id || uid
           }
         } else {
           return {
             uid,
-            value: data[key] || 0
+            value: data[key] || 0,
+            nickname: data.id || uid
           }
         }
       });
 
-    // 排序，显示所有用户
+    // 排序取前10
     userList.sort((a, b) => b.value - a.value);
-    const topList = userList; // 不再 slice 取前10
+    const topList = userList.slice(0, 10);
 
-    // 批量获取昵称（群名片/昵称/QQ号）
-    for (let u of topList) {
-      try {
-        const info = await Bot.pickUser(u.uid).getInfo();
-        // 优先群名片，其次昵称，最后QQ号
-        let name = info.card || info.nickname || u.uid;
-        u.nickname = `${name}(${u.uid})`;
-      } catch {
-        u.nickname = `(${u.uid})`;
+    // 获取昵称（如有 card 字段则用 card，否则用 QQ 号）
+    for (let user of topList) {
+      if (!user.nickname || user.nickname === user.uid) {
+        try {
+          const info = await Bot.pickUser(user.uid).getInfo();
+          user.nickname = info.card || info.nickname || user.uid;
+        } catch {
+          user.nickname = user.uid;
+        }
       }
     }
 
