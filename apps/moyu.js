@@ -76,7 +76,8 @@ export class moyu extends plugin {
         totalSignCount: 0,
         continueSignCount: 0,
         stamina: MAX_STAMINA,
-        lastStaminaTime: Date.now()
+        lastStaminaTime: Date.now(),
+        catchFishCount: 0 // 新增字段
       };
     }
     if (typeof userData[userId].stamina !== 'number') {
@@ -84,6 +85,9 @@ export class moyu extends plugin {
     }
     if (!userData[userId].lastStaminaTime) {
       userData[userId].lastStaminaTime = Date.now();
+    }
+    if (typeof userData[userId].catchFishCount !== 'number') {
+      userData[userId].catchFishCount = 0;
     }
 
     // 自动恢复体力
@@ -126,8 +130,10 @@ export class moyu extends plugin {
       return e.reply(`你本次摸鱼需要消耗${staminaCost}点体力，但你当前体力不足，鱼跑掉了！`, false, { at: true });
     }
 
+    // 抓鱼成功后增加次数
     userData[userId].coins += fishCoins;
     userData[userId].stamina -= staminaCost;
+    userData[userId].catchFishCount += 1; // 增加统计
 
     fs.writeFileSync(dataPath, yaml.stringify(userData));
 

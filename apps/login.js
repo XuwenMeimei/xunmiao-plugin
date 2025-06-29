@@ -219,7 +219,15 @@ export class nekologin extends plugin {
       userData = yaml.parse(fileContent) || {};
     }
 
-    let { favorability = 0, coins = 0, bank = 0, totalSignCount = 0, continueSignCount = 0, stamina = 100 } = userData[userId] || {};
+    let {
+      favorability = 0,
+      coins = 0,
+      bank = 0,
+      totalSignCount = 0,
+      continueSignCount = 0,
+      stamina = 100,
+      catchFishCount = 0 // 新增字段
+    } = userData[userId] || {};
 
     if (typeof totalSignCount === 'undefined' || isNaN(totalSignCount)) {
       totalSignCount = 0;
@@ -229,6 +237,9 @@ export class nekologin extends plugin {
     }
     if (typeof stamina !== 'number') {
       stamina = 100;
+    }
+    if (typeof catchFishCount !== 'number') {
+      catchFishCount = 0;
     }
 
     let touxiangUrl = Bot.pickUser(this.e.user_id).getAvatarUrl();
@@ -253,6 +264,7 @@ export class nekologin extends plugin {
       totalSignCount,
       continueSignCount,
       stamina,
+      catchFishCount, // 传递到模板
       id,
       touxiang
     };
