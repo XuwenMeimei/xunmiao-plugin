@@ -120,9 +120,10 @@ export class moyu extends plugin {
     let fishCoins = Math.floor((length * 2 + weight * 10) * fish.priceRate);
     if (fishCoins < 1) fishCoins = 1;
 
-    // 体力消耗 = 长度/5 + 重量*5，向上取整，最少5点（大幅提升消耗，防刷屏）
-    let staminaCost = Math.ceil(Number(length) / 5 + Number(weight) * 5);
-    if (staminaCost < 5) staminaCost = 5;
+    // 体力消耗 = (长度/2 + 重量*15)，向上取整，最少35点，最多100点
+    let staminaCost = Math.ceil(Number(length) / 2 + Number(weight) * 15);
+    if (staminaCost < 35) staminaCost = 35;
+    if (staminaCost > 100) staminaCost = 100;
 
     if (userData[userId].stamina < staminaCost) {
       fs.writeFileSync(dataPath, yaml.stringify(userData));
