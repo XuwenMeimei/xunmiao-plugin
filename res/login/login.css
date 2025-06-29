@@ -24,7 +24,7 @@ body, html {
     align-items: center;
     font-family: 'LcCute', sans-serif;
     background: url('./img/bg.png') no-repeat center center;
-    background-size: 1280px 720px;
+    background-size: contain;
     overflow: hidden;
 }
 
