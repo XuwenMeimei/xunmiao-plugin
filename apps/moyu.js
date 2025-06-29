@@ -20,8 +20,31 @@ const fishTypes = [
 
 // 体力恢复相关设置
 const MAX_STAMINA = 100;
+const MAX_STAMINA_OVERFLOW = 300; // 新增，供物品使用时参考
 const RECOVER_INTERVAL = 60 * 1000; // 每分钟恢复
 const RECOVER_AMOUNT = 5; // 每分钟恢复1点
+
+// 体力自动恢复逻辑（只能恢复到100）
+function recoverStamina(user) {
+  const now = Date.now();
+  if (!user.lastStaminaTime) {
+    user.lastStaminaTime = now;
+    return;
+  }
+  if (user.stamina >= MAX_STAMINA) {
+    user.lastStaminaTime = now;
+    return;
+  }
+  // 计算距离上次更新时间过去了多少分钟
+  const elapsed = now - user.lastStaminaTime;
+  const recoverTimes = Math.floor(elapsed / RECOVER_INTERVAL);
+  if (recoverTimes > 0) {
+    user.stamina = Math.min(MAX_STAMINA, user.stamina + recoverTimes * RECOVER_AMOUNT);
+    user.lastStaminaTime += recoverTimes * RECOVER_INTERVAL;
+    // 防止 lastStaminaTime 超过 now
+    if (user.lastStaminaTime > now) user.lastStaminaTime = now;
+  }
+}
 
 export class moyu extends plugin {
   constructor() {
@@ -32,33 +55,11 @@ export class moyu extends plugin {
       priority: 5000,
       rule: [
         {
-          reg: '^#*摸鱼$',
+          reg: '^#摸鱼$',
           fnc: 'moyu'
         }
       ]
     })
-  }
-
-  // 体力自动恢复逻辑（每分钟恢复 RECOVER_AMOUNT 点体力）
-  recoverStamina(user) {
-    const now = Date.now();
-    if (!user.lastStaminaTime) {
-      user.lastStaminaTime = now;
-      return;
-    }
-    if (user.stamina >= MAX_STAMINA) {
-      user.lastStaminaTime = now;
-      return;
-    }
-    // 计算距离上次更新时间过去了多少分钟
-    const elapsed = now - user.lastStaminaTime;
-    const recoverTimes = Math.floor(elapsed / RECOVER_INTERVAL);
-    if (recoverTimes > 0) {
-      user.stamina = Math.min(MAX_STAMINA, user.stamina + recoverTimes * RECOVER_AMOUNT);
-      user.lastStaminaTime += recoverTimes * RECOVER_INTERVAL;
-      // 防止 lastStaminaTime 超过 now
-      if (user.lastStaminaTime > now) user.lastStaminaTime = now;
-    }
   }
 
   async moyu(e) {
@@ -94,7 +95,7 @@ export class moyu extends plugin {
     }
 
     // 自动恢复体力（重写后）
-    this.recoverStamina(userData[userId]);
+    recoverStamina(userData[userId]);
 
     // 体力不足
     if (userData[userId].stamina <= 0) {

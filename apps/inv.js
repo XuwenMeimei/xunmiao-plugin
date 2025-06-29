@@ -21,11 +21,12 @@ function getShopItems() {
   return yaml.parse(content) || [];
 }
 
-const MAX_STAMINA = 100;
+const MAX_STAMINA = 100; // 自然恢复上限
+const MAX_STAMINA_OVERFLOW = 300; // 物品使用最大体力上限
 const RECOVER_INTERVAL = 60 * 1000; // 每分钟恢复
 const RECOVER_AMOUNT = 1;
 
-// 体力自动恢复逻辑
+// 体力自动恢复逻辑（只能恢复到100）
 function recoverStamina(user) {
   const now = Date.now();
   if (!user.lastStaminaTime) {
@@ -101,23 +102,23 @@ export class inv extends plugin {
       return e.reply(`你的背包里没有【${shopItem.name}】`, false, { at: true });
     }
 
-    // 体力物品前先自动恢复体力
+    // 体力物品前先自动恢复体力（只恢复到100）
     if (!userData[userId]) userData[userId] = { stamina: 100 };
     recoverStamina(userData[userId]);
 
     let effectMsg = '';
     if (shopItem.use && shopItem.use.type === 'stamina') {
       const before = userData[userId].stamina || 0;
-      if (before >= MAX_STAMINA) {
-        return e.reply('你的体力已经满了，无法使用该物品。', false, { at: true });
+      if (before >= MAX_STAMINA_OVERFLOW) {
+        return e.reply('你的体力已经达到最大上限，无法继续使用该物品。', false, { at: true });
       }
-      // 计算最多可用数量
-      const need = Math.ceil((MAX_STAMINA - before) / shopItem.use.value);
+      // 计算最多可用数量（最多溢出到300）
+      const need = Math.ceil((MAX_STAMINA_OVERFLOW - before) / shopItem.use.value);
       const realUse = Math.min(useCount, invData[userId][itemId], need);
-      userData[userId].stamina = Math.min(MAX_STAMINA, before + shopItem.use.value * realUse);
+      userData[userId].stamina = Math.min(MAX_STAMINA_OVERFLOW, before + shopItem.use.value * realUse);
       invData[userId][itemId] -= realUse;
       if (invData[userId][itemId] <= 0) delete invData[userId][itemId];
-      effectMsg = `体力恢复${shopItem.use.value * realUse}点，当前体力${userData[userId].stamina}/${MAX_STAMINA}`;
+      effectMsg = `体力恢复${shopItem.use.value * realUse}点，当前体力${userData[userId].stamina}/${MAX_STAMINA_OVERFLOW}`;
       fs.writeFileSync(invDataPath, yaml.stringify(invData));
       fs.writeFileSync(userDataPath, yaml.stringify(userData));
       return e.reply(`你使用了${realUse}个【${shopItem.name}】\n${effectMsg}`, false, { at: true });
