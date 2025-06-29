@@ -19,8 +19,11 @@ html, body {
 
 /* 容器固定大小，居中留白，视觉上保留原有样式 */
 .card {
+    display: flex;
+    flex-direction: column;
     width: 1120px;              /* 1280 - 2*80 */
-    height: 560px;              /* 720 - 2*80 */
+    height: 80vh; /* 或 100%，根据你的需求调整 */
+    justify-content: flex-start;
     margin: 80px;
     padding: 70px;
     background: rgba(255, 255, 255, 0.7);
@@ -76,7 +79,14 @@ html, body {
 .details {
     display: flex;
     justify-content: space-between;
-    width: 100%;
+    margin-top: auto; /* 让details贴到底部 */
+    padding-bottom: 32px; /* 可选：底部留白 */
+}
+
+.details-left, .details-right {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
 }
 
 .details-left,
