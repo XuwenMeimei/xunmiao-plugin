@@ -21,7 +21,7 @@ const fishTypes = [
 // 体力恢复相关设置
 const MAX_STAMINA = 100;
 const RECOVER_INTERVAL = 60 * 1000; // 每分钟恢复
-const RECOVER_AMOUNT = 1; // 每分钟恢复1点
+const RECOVER_AMOUNT = 5; // 每分钟恢复1点
 
 export class moyu extends plugin {
   constructor() {
