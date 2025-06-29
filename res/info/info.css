@@ -5,6 +5,11 @@
     font-style: normal;
 }
 
+:root {
+    width: 1280;
+    height: 720;
+}
+
 body, html {
     margin: 0;
     padding: 40px; /* 四周留白，数值可调 */
