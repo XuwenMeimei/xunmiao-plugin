@@ -60,11 +60,26 @@ export class shop extends plugin {
     let userData = getUserData();
     let invData = getInvData();
 
-    if (!userData[userId]) userData[userId] = { coins: 0 };
+    if (!userData[userId]) userData[userId] = { coins: 0, bank: 0 };
+    if (userData[userId].bank === undefined) userData[userId].bank = 0;
     if (!invData[userId]) invData[userId] = {};
 
     if ((userData[userId].coins || 0) < item.price) {
-      return e.reply('你的喵喵币不足，无法购买~', false, { at: true });
+      // 喵喵币不足，尝试从银行扣除
+      const total = (userData[userId].coins || 0) + (userData[userId].bank || 0);
+      if (total < item.price) {
+        return e.reply('你的喵喵币和银行存款都不足，无法购买~', false, { at: true });
+      }
+      // 优先扣完喵喵币，不足部分从银行扣除
+      const needFromBank = item.price - (userData[userId].coins || 0);
+      userData[userId].bank -= needFromBank;
+      userData[userId].coins = 0;
+      invData[userId][item.id] = (invData[userId][item.id] || 0) + 1;
+
+      fs.writeFileSync(userDataPath, yaml.stringify(userData));
+      fs.writeFileSync(invDataPath, yaml.stringify(invData));
+
+      return e.reply(`你的喵喵币不足，已从银行扣除${needFromBank}喵喵币。\n你成功购买了1个【${item.name}】，已放入你的背包~`, false, { at: true });
     }
 
     userData[userId].coins -= item.price;
