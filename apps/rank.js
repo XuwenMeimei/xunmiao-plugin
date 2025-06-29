@@ -43,13 +43,28 @@ export class rank extends plugin {
     let userData = yaml.parse(fileContent) || {};
 
     // 过滤掉非用户数据
-    const userList = Object.entries(userData)
+    let userList = Object.entries(userData)
       .filter(([uid, data]) => /^\d+$/.test(uid) && typeof data === 'object')
-      .map(([uid, data]) => ({
-        uid,
-        value: data[key] || 0,
-        nickname: data.id || uid
-      }));
+      .map(([uid, data]) => {
+        if (type === '喵喵币') {
+          // coins + bank
+          const coins = Number(data.coins || 0);
+          const bank = Number(data.bank || 0);
+          return {
+            uid,
+            value: coins + bank,
+            coins,
+            bank,
+            nickname: data.id || uid
+          }
+        } else {
+          return {
+            uid,
+            value: data[key] || 0,
+            nickname: data.id || uid
+          }
+        }
+      });
 
     // 排序取前10
     userList.sort((a, b) => b.value - a.value);
@@ -70,11 +85,21 @@ export class rank extends plugin {
     // 构造渲染数据
     const data = {
       type: label,
-      list: topList.map((u, idx) => ({
-        rank: idx + 1,
-        nickname: u.nickname,
-        value: u.value
-      }))
+      list: topList.map((u, idx) => {
+        if (type === '喵喵币') {
+          return {
+            rank: idx + 1,
+            nickname: u.nickname,
+            value: `${u.coins} + ${u.bank} = ${u.value}`
+          }
+        } else {
+          return {
+            rank: idx + 1,
+            nickname: u.nickname,
+            value: u.value
+          }
+        }
+      })
     };
 
     // 渲染图片
