@@ -129,12 +129,18 @@ export class moyu extends plugin {
     let fishCoins = Math.floor((length * 2 + weight * 10) * fish.priceRate);
     if (fishCoins < 1) fishCoins = 1;
 
-    let staminaCost = Math.ceil(
-    Math.sqrt(Number(length)) * 1.8 + Number(weight) ** 1.5 * 2.5
+    let staminaCost = (
+      Math.pow(Number(length), 0.8) +       // 长度影响（边际递减）
+      Math.pow(Number(weight), 2.2) * 2.2 + // 重量影响（更陡峭）
+      fish.priceRate * 5                    // 稀有度附加
     );
-    staminaCost *= (1 + fish.priceRate * 0.1);
-    staminaCost *= 0.9 + Math.random() * 0.2;
-    staminaCost = Math.min(120, Math.max(20, Math.ceil(staminaCost)));
+
+    // 引入 0.85 - 1.25 波动范围（±20%）
+    staminaCost *= 0.85 + Math.random() * 0.4;
+
+    // 限制范围：最少 20，最多 120
+    staminaCost = Math.max(20, Math.min(120, Math.round(staminaCost)));
+
 
     if (userData[userId].stamina < staminaCost) {
       fs.writeFileSync(dataPath, yaml.stringify(userData));
@@ -225,19 +231,25 @@ export class moyu extends plugin {
       if (fishCoins < 1) fishCoins = 1;
 
       // 体力消耗
-      let staminaCost = Math.ceil(
-      Math.sqrt(Number(length)) * 1.8 + Number(weight) ** 1.5 * 2.5
-      );
-      staminaCost *= (1 + fish.priceRate * 0.1);
-      staminaCost *= 0.9 + Math.random() * 0.2;
-      staminaCost = Math.min(120, Math.max(20, Math.ceil(staminaCost)));
+      let staminaCost = (
+    Math.pow(Number(length), 0.8) +       // 长度影响（边际递减）
+    Math.pow(Number(weight), 2.2) * 2.2 + // 重量影响（更陡峭）
+    fish.priceRate * 5                    // 稀有度附加
+    );
+
+    // 引入 0.85 - 1.25 波动范围（±20%）
+    staminaCost *= 0.85 + Math.random() * 0.4;
+
+    // 限制范围：最少 20，最多 120
+    staminaCost = Math.max(20, Math.min(120, Math.round(staminaCost)));
+
 
       if (stamina < staminaCost) {
         // 体力不足，提示本次摸鱼需要消耗多少体力
         fishList.push(`你本次摸鱼需要消耗${staminaCost}点体力，但你当前体力不足，鱼跑掉了！`);
       }
 
-      if (stamina < 20) break;
+      if (stamina < staminaCost) break;
 
       stamina -= staminaCost;
       totalStaminaCost += staminaCost;
