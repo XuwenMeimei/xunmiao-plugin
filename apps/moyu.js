@@ -234,7 +234,7 @@ export class moyu extends plugin {
     staminaCost = Math.max(20, Math.min(120, Math.round(staminaCost)));
 
     if (stamina < staminaCost) {
-      fishList.push(`你本次摸鱼需要消耗${staminaCost}点体力，但你当前体力不足，鱼跑掉了！`, false, { at: true });
+      fishList.push(`你本次摸鱼需要消耗${staminaCost}点体力，但你当前体力不足，鱼跑掉了！`);
     }
 
     if (stamina < 20) break;
