@@ -162,145 +162,126 @@ export class moyu extends plugin {
   }
 
   async multiMoyu(e) {
-    const userId = `${e.user_id}`;
-    let userData = {};
+  const userId = `${e.user_id}`;
+  let userData = {};
 
-    if (!fs.existsSync(dataPath)) {
-      fs.writeFileSync(dataPath, yaml.stringify({}));
-    }
-    const fileContent = fs.readFileSync(dataPath, 'utf8');
-    userData = yaml.parse(fileContent) || {};
+  if (!fs.existsSync(dataPath)) {
+    fs.writeFileSync(dataPath, yaml.stringify({}));
+  }
+  const fileContent = fs.readFileSync(dataPath, 'utf8');
+  userData = yaml.parse(fileContent) || {};
 
-    if (!userData[userId]) {
-      userData[userId] = {
-        coins: 0,
-        favorability: 0,
-        bank: 0,
-        totalSignCount: 0,
-        continueSignCount: 0,
-        stamina: MAX_STAMINA,
-        lastStaminaTime: Date.now(),
-        catchFishCount: 0
-      };
-    }
-    if (typeof userData[userId].stamina !== 'number') {
-      userData[userId].stamina = MAX_STAMINA;
-    }
-    if (!userData[userId].lastStaminaTime) {
-      userData[userId].lastStaminaTime = Date.now();
-    }
-    if (typeof userData[userId].catchFishCount !== 'number') {
-      userData[userId].catchFishCount = 0;
-    }
+  if (!userData[userId]) {
+    userData[userId] = {
+      coins: 0,
+      favorability: 0,
+      bank: 0,
+      totalSignCount: 0,
+      continueSignCount: 0,
+      stamina: MAX_STAMINA,
+      lastStaminaTime: Date.now(),
+      catchFishCount: 0
+    };
+  }
+  if (typeof userData[userId].stamina !== 'number') {
+    userData[userId].stamina = MAX_STAMINA;
+  }
+  if (!userData[userId].lastStaminaTime) {
+    userData[userId].lastStaminaTime = Date.now();
+  }
+  if (typeof userData[userId].catchFishCount !== 'number') {
+    userData[userId].catchFishCount = 0;
+  }
 
-    // 自动恢复体力
-    recoverStamina(userData[userId]);
+  recoverStamina(userData[userId]);
 
-    if (userData[userId].stamina <= 0) {
-      fs.writeFileSync(dataPath, yaml.stringify(userData));
-      return e.reply('你已经没有体力了，休息一会儿再来摸鱼吧~', false, { at: true });
-    }
+  if (userData[userId].stamina <= 0) {
+    fs.writeFileSync(dataPath, yaml.stringify(userData));
+    return e.reply('你已经没有体力了，休息一会儿再来摸鱼吧~', false, { at: true });
+  }
 
-    let stamina = userData[userId].stamina;
-    let totalCoins = 0;
-    let totalCount = 0;
-    let fishList = [];
-    let totalStaminaCost = 0;
+  let stamina = userData[userId].stamina;
+  let totalCoins = 0;
+  let totalCount = 0;
+  let fishList = [];
+  let totalStaminaCost = 0;
 
-    // 连续摸鱼直到体力小于35
-    while (stamina >= 20) {
-      // 按权重随机选择鱼的品种
-      const totalWeight = fishTypes.reduce((sum, fish) => sum + fish.weight, 0);
-      let rand = Math.random() * totalWeight;
-      let fish;
-      for (let i = 0; i < fishTypes.length; i++) {
-        rand -= fishTypes[i].weight;
-        if (rand <= 0) {
-          fish = fishTypes[i];
-          break;
-        }
+  while (stamina >= 20) {
+    const totalWeight = fishTypes.reduce((sum, fish) => sum + fish.weight, 0);
+    let rand = Math.random() * totalWeight;
+    let fish;
+    for (let i = 0; i < fishTypes.length; i++) {
+      rand -= fishTypes[i].weight;
+      if (rand <= 0) {
+        fish = fishTypes[i];
+        break;
       }
-      if (!fish) fish = fishTypes[0];
+    }
+    if (!fish) fish = fishTypes[0];
 
-      // 随机生成鱼的长度和重量
-      const length = (Math.random() * (fish.maxLen - fish.minLen) + fish.minLen).toFixed(1);
-      const weight = (Math.random() * (fish.maxW - fish.minW) + fish.minW).toFixed(2);
+    const length = (Math.random() * (fish.maxLen - fish.minLen) + fish.minLen).toFixed(1);
+    const weight = (Math.random() * (fish.maxW - fish.minW) + fish.minW).toFixed(2);
 
-      // 喵喵币奖励
-      let fishCoins = Math.floor((length * 2 + weight * 10) * fish.priceRate);
-      if (fishCoins < 1) fishCoins = 1;
+    let fishCoins = Math.floor((length * 2 + weight * 10) * fish.priceRate);
+    if (fishCoins < 1) fishCoins = 1;
 
-      // 体力消耗
-      let staminaCost = (
-    Math.pow(Number(length), 0.8) +       // 长度影响（边际递减）
-    Math.pow(Number(weight), 2.2) * 2.2 + // 重量影响（更陡峭）
-    fish.priceRate * 5                    // 稀有度附加
+    let staminaCost = (
+      Math.pow(Number(length), 0.8) +
+      Math.pow(Number(weight), 2.2) * 2.2 +
+      fish.priceRate * 5
     );
-
-    // 引入 0.85 - 1.25 波动范围（±20%）
     staminaCost *= 0.85 + Math.random() * 0.4;
-
-    // 限制范围：最少 20，最多 120
     staminaCost = Math.max(20, Math.min(120, Math.round(staminaCost)));
 
+    if (stamina < staminaCost) break;
 
-      if (stamina < staminaCost) {
-        // 体力不足，提示本次摸鱼需要消耗多少体力
-        fishList.push(`你本次摸鱼需要消耗${staminaCost}点体力，但你当前体力不足，鱼跑掉了！`);
-      }
+    stamina -= staminaCost;
+    totalStaminaCost += staminaCost;
+    totalCoins += fishCoins;
+    totalCount += 1;
 
-      if (stamina < staminaCost) break;
+    fishList.push(`你摸到了一条【${fish.name}】\n长度：${length}cm\n重量：${weight}kg\n获得${fishCoins}喵喵币，消耗体力${staminaCost}`);
+  }
 
-      stamina -= staminaCost;
-      totalStaminaCost += staminaCost;
-      totalCoins += fishCoins;
-      totalCount += 1;
-      fishList.push(
-        `你摸到了一条【${fish.name}】\n长度：${length}cm\n重量：${weight}kg\n获得${fishCoins}喵喵币，消耗体力${staminaCost}`
-      );
-    }
-
-    if (totalCount === 0) {
-      fs.writeFileSync(dataPath, yaml.stringify(userData));
-      return e.reply('你当前体力不足以摸一次鱼哦~', false, { at: true });
-    }
-
-    userData[userId].coins += totalCoins;
-    userData[userId].stamina -= totalStaminaCost;
-    userData[userId].catchFishCount += totalCount;
-
+  if (totalCount === 0) {
     fs.writeFileSync(dataPath, yaml.stringify(userData));
+    return e.reply('你当前体力不足以摸一次鱼哦~', false, { at: true });
+  }
 
-    // 构造合并转发消息
-    let msgArr = [];
-    // 第一条为汇总
-    msgArr.push(`你本次连续摸鱼${totalCount}次，获得${totalCoins}个喵喵币，消耗体力${totalStaminaCost}，当前体力${userData[userId].stamina}`);
-    // 后续为每条鱼
-    for (let i = 0; i < fishList.length; i++) {
-      msgArr.push(fishList[i]);
-    }
+  userData[userId].coins += totalCoins;
+  userData[userId].stamina -= totalStaminaCost;
+  userData[userId].catchFishCount += totalCount;
 
-    // 只展示前100条，防止刷屏
-    if (msgArr.length > 101) {
-      msgArr = msgArr.slice(0, 101);
-      msgArr.push('（仅展示前100条，剩余请在数据中查看）');
-    }
+  fs.writeFileSync(dataPath, yaml.stringify(userData));
 
-    // 生成合并转发消息
+  // 构造消息批次
+  const batchSize = 50;
+  const batches = [];
+  for (let i = 0; i < fishList.length; i += batchSize) {
+    batches.push(fishList.slice(i, i + batchSize));
+  }
+
+  const makeMsg = async (arr) => {
+    const nickname = e.sender?.nickname || e.member?.card || e.user_id;
     if (typeof Bot.makeForwardArray === 'function') {
-      // Trss
-      return e.reply(await Bot.makeForwardArray(msgArr));
+      return await Bot.makeForwardArray(arr);
     } else if (typeof Bot.makeForwardMsg === 'function') {
-      // Yunzai / oicq（使用消息段）
-      const forwardMsg = await Bot.makeForwardMsg(e, msgArr.map(message => ({
-        message,
-        nickname: e.sender?.nickname || e.member?.card || e.user_id,
+      return await Bot.makeForwardMsg(e, arr.map(msg => ({
+        message: msg,
+        nickname,
         user_id: e.user_id
       })), `摸鱼记录`);
-      return e.reply(forwardMsg);
     } else {
-      // 兜底普通消息
-      return e.reply(msgArr.join('\n\n'), false, { at: true });
+      return arr.join('\n\n');
+    }
+  };
+
+  // 每个批次发送（加上汇总）
+  for (let i = 0; i < batches.length; i++) {
+    const head = `【第 ${i + 1} 页】本次连续摸鱼${totalCount}次，共获得${totalCoins}喵喵币，消耗体力${totalStaminaCost}，当前体力${userData[userId].stamina}`;
+    const batchMsg = [head, ...batches[i]];
+    const msg = await makeMsg(batchMsg);
+    await e.reply(msg);
     }
   }
 }
