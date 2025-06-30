@@ -1,6 +1,7 @@
 import plugin from '../../../lib/plugins/plugin.js'
 import fs from 'fs'
 import yaml from 'yaml'
+import puppeteer from '../../../lib/puppeteer/puppeteer.js'
 
 const _path = process.cwd().replace(/\\/g, "/");
 const dataPath = `${_path}/plugins/xunmiao-plugin/data/user_data.yaml`;
@@ -162,129 +163,148 @@ export class moyu extends plugin {
   }
 
   async multiMoyu(e) {
-  const userId = `${e.user_id}`;
-  let userData = {};
+    const userId = `${e.user_id}`;
+    let userData = {};
 
-  if (!fs.existsSync(dataPath)) {
-    fs.writeFileSync(dataPath, yaml.stringify({}));
-  }
-  const fileContent = fs.readFileSync(dataPath, 'utf8');
-  userData = yaml.parse(fileContent) || {};
+    if (!fs.existsSync(dataPath)) {
+      fs.writeFileSync(dataPath, yaml.stringify({}));
+    }
+    const fileContent = fs.readFileSync(dataPath, 'utf8');
+    userData = yaml.parse(fileContent) || {};
 
-  if (!userData[userId]) {
-    userData[userId] = {
-      coins: 0,
-      favorability: 0,
-      bank: 0,
-      totalSignCount: 0,
-      continueSignCount: 0,
-      stamina: MAX_STAMINA,
-      lastStaminaTime: Date.now(),
-      catchFishCount: 0
-    };
-  }
-  if (typeof userData[userId].stamina !== 'number') {
-    userData[userId].stamina = MAX_STAMINA;
-  }
-  if (!userData[userId].lastStaminaTime) {
-    userData[userId].lastStaminaTime = Date.now();
-  }
-  if (typeof userData[userId].catchFishCount !== 'number') {
-    userData[userId].catchFishCount = 0;
-  }
+    if (!userData[userId]) {
+      userData[userId] = {
+        coins: 0,
+        favorability: 0,
+        bank: 0,
+        totalSignCount: 0,
+        continueSignCount: 0,
+        stamina: MAX_STAMINA,
+        lastStaminaTime: Date.now(),
+        catchFishCount: 0
+      };
+    }
+    if (typeof userData[userId].stamina !== 'number') {
+      userData[userId].stamina = MAX_STAMINA;
+    }
+    if (!userData[userId].lastStaminaTime) {
+      userData[userId].lastStaminaTime = Date.now();
+    }
+    if (typeof userData[userId].catchFishCount !== 'number') {
+      userData[userId].catchFishCount = 0;
+    }
 
-  recoverStamina(userData[userId]);
+    recoverStamina(userData[userId]);
 
-  if (userData[userId].stamina <= 0) {
-    fs.writeFileSync(dataPath, yaml.stringify(userData));
-    return e.reply('你已经没有体力了，休息一会儿再来摸鱼吧~', false, { at: true });
-  }
+    if (userData[userId].stamina <= 0) {
+      fs.writeFileSync(dataPath, yaml.stringify(userData));
+      return e.reply('你已经没有体力了，休息一会儿再来摸鱼吧~', false, { at: true });
+    }
 
-  let stamina = userData[userId].stamina;
-  let totalCoins = 0;
-  let totalCount = 0;
-  let fishList = [];
-  let totalStaminaCost = 0;
+    let stamina = userData[userId].stamina;
+    let totalCoins = 0;
+    let totalCount = 0;
+    let fishList = [];
+    let totalStaminaCost = 0;
+    let fishSummary = {};
+    let totalLength = 0;
+    let totalWeight = 0;
 
-  while (stamina >= 20) {
-    const totalWeight = fishTypes.reduce((sum, fish) => sum + fish.weight, 0);
-    let rand = Math.random() * totalWeight;
-    let fish;
-    for (let i = 0; i < fishTypes.length; i++) {
-      rand -= fishTypes[i].weight;
-      if (rand <= 0) {
-        fish = fishTypes[i];
+    while (stamina >= 20) {
+      const totalWeight = fishTypes.reduce((sum, fish) => sum + fish.weight, 0);
+      let rand = Math.random() * totalWeight;
+      let fish;
+      for (let i = 0; i < fishTypes.length; i++) {
+        rand -= fishTypes[i].weight;
+        if (rand <= 0) {
+          fish = fishTypes[i];
+          break;
+        }
+      }
+      if (!fish) fish = fishTypes[0];
+
+      const length = (Math.random() * (fish.maxLen - fish.minLen) + fish.minLen).toFixed(1);
+      const weight = (Math.random() * (fish.maxW - fish.minW) + fish.minW).toFixed(2);
+
+      let fishCoins = Math.floor((length * 2 + weight * 10) * fish.priceRate);
+      if (fishCoins < 1) fishCoins = 1;
+
+      let staminaCost = (
+        Math.pow(Number(length), 0.8) +
+        Math.pow(Number(weight), 2.2) * 2.2 +
+        fish.priceRate * 5
+      );
+      staminaCost *= 0.85 + Math.random() * 0.4;
+      staminaCost = Math.max(20, Math.min(120, Math.round(staminaCost)));
+
+      if (stamina < staminaCost || stamina < 20) {
+        fishList.push(`你本次摸鱼需要消耗${staminaCost}点体力，但你当前体力不足，鱼跑掉了！`);
         break;
       }
+
+      stamina -= staminaCost;
+      totalStaminaCost += staminaCost;
+      totalCoins += fishCoins;
+      totalCount += 1;
+
+      fishList.push(`你摸到了一条【${fish.name}】\n长度：${length}cm\n重量：${weight}kg\n获得${fishCoins}喵喵币，消耗体力${staminaCost}`);
+
+      // 统计
+      if (!fishSummary[fish.name]) {
+        fishSummary[fish.name] = {
+          count: 0,
+          coins: 0,
+          length: 0,
+          weight: 0
+        };
+      }
+      fishSummary[fish.name].count += 1;
+      fishSummary[fish.name].coins += fishCoins;
+      fishSummary[fish.name].length += Number(length);
+      fishSummary[fish.name].weight += Number(weight);
+
+      totalLength += Number(length);
+      totalWeight += Number(weight);
     }
-    if (!fish) fish = fishTypes[0];
 
-    const length = (Math.random() * (fish.maxLen - fish.minLen) + fish.minLen).toFixed(1);
-    const weight = (Math.random() * (fish.maxW - fish.minW) + fish.minW).toFixed(2);
-
-    let fishCoins = Math.floor((length * 2 + weight * 10) * fish.priceRate);
-    if (fishCoins < 1) fishCoins = 1;
-
-    let staminaCost = (
-      Math.pow(Number(length), 0.8) +
-      Math.pow(Number(weight), 2.2) * 2.2 +
-      fish.priceRate * 5
-    );
-    staminaCost *= 0.85 + Math.random() * 0.4;
-    staminaCost = Math.max(20, Math.min(120, Math.round(staminaCost)));
-
-    if (stamina < staminaCost || stamina < 20) {
-      fishList.push(`你本次摸鱼需要消耗${staminaCost}点体力，但你当前体力不足，鱼跑掉了！`);
-      break;
+    if (totalCount === 0) {
+      fs.writeFileSync(dataPath, yaml.stringify(userData));
+      return e.reply('你当前体力不足以摸一次鱼哦~', false, { at: true });
     }
 
-    stamina -= staminaCost;
-    totalStaminaCost += staminaCost;
-    totalCoins += fishCoins;
-    totalCount += 1;
+    userData[userId].coins += totalCoins;
+    userData[userId].stamina -= totalStaminaCost;
+    userData[userId].catchFishCount += totalCount;
 
-    fishList.push(`你摸到了一条【${fish.name}】\n长度：${length}cm\n重量：${weight}kg\n获得${fishCoins}喵喵币，消耗体力${staminaCost}`);
-  }
-
-  if (totalCount === 0) {
     fs.writeFileSync(dataPath, yaml.stringify(userData));
-    return e.reply('你当前体力不足以摸一次鱼哦~', false, { at: true });
-  }
 
-  userData[userId].coins += totalCoins;
-  userData[userId].stamina -= totalStaminaCost;
-  userData[userId].catchFishCount += totalCount;
+    // 渲染统计表图片
+    const summaryArr = Object.entries(fishSummary).map(([name, stat]) => ({
+      name,
+      count: stat.count,
+      coins: stat.coins,
+      length: stat.length.toFixed(1),
+      weight: stat.weight.toFixed(2)
+    }));
 
-  fs.writeFileSync(dataPath, yaml.stringify(userData));
+    const summaryData = {
+      list: summaryArr,
+      totalCount,
+      totalCoins,
+      totalLength: totalLength.toFixed(1),
+      totalWeight: totalWeight.toFixed(2),
+      totalStaminaCost,
+      stamina: userData[userId].stamina
+    };
 
-  // 构造消息批次
-  const batchSize = 99;
-  const batches = [];
-  for (let i = 0; i < fishList.length; i += batchSize) {
-    batches.push(fishList.slice(i, i + batchSize));
-  }
+    const base64 = await puppeteer.screenshot('xunmiao-plugin', {
+      saveId: 'moyu_summary',
+      imgType: 'png',
+      tplFile: `${_path}/plugins/xunmiao-plugin/res/moyu/moyu_summary.html`,
+      pluginResources: `${_path}/plugins/xunmiao-plugin/res/moyu/moyu_summary.css`,
+      data: summaryData
+    });
 
-  const makeMsg = async (arr) => {
-    const nickname = e.sender?.nickname || e.member?.card || e.user_id;
-    if (typeof Bot.makeForwardArray === 'function') {
-      return await Bot.makeForwardArray(arr);
-    } else if (typeof Bot.makeForwardMsg === 'function') {
-      return await Bot.makeForwardMsg(e, arr.map(msg => ({
-        message: msg,
-        nickname,
-        user_id: e.user_id
-      })), `摸鱼记录`);
-    } else {
-      return arr.join('\n\n');
-    }
-  };
-
-  // 每个批次发送（加上汇总）
-  for (let i = 0; i < batches.length; i++) {
-    const head = `【第 ${i + 1} 页】本次连续摸鱼${totalCount}次，共获得${totalCoins}喵喵币，消耗体力${totalStaminaCost}，当前体力${userData[userId].stamina}`;
-    const batchMsg = [head, ...batches[i]];
-    const msg = await makeMsg(batchMsg);
-    await e.reply(msg);
-    }
+    return e.reply(base64, false, { at: true });
   }
 }
