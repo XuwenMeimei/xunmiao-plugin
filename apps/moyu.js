@@ -225,15 +225,18 @@ export class moyu extends plugin {
       if (fishCoins < 1) fishCoins = 1;
 
       // 体力消耗
-      let staminaCost = Math.ceil(Number(length) / 2 + Number(weight) * 15);
-      if (staminaCost < 35) staminaCost = 35;
-      if (staminaCost > 100) staminaCost = 100;
+      let staminaCost = Math.ceil(
+      Math.sqrt(Number(length)) * 1.8 + Number(weight) ** 1.5 * 2.5
+      );
+      staminaCost *= (1 + fish.priceRate * 0.1);
+      staminaCost *= 0.9 + Math.random() * 0.2;
+      staminaCost = Math.min(120, Math.max(20, Math.ceil(staminaCost)));
 
       if (stamina < staminaCost) {
         // 体力不足，提示本次摸鱼需要消耗多少体力
         fishList.push(`你本次摸鱼需要消耗${staminaCost}点体力，但你当前体力不足，鱼跑掉了！`);
       }
-      
+
       if (stamina < 20) break;
 
       stamina -= staminaCost;
