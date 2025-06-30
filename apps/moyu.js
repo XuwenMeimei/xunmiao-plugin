@@ -129,7 +129,6 @@ export class moyu extends plugin {
     let fishCoins = Math.floor((length * 2 + weight * 10) * fish.priceRate);
     if (fishCoins < 1) fishCoins = 1;
 
-    // 体力消耗 = (长度/2 + 重量*15)，向上取整，最少35点，最多100点
     let staminaCost = Math.ceil(
     Math.sqrt(Number(length)) * 1.8 + Number(weight) ** 1.5 * 2.5
     );
@@ -203,7 +202,7 @@ export class moyu extends plugin {
     let totalStaminaCost = 0;
 
     // 连续摸鱼直到体力小于35
-    while (stamina >= 35) {
+    while (stamina >= 20) {
       // 按权重随机选择鱼的品种
       const totalWeight = fishTypes.reduce((sum, fish) => sum + fish.weight, 0);
       let rand = Math.random() * totalWeight;
@@ -234,7 +233,8 @@ export class moyu extends plugin {
         // 体力不足，提示本次摸鱼需要消耗多少体力
         fishList.push(`你本次摸鱼需要消耗${staminaCost}点体力，但你当前体力不足，鱼跑掉了！`);
       }
-      if (stamina < 35) break;
+      
+      if (stamina < 20) break;
 
       stamina -= staminaCost;
       totalStaminaCost += staminaCost;
