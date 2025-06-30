@@ -211,8 +211,9 @@ export class moyu extends plugin {
     let totalWeight = 0;
 
     while (stamina >= 20) {
-      const totalWeight = fishTypes.reduce((sum, fish) => sum + fish.weight, 0);
-      let rand = Math.random() * totalWeight;
+      // 这里改为 let，避免重复声明
+      let totalFishWeight = fishTypes.reduce((sum, fish) => sum + fish.weight, 0);
+      let rand = Math.random() * totalFishWeight;
       let fish;
       for (let i = 0; i < fishTypes.length; i++) {
         rand -= fishTypes[i].weight;
