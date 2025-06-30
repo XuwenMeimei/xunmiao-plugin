@@ -255,7 +255,7 @@ export class moyu extends plugin {
   fs.writeFileSync(dataPath, yaml.stringify(userData));
 
   // 构造消息批次
-  const batchSize = 50;
+  const batchSize = 99;
   const batches = [];
   for (let i = 0; i < fishList.length; i += batchSize) {
     batches.push(fishList.slice(i, i + batchSize));
