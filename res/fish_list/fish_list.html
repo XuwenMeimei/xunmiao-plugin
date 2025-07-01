@@ -18,15 +18,15 @@
       </tr>
       {{each data.fishList item}}
       <tr>
-        <td>{{item.name}}</td>
-        <td>{{item.len}}</td>
-        <td>{{item.weight}}</td>
+        <td class="fish-name">{{item.name}}</td>
+        <td class="fish-len">{{item.len}}</td>
+        <td class="fish-weight">{{item.weight}}</td>
         <td>
           <span class="prob-color {{item.probLevel}}">
             {{item.prob}}
           </span>
         </td>
-        <td>{{item.price}}</td>
+        <td class="fish-price">{{item.price}}</td>
       </tr>
       {{/each}}
     </table>
