@@ -166,34 +166,29 @@ export class diaoyu extends plugin {
     // 加载鱼种
     const fishTypes = getFishTypes();
 
-    // 根据鱼饵调整鱼池
-    let fishPool = fishTypes;
+    function buildFishPool(fishTypes, filterFn) {
+      let pool = [];
+      fishTypes.forEach(f => {
+        if (!filterFn || filterFn(f)) {
+          for (let i = 0; i < (f.weight || 1); i++) {
+            pool.push(f);
+          }
+        }
+      });
+      return pool;
+    }
+
+    let fishPool;
     if (baitEquipped === 5) {
-      fishPool = fishTypes.filter(f => f.normal);
+      fishPool = buildFishPool(fishTypes, f => f.normal);
     } else if (baitEquipped === 6) {
-      fishPool = [];
-      fishTypes.forEach(f => {
-        if (f.normal) {
-          fishPool.push(f);
-        } else if (['锦鲤', '猫猫鱼'].includes(f.name)) {
-          for (let i = 0; i < 3; i++) fishPool.push(f);
-        }
-      });
+      fishPool = buildFishPool(fishTypes, f => f.normal || (!f.normal && f.weight > 0));
     } else if (baitEquipped === 7) {
-      fishPool = [];
-      fishTypes.forEach(f => {
-        if (f.normal) {
-          fishPool.push(f);
-        } else if (['锦鲤', '猫猫鱼'].includes(f.name)) {
-          for (let i = 0; i < 4; i++) fishPool.push(f);
-        } else if (['金龙鱼', '神秘鱼'].includes(f.name)) {
-          for (let i = 0; i < 4; i++) fishPool.push(f);
-        }
-      });
+      fishPool = buildFishPool(fishTypes, f => f.normal || (!f.normal && f.weight > 0));
     } else if (baitEquipped === 8) {
-      fishPool = fishTypes.filter(f =>
-        ['锦鲤', '猫猫鱼', '金龙鱼', '神秘鱼', '几把鱼'].includes(f.name)
-      );
+      fishPool = buildFishPool(fishTypes, f => !f.normal && f.weight > 0);
+    } else {
+      fishPool = buildFishPool(fishTypes);
     }
 
     const fish = fishPool[Math.floor(Math.random() * fishPool.length)];
@@ -236,25 +231,25 @@ export class diaoyu extends plugin {
     let shopItems = getShopItems();
 
     if (!userData[userId]) {
-      userData[userId] = {
-        coins: 0,
-        favorability: 0,
-        bank: 0,
-        totalSignCount: 0,
-        continueSignCount: 0,
-        stamina: MAX_STAMINA,
-        lastStaminaTime: Date.now(),
-        catchFishCount: 0
-      };
+        userData[userId] = {
+            coins: 0,
+            favorability: 0,
+            bank: 0,
+            totalSignCount: 0,
+            continueSignCount: 0,
+            stamina: MAX_STAMINA,
+            lastStaminaTime: Date.now(),
+            catchFishCount: 0
+        };
     }
     if (typeof userData[userId].stamina !== 'number') {
-      userData[userId].stamina = MAX_STAMINA;
+        userData[userId].stamina = MAX_STAMINA;
     }
     if (!userData[userId].lastStaminaTime) {
-      userData[userId].lastStaminaTime = Date.now();
+        userData[userId].lastStaminaTime = Date.now();
     }
     if (typeof userData[userId].catchFishCount !== 'number') {
-      userData[userId].catchFishCount = 0;
+        userData[userId].catchFishCount = 0;
     }
 
     // 自动恢复体力
@@ -267,30 +262,30 @@ export class diaoyu extends plugin {
 
     // 必须同时装备鱼竿和鱼饵
     if (!rodEquipped && !baitEquipped) {
-      return e.reply('你没有装备鱼竿和鱼饵，无法钓鱼！请先在背包中装备。', false, { at: true });
+        return e.reply('你没有装备鱼竿和鱼饵，无法钓鱼！请先在背包中装备。', false, { at: true });
     }
     if (!rodEquipped) {
-      return e.reply('你没有装备鱼竿，无法钓鱼！请先在背包中装备鱼竿。', false, { at: true });
+        return e.reply('你没有装备鱼竿，无法钓鱼！请先在背包中装备鱼竿。', false, { at: true });
     }
     if (!baitEquipped) {
-      return e.reply('你没有装备鱼饵，无法钓鱼！请先在背包中装备鱼饵。', false, { at: true });
+        return e.reply('你没有装备鱼饵，无法钓鱼！请先在背包中装备鱼饵。', false, { at: true });
     }
 
     // 检查背包鱼饵数量
     if (!invData[userId][baitEquipped] || invData[userId][baitEquipped] <= 0) {
-      return e.reply('你的鱼饵已经用完了，请补充后再钓鱼！', false, { at: true });
+        return e.reply('你的鱼饵已经用完了，请补充后再钓鱼！', false, { at: true });
     }
 
     // 钓鱼概率：以鱼竿配置为主
     let fishRate = 0.25;
     const rodItem = shopItems.find(i => i.id === rodEquipped);
     if (rodItem && rodItem.use && rodItem.use.type === 'diaoyu_rod') {
-      const match = rodItem.desc && rodItem.desc.match(/(\d+(\.\d+)?)%/);
-      if (match) {
-        fishRate = parseFloat(match[1]) / 100;
-      } else {
-        fishRate = 0.5;
-      }
+        const match = rodItem.desc && rodItem.desc.match(/(\d+(\.\d+)?)%/);
+        if (match) {
+            fishRate = parseFloat(match[1]) / 100;
+        } else {
+            fishRate = 0.5;
+        }
     }
 
     let stamina = userData[userId].stamina;
@@ -306,98 +301,95 @@ export class diaoyu extends plugin {
 
     const fishTypes = getFishTypes();
 
+    // 构建概率鱼池工具函数
+    function buildFishPool(fishTypes, filterFn) {
+        let pool = [];
+        fishTypes.forEach(f => {
+            if (!filterFn || filterFn(f)) {
+                for (let i = 0; i < (f.weight || 1); i++) {
+                    pool.push(f);
+                }
+            }
+        });
+        return pool;
+    }
+
+    // 预先构建鱼池，避免每次循环都构建
+    let fishPool;
+    if (baitEquipped === 5) {
+        fishPool = buildFishPool(fishTypes, f => f.normal);
+    } else if (baitEquipped === 6) {
+        fishPool = buildFishPool(fishTypes, f => f.normal || (!f.normal && f.weight > 0));
+    } else if (baitEquipped === 7) {
+        fishPool = buildFishPool(fishTypes, f => f.normal || (!f.normal && f.weight > 0));
+    } else if (baitEquipped === 8) {
+        fishPool = buildFishPool(fishTypes, f => !f.normal && f.weight > 0);
+    } else {
+        fishPool = buildFishPool(fishTypes);
+    }
+
     while (stamina >= 20 && baitCount > 0) {
-      // 每次消耗一个鱼饵
-      baitCount--;
-      invData[userId][baitEquipped]--;
+        // 每次消耗一个鱼饵
+        baitCount--;
+        invData[userId][baitEquipped]--;
 
-      // 钓鱼判定
-      if (Math.random() > fishRate) {
-        stamina -= 20;
-        if (stamina < 0) stamina = 0;
-        emptyCount++;
-        fishList.push(`钓了半天什么都没钓到，消耗20点体力和1个鱼饵，当前体力${stamina}`);
-        continue;
-      }
+        // 钓鱼判定
+        if (Math.random() > fishRate) {
+            stamina -= 20;
+            if (stamina < 0) stamina = 0;
+            emptyCount++;
+            fishList.push(`钓了半天什么都没钓到，消耗20点体力和1个鱼饵，当前体力${stamina}`);
+            continue;
+        }
 
-      // 根据鱼饵调整鱼池
-      let fishPool = fishTypes;
-      if (baitEquipped === 5) {
-        fishPool = fishTypes.filter(f => f.normal);
-      } else if (baitEquipped === 6) {
-        fishPool = [];
-        fishTypes.forEach(f => {
-          if (f.normal) {
-            fishPool.push(f);
-          } else if (['锦鲤', '猫猫鱼'].includes(f.name)) {
-            for (let i = 0; i < 3; i++) fishPool.push(f);
-          }
-        });
-      } else if (baitEquipped === 7) {
-        fishPool = [];
-        fishTypes.forEach(f => {
-          if (f.normal) {
-            fishPool.push(f);
-          } else if (['锦鲤', '猫猫鱼'].includes(f.name)) {
-            for (let i = 0; i < 4; i++) fishPool.push(f);
-          } else if (['金龙鱼', '神秘鱼'].includes(f.name)) {
-            for (let i = 0; i < 4; i++) fishPool.push(f);
-          }
-        });
-      } else if (baitEquipped === 8) {
-        fishPool = fishTypes.filter(f =>
-          ['锦鲤', '猫猫鱼', '金龙鱼', '神秘鱼', '几把鱼'].includes(f.name)
+        const fish = fishPool[Math.floor(Math.random() * fishPool.length)];
+        const length = (Math.random() * (fish.maxLen - fish.minLen) + fish.minLen).toFixed(1);
+        const weight = (Math.random() * (fish.maxW - fish.minW) + fish.minW).toFixed(2);
+
+        let fishCoins = Math.floor((length * 2 + weight * 10) * fish.priceRate);
+        if (fishCoins < 1) fishCoins = 1;
+
+        let staminaCost = (
+            Math.pow(Number(length), 0.8) +
+            Math.pow(Number(weight), 2.2) * 2.2 +
+            fish.priceRate * 5
         );
-      }
+        staminaCost *= 0.85 + Math.random() * 0.4;
+        staminaCost = Math.max(20, Math.min(120, Math.round(staminaCost)));
 
-      const fish = fishPool[Math.floor(Math.random() * fishPool.length)];
-      const length = (Math.random() * (fish.maxLen - fish.minLen) + fish.minLen).toFixed(1);
-      const weight = (Math.random() * (fish.maxW - fish.minW) + fish.minW).toFixed(2);
+        if (stamina < staminaCost) {
+            fishList.push(`你本次钓鱼需要消耗${staminaCost}点体力，但你当前体力不足，鱼跑掉了！`);
+            break;
+        }
 
-      let fishCoins = Math.floor((length * 2 + weight * 10) * fish.priceRate);
-      if (fishCoins < 1) fishCoins = 1;
+        stamina -= staminaCost;
+        totalStaminaCost += staminaCost;
+        totalCoins += fishCoins;
+        totalCount += 1;
 
-      let staminaCost = (
-        Math.pow(Number(length), 0.8) +
-        Math.pow(Number(weight), 2.2) * 2.2 +
-        fish.priceRate * 5
-      );
-      staminaCost *= 0.85 + Math.random() * 0.4;
-      staminaCost = Math.max(20, Math.min(120, Math.round(staminaCost)));
+        fishList.push(`你钓到了一条【${fish.name}】\n长度：${length}cm\n重量：${weight}kg\n获得${fishCoins}喵喵币，消耗体力${staminaCost}和1个鱼饵`);
 
-      if (stamina < staminaCost) {
-        fishList.push(`你本次钓鱼需要消耗${staminaCost}点体力，但你当前体力不足，鱼跑掉了！`);
-        break;
-      }
+        // 统计
+        if (!fishSummary[fish.name]) {
+            fishSummary[fish.name] = {
+                count: 0,
+                coins: 0,
+                length: 0,
+                weight: 0
+            };
+        }
+        fishSummary[fish.name].count += 1;
+        fishSummary[fish.name].coins += fishCoins;
+        fishSummary[fish.name].length += Number(length);
+        fishSummary[fish.name].weight += Number(weight);
 
-      stamina -= staminaCost;
-      totalStaminaCost += staminaCost;
-      totalCoins += fishCoins;
-      totalCount += 1;
-
-      fishList.push(`你钓到了一条【${fish.name}】\n长度：${length}cm\n重量：${weight}kg\n获得${fishCoins}喵喵币，消耗体力${staminaCost}和1个鱼饵`);
-
-      // 统计
-      if (!fishSummary[fish.name]) {
-        fishSummary[fish.name] = {
-          count: 0,
-          coins: 0,
-          length: 0,
-          weight: 0
-        };
-      }
-      fishSummary[fish.name].count += 1;
-      fishSummary[fish.name].coins += fishCoins;
-      fishSummary[fish.name].length += Number(length);
-      fishSummary[fish.name].weight += Number(weight);
-
-      totalLength += Number(length);
-      totalWeight += Number(weight);
+        totalLength += Number(length);
+        totalWeight += Number(weight);
     }
 
     if (totalCount === 0 && emptyCount === 0) {
-      fs.writeFileSync(dataPath, yaml.stringify(userData));
-      return e.reply('你当前体力或鱼饵不足以钓一次鱼哦~', false, { at: true });
+        fs.writeFileSync(dataPath, yaml.stringify(userData));
+        return e.reply('你当前体力或鱼饵不足以钓一次鱼哦~', false, { at: true });
     }
 
     userData[userId].coins += totalCoins;
@@ -412,41 +404,41 @@ export class diaoyu extends plugin {
 
     // 渲染统计表图片
     const summaryArr = Object.entries(fishSummary).map(([name, stat]) => ({
-      name,
-      count: stat.count,
-      coins: stat.coins,
-      length: stat.length.toFixed(1),
-      weight: stat.weight.toFixed(2)
+        name,
+        count: stat.count,
+        coins: stat.coins,
+        length: stat.length.toFixed(1),
+        weight: stat.weight.toFixed(2)
     }));
 
     // 统计本次消耗的鱼饵数量和名称
     const baitUsed = invData[userId][baitEquipped] !== undefined
-      ? (invData[userId][baitEquipped] + totalCount + emptyCount) - baitCount
-      : totalCount + emptyCount;
+        ? (invData[userId][baitEquipped] + totalCount + emptyCount) - baitCount
+        : totalCount + emptyCount;
     const baitItem = shopItems.find(i => i.id === baitEquipped);
     const baitName = baitItem ? baitItem.name : `#${baitEquipped}`;
 
     const summaryData = {
-      list: summaryArr,
-      totalCount,
-      totalCoins,
-      totalLength: totalLength.toFixed(1),
-      totalWeight: totalWeight.toFixed(2),
-      totalStaminaCost: totalStaminaCost + emptyCount * 20,
-      stamina: userData[userId].stamina,
-      emptyCount,
-      baitUsed: totalCount + emptyCount,
-      baitName
+        list: summaryArr,
+        totalCount,
+        totalCoins,
+        totalLength: totalLength.toFixed(1),
+        totalWeight: totalWeight.toFixed(2),
+        totalStaminaCost: totalStaminaCost + emptyCount * 20,
+        stamina: userData[userId].stamina,
+        emptyCount,
+        baitUsed: totalCount + emptyCount,
+        baitName
     };
 
     const base64 = await puppeteer.screenshot('xunmiao-plugin', {
-      saveId: 'diaoyu_summary',
-      imgType: 'png',
-      tplFile: `${_path}/plugins/xunmiao-plugin/res/diaoyu/diaoyu_summary.html`,
-      pluginResources: `${_path}/plugins/xunmiao-plugin/res/diaoyu/diaoyu_summary.css`,
-      data: summaryData
+        saveId: 'diaoyu_summary',
+        imgType: 'png',
+        tplFile: `${_path}/plugins/xunmiao-plugin/res/diaoyu/diaoyu_summary.html`,
+        pluginResources: `${_path}/plugins/xunmiao-plugin/res/diaoyu/diaoyu_summary.css`,
+        data: summaryData
     });
 
     return e.reply(base64, false, { at: true });
-  }
+}
 }
