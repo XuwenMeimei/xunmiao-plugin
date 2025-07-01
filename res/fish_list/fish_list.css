@@ -62,10 +62,10 @@ body{
   font-size: 22px;
 }
 
-.prob-color.prob-high { color: #43a047; font-weight: bold; text-shadow: 0 1px 2px #c8e6c9; }
-.prob-color.prob-mid  { color: #1976d2; font-weight: bold; text-shadow: 0 1px 2px #bbdefb; }
-.prob-color.prob-low  { color: #fb8c00; font-weight: bold; text-shadow: 0 1px 2px #ffe0b2; }
-.prob-color.prob-rare { color: #e53935; font-weight: bold; text-shadow: 0 1px 2px #ffcdd2; }
+.prob-color.prob-high { color: #43a047; text-shadow: 0 1px 2px #c8e6c9; }
+.prob-color.prob-mid  { color: #1976d2; text-shadow: 0 1px 2px #bbdefb; }
+.prob-color.prob-low  { color: #fb8c00; text-shadow: 0 1px 2px #ffe0b2; }
+.prob-color.prob-rare { color: #e53935; text-shadow: 0 1px 2px #ffcdd2; }
 
 .fish-list-footer {
   text-align: center;
