@@ -227,6 +227,6 @@ export class shop extends plugin {
       data: receiptData
     });
 
-    return e.reply(base64, false, { at: true });
+    return e.reply(base64, false, { at: false });
   }
 }
