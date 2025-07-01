@@ -36,17 +36,18 @@ body, html {
 
 .help-list {
   display: flex;
-  flex-direction: column;
-  gap: 18px;
+  flex-wrap: wrap;
+  gap: 20px;
   padding: 0;
   margin: 0;
   width: 100%;
+  justify-content: space-between;
 }
 
 .help-list li {
   background: #f7faff;
   border-radius: 16px;
-  padding: 18px 24px 14px 24px;
+  padding: 28px 24px 22px 24px;
   box-shadow: 0 2px 8px #e0eaff;
   border: 2.5px solid #b3c6ff;
   position: relative;
@@ -56,7 +57,11 @@ body, html {
   display: flex;
   align-items: center;
   gap: 18px;
-  transition: box-shadow 0.2s;
+  width: 48%;
+  min-width: 260px;
+  max-width: 48%;
+  min-height: 90px;
+  box-sizing: border-box;
   border-bottom: 5px solid #a3bfff;
   border-right: 5px solid #a3bfff;
   border-top: 2.5px solid #e0eaff;
