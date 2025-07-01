@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>寻喵商店</title>
+  <link rel="stylesheet" href="{{pluginResources}}">
+</head>
+<body>
+  <div class="shop-card">
+    <h1 class="shop-title">寻喵商店</h1>
+    <div class="shop-list">
+      {{each data.list item}}
+      <div class="shop-item">
+        <div class="item-header">
+          <span class="item-id">#{{item.id}}</span>
+          <span class="item-name">{{item.name}}</span>
+        </div>
+        <div class="item-desc">{{item.desc}}</div>
+        <div class="item-info">
+          <span class="item-price">{{item.price}} 喵喵币</span>
+          <span class="item-stock">{{item.stock}}</span>
+          {{if item.limit}}<span class="item-limit">{{item.limit}}</span>{{/if}}
+        </div>
+      </div>
+      {{/each}}
+    </div>
+    <div class="shop-tip">{{data.tip}}</div>
+  </div>
+</body>
+</html>

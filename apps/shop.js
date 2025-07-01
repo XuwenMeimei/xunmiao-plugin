@@ -67,20 +67,43 @@ export class shop extends plugin {
     let shopStock = getShopStock();
     if (!shopStock[nowDate]) shopStock[nowDate] = {};
 
-    let msg = '【寻喵商店】\n';
-    shopItems.forEach(item => {
+    // 组装渲染数据
+    const itemList = shopItems.map(item => {
       let stockStr = '';
       if (item.max_per_day !== undefined && item.max_per_day !== -1) {
         const sold = shopStock[nowDate][item.id] || 0;
-        stockStr = `（今日剩余${item.max_per_day - sold}）`;
+        stockStr = `今日剩余${item.max_per_day - sold}`;
+      } else {
+        stockStr = '不限购';
       }
+      let limitStr = '';
       if (item.only_once) {
-        stockStr += '（每人限购1次）';
+        limitStr = '每人限购1次';
       }
-      msg += `#${item.id} ${item.name} - ${item.price}喵喵币${stockStr}\n  ${item.desc}\n`;
+      return {
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        desc: item.desc,
+        stock: stockStr,
+        limit: limitStr
+      }
     });
-    msg += '\n发送 #购买商品编号 进行购买，如 #购买1';
-    return e.reply(msg, false, { at: true });
+
+    const data = {
+      list: itemList,
+      tip: '发送 #购买商品编号 进行购买，如 #购买1'
+    };
+
+    const base64 = await puppeteer.screenshot('xunmiao-plugin', {
+      saveId: 'shop',
+      imgType: 'png',
+      tplFile: `${_path}/plugins/xunmiao-plugin/res/shop/shop.html`,
+      pluginResources: `${_path}/plugins/xunmiao-plugin/res/shop/shop.css`,
+      data
+    });
+
+    return e.reply(base64, false, { at: true });
   }
 
   async buyItem(e) {
