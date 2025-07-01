@@ -35,11 +35,10 @@ export class fish_list extends plugin {
     // 计算总权重
     const totalWeight = fishTypes.reduce((sum, f) => sum + (f.weight || 1), 0);
 
-    // 整理数据并排序，并加上概率颜色
-    function getProbColor(prob) {
-      if (prob >= 0.08) return 'prob-high';
-      if (prob >= 0.03) return 'prob-mid';
-      if (prob >= 0.01) return 'prob-low';
+    function getProbLevel(prob) {
+      if (prob >= 0.10) return 'prob-high';
+      if (prob >= 0.05) return 'prob-mid';
+      if (prob >= 0.02) return 'prob-low';
       return 'prob-rare';
     }
 
@@ -51,12 +50,11 @@ export class fish_list extends plugin {
         weight: `${f.minW}~${f.maxW}`,
         prob: (probValue * 100).toFixed(2) + '%',
         price: `x${f.priceRate}`,
-        probColor: getProbColor(probValue),
+        probLevel: getProbLevel(probValue),
         probValue,
         priceValue: f.priceRate
       }
     }).sort((a, b) => {
-      // 先按概率降序，再按价格倍率降序
       if (b.probValue !== a.probValue) return b.probValue - a.probValue;
       return b.priceValue - a.priceValue;
     });

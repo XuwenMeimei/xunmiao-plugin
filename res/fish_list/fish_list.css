@@ -62,10 +62,38 @@ body{
   font-size: 22px;
 }
 
-.prob-color.prob-high { color: #43a047; text-shadow: 0 1px 2px #c8e6c9; }
-.prob-color.prob-mid  { color: #1976d2; text-shadow: 0 1px 2px #bbdefb; }
-.prob-color.prob-low  { color: #fb8c00; text-shadow: 0 1px 2px #ffe0b2; }
-.prob-color.prob-rare { color: #e53935; text-shadow: 0 1px 2px #ffcdd2; }
+.prob-color.prob-high {
+  background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%);
+  color: #226d3a;
+  font-weight: bold;
+  border-radius: 8px;
+  padding: 2px 10px;
+  box-shadow: 0 1px 4px #b3e5fc44;
+}
+.prob-color.prob-mid {
+  background: linear-gradient(90deg, #42a5f5 0%, #7e57c2 100%);
+  color: #174a7c;
+  font-weight: bold;
+  border-radius: 8px;
+  padding: 2px 10px;
+  box-shadow: 0 1px 4px #b3e5fc44;
+}
+.prob-color.prob-low {
+  background: linear-gradient(90deg, #ffb347 0%, #ffcc33 100%);
+  color: #a65c00;
+  font-weight: bold;
+  border-radius: 8px;
+  padding: 2px 10px;
+  box-shadow: 0 1px 4px #ffe0b244;
+}
+.prob-color.prob-rare {
+  background: linear-gradient(90deg, #ff5858 0%, #f09819 100%);
+  color: #a60000;
+  font-weight: bold;
+  border-radius: 8px;
+  padding: 2px 10px;
+  box-shadow: 0 1px 4px #ffcdd244;
+}
 
 .fish-list-footer {
   text-align: center;
