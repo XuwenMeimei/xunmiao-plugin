@@ -60,7 +60,7 @@ export class fish_list extends plugin {
     // 先按概率从高到低排序，再按最大价值从高到低排序（不交叉）
     .sort((a, b) => {
       if (b.probValue !== a.probValue) return b.probValue - a.probValue;
-      return b.maxPrice - a.maxPrice;
+      return a.maxPrice - b.maxPrice;
     });
 
     const base64 = await puppeteer.screenshot('xunmiao-plugin', {
