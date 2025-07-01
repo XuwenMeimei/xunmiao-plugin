@@ -47,25 +47,26 @@ body, html {
 .help-list li {
   background: #f7faff;
   border-radius: 16px;
-  padding: 28px 24px 22px 24px;
+  padding: 22px 24px 18px 24px;
   box-shadow: 0 2px 8px #e0eaff;
   border: 2.5px solid #b3c6ff;
   position: relative;
   font-size: 22px;
   color: #4e7cff;
   margin-bottom: 0;
-  display: flex;
-  align-items: center;
-  gap: 18px;
   width: 48%;
   min-width: 260px;
   max-width: 48%;
   min-height: 90px;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   border-bottom: 5px solid #a3bfff;
   border-right: 5px solid #a3bfff;
   border-top: 2.5px solid #e0eaff;
   border-left: 2.5px solid #e0eaff;
+  transition: box-shadow 0.2s;
 }
 
 .help-list li:hover {
@@ -76,20 +77,24 @@ body, html {
   background: #fffbe6;
   color: #e6b800;
   border-radius: 8px;
-  padding: 2px 10px;
-  font-size: 20px;
-  margin-right: 8px;
+  padding: 4px 14px;
+  font-size: 22px;
+  margin-bottom: 8px;
   border: 1px solid #ffe58f;
   box-shadow: 0 1px 2px #ffe58f44;
+  font-weight: bold;
   letter-spacing: 1px;
-  min-width: 160px;
+  min-width: 120px;
   text-align: center;
+  display: inline-block;
 }
 
 .help-list .desc {
   color: #666;
-  font-size: 20px;
-  margin-left: 8px;
+  font-size: 19px;
+  margin-left: 2px;
+  margin-top: 0;
   flex: 1;
-  line-height: 1.6;
+  line-height: 1.7;
+  word-break: break-all;
 }
