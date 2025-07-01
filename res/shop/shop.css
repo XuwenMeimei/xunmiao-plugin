@@ -10,7 +10,7 @@ body, html {
   padding: 0;
   width: 700px;
   min-height: 100vh;
-  background: #f8faff;
+  background: linear-gradient(135deg, #e6f0ff 0%, #fbefff 100%);
   font-family: 'LcCute', 'Microsoft YaHei', sans-serif;
 }
 
@@ -18,9 +18,9 @@ body, html {
   width: 100vw;
   min-height: 100vh;
   margin: 0;
-  background: #fff;
+  background: #fff9fd;
   border-radius: 0;
-  box-shadow: none;
+  box-shadow: 0 0 32px #e0eaff88;
   padding: 36px 32px 24px 32px;
   box-sizing: border-box;
   position: relative;
@@ -43,7 +43,7 @@ body, html {
 }
 
 .shop-item {
-  background: linear-gradient(135deg, #fbefff 60%, #e3f0ff 100%);
+  background: linear-gradient(135deg, #f7faff 70%, #e6eeff 100%);
   border-radius: 18px;
   padding: 18px 24px 14px 24px;
   box-shadow: 0 4px 24px #b3c6ff, 0 1.5px 0 #fff inset;
@@ -51,13 +51,8 @@ body, html {
   position: relative;
   width: 48%;
   min-width: 260px;
-  max-width: 48%;
-  min-height: 150px;
   box-sizing: border-box;
   margin-bottom: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
 }
 
 .item-header {
@@ -91,12 +86,11 @@ body, html {
   color: #666;
   margin: 8px 0 6px 0;
   line-height: 1.5;
-  flex: 1 1 auto;
 }
 
 .item-info {
   display: flex;
-  gap: 12px;
+  gap: 18px;
   font-size: 18px;
   color: #888;
   align-items: center;
