@@ -39,6 +39,7 @@ body {
   margin-bottom: 28px;
   text-shadow: 0 4px 16px #f8bbd0, 0 1px 0 #fff;
   letter-spacing: 3px;
+
 }
 
 .fish-table {
@@ -127,6 +128,12 @@ body {
   background: linear-gradient(90deg, #ff80ab 0%, #f09819 100%);
   color: #a60000;
   border-color: #ffcdd2;
+  animation: rare-glow 1.5s infinite alternate;
+}
+
+@keyframes rare-glow {
+  0% { box-shadow: 0 0 8px #ff80ab88; }
+  100% { box-shadow: 0 0 24px #ff80abcc; }
 }
 
 .fish-list-footer {

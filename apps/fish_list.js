@@ -54,13 +54,13 @@ export class fish_list extends plugin {
         probColor: getProbColor(probValue),
         probValue,
         priceValue: f.priceRate,
-        maxPrice: (f.maxW || 0) * (f.priceRate || 0) // 新增最大价值字段
+        maxPrice: (f.maxW || 0) * (f.priceRate || 0)
       }
-    }).sort((a, b) => {
-      // 按最大价值升序排序，最便宜的鱼在最上面，最值钱的鱼在最下面
-      if (a.maxPrice !== b.maxPrice) return a.maxPrice - b.maxPrice;
-      // 若最大价值相同，再按概率升序（稀有的在下）
-      return a.probValue - b.probValue;
+    })
+    // 先按概率从高到低排序，再按最大价值从高到低排序（不交叉）
+    .sort((a, b) => {
+      if (b.probValue !== a.probValue) return b.probValue - a.probValue;
+      return b.maxPrice - a.maxPrice;
     });
 
     const base64 = await puppeteer.screenshot('xunmiao-plugin', {
