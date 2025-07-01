@@ -8,7 +8,7 @@
 body html{
   margin: 0;
   padding: 0;
-  width: auto;
+  width: 1300px;
   font-family: 'LcCute', '微软雅黑', sans-serif;
   background: linear-gradient(135deg, #e0f7fa 0%, #fffbe6 100%);
   display: flex;
