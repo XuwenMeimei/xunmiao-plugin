@@ -48,8 +48,11 @@ function recoverStamina(user) {
 
 const EQUIP_TYPES = {
   3: 'glove',   // 摸鱼手套
-  4: 'rod',     // 初级鱼竿
-  5: 'bait'     // 初级鱼饵
+  4: 'rod',     // 鱼竿
+  5: 'bait',    // 初级鱼饵
+  6: 'bait',    // 中级鱼饵
+  7: 'bait',    // 高级鱼饵
+  8: 'bait'     // 特级鱼饵
 };
 
 // 获取装备状态
@@ -129,14 +132,25 @@ export class inv extends plugin {
     let equipData = getEquipData(userId, invData);
     const type = EQUIP_TYPES[itemId];
 
-    // 只能装备一个同类型物品
-    for (const [id, t] of Object.entries(EQUIP_TYPES)) {
-      if (t === type && equipData[type]) {
-        return e.reply(`你已经装备了${shopItems.find(i => i.id == id).name}，请先卸下再装备新的。`, false, { at: true });
+    // 如果是鱼饵，卸下原有鱼饵（同一时间只能装备一种鱼饵）
+    if (type === 'bait') {
+      // 卸下所有已装备的鱼饵
+      for (const [id, t] of Object.entries(EQUIP_TYPES)) {
+        if (t === 'bait' && equipData.bait === parseInt(id)) {
+          delete equipData.bait;
+        }
       }
+      equipData.bait = itemId;
+    } else {
+      // 只能装备一个同类型物品
+      for (const [id, t] of Object.entries(EQUIP_TYPES)) {
+        if (t === type && equipData[type]) {
+          return e.reply(`你已经装备了${shopItems.find(i => i.id == equipData[type]).name}，请先卸下再装备新的。`, false, { at: true });
+        }
+      }
+      equipData[type] = itemId;
     }
 
-    equipData[type] = itemId;
     fs.writeFileSync(invDataPath, yaml.stringify(invData));
     return e.reply(`你已装备【${shopItem.name}】`, false, { at: true });
   }

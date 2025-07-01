@@ -119,9 +119,15 @@ export class diaoyu extends plugin {
     let rodEquipped = equipData.rod;
     let baitEquipped = equipData.bait;
 
-    // 没有装备鱼竿无法钓鱼
+    // 必须同时装备鱼竿和鱼饵
+    if (!rodEquipped && !baitEquipped) {
+      return e.reply('你没有装备鱼竿和鱼饵，无法钓鱼！请先在背包中装备。', false, { at: true });
+    }
     if (!rodEquipped) {
       return e.reply('你没有装备鱼竿，无法钓鱼！请先在背包中装备鱼竿。', false, { at: true });
+    }
+    if (!baitEquipped) {
+      return e.reply('你没有装备鱼饵，无法钓鱼！请先在背包中装备鱼饵。', false, { at: true });
     }
 
     // 钓鱼概率：以鱼竿配置为主

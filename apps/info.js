@@ -6,6 +6,8 @@ import axios from 'axios'
 
 const _path = process.cwd().replace(/\\/g, "/");
 const dataPath = `${_path}/plugins/xunmiao-plugin/data/user_data.yaml`;
+const invDataPath = `${_path}/plugins/xunmiao-plugin/data/inv_data.yaml`;
+const itemsPath = `${_path}/plugins/xunmiao-plugin/data/items.yaml`;
 const MAX_STAMINA = 200;
 const MAX_STAMINA_OVERFLOW = 999999999; // 新增，供物品使用时参考
 const RECOVER_INTERVAL = 60 * 1000;
@@ -28,6 +30,23 @@ function recoverStamina(user) {
     user.lastStaminaTime += recoverTimes * RECOVER_INTERVAL;
     if (user.lastStaminaTime > now) user.lastStaminaTime = now;
   }
+}
+
+function getInvData() {
+  if (!fs.existsSync(invDataPath)) fs.writeFileSync(invDataPath, yaml.stringify({}));
+  return yaml.parse(fs.readFileSync(invDataPath, 'utf8')) || {};
+}
+function getShopItems() {
+  if (!fs.existsSync(itemsPath)) return [];
+  const content = fs.readFileSync(itemsPath, 'utf8');
+  return yaml.parse(content) || [];
+}
+function getEquipData(userId, invData) {
+  if (!invData[userId] || !invData[userId]._equip) {
+    if (!invData[userId]) invData[userId] = {};
+    invData[userId]._equip = {};
+  }
+  return invData[userId]._equip;
 }
 
 export class info extends plugin {
@@ -84,6 +103,26 @@ export class info extends plugin {
       catchFishCount = 0;
     }
 
+    // 新增：查询装备信息
+    const invData = getInvData();
+    const shopItems = getShopItems();
+    const equipData = getEquipData(userId, invData);
+    let equipMsg = '';
+    if (equipData) {
+      if (equipData.rod) {
+        const rod = shopItems.find(i => i.id === equipData.rod);
+        if (rod) equipMsg += `已装备鱼竿：${rod.name}\n`;
+      }
+      if (equipData.bait) {
+        const bait = shopItems.find(i => i.id === equipData.bait);
+        if (bait) equipMsg += `已装备鱼饵：${bait.name}\n`;
+      }
+      if (equipData.glove) {
+        const glove = shopItems.find(i => i.id === equipData.glove);
+        if (glove) equipMsg += `已装备：${glove.name}\n`;
+      }
+    }
+
     let touxiangUrl = Bot.pickUser(this.e.user_id).getAvatarUrl();
     let touxiang = '';
     try {
@@ -108,7 +147,8 @@ export class info extends plugin {
       stamina,
       catchFishCount,
       id,
-      touxiang
+      touxiang,
+      equipMsg // 新增：装备信息
     };
 
     const base64 = await puppeteer.screenshot('xunmiao-plugin', {
@@ -119,6 +159,9 @@ export class info extends plugin {
       data: data
     });
 
-    return await e.reply(base64);
+    // 文本模式下也显示装备信息
+    let textInfo = `喵喵币：${coins}\n好感度：${favorability}\n银行存款：${bank}\n累计签到：${totalSignCount}天\n连续签到：${continueSignCount}天\n体力：${stamina} / 200\n摸鱼次数：${catchFishCount}次`;
+    if (equipMsg) textInfo += `\n${equipMsg}`;
+    return await e.reply(base64, false, { at: true });
   }
 }
