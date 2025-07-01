@@ -8,73 +8,84 @@
 body, html {
   margin: 0;
   padding: 0;
-  /* width: auto;
-  height: auto; */
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  width: 700px;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #e6f0ff 0%, #fbefff 100%);
   font-family: 'LcCute', 'Microsoft YaHei', sans-serif;
-  background: url('../asset/img/help_bg.png') no-repeat center center;
-  background-size: cover;
-  overflow: hidden;
 }
 
 .card {
-  width: 100%;
-  padding: 60px 60px 40px 60px;
-  background: rgba(255, 255, 255, 0.5);
+  width: 640px;
+  margin: 32px auto;
+  background: #fff;
   border-radius: 24px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(78,124,255,0.10);
+  padding: 36px 32px 24px 32px;
+  box-sizing: border-box;
+  position: relative;
 }
 
 .card h1 {
-  margin: 0 0 32px 0;
-  font-size: 48px;
+  text-align: center;
+  font-size: 44px;
   color: #4e7cff;
+  margin-bottom: 24px;
   letter-spacing: 2px;
   text-shadow: 0 2px 8px #e0eaff;
 }
 
 .help-list {
-  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
   padding: 0;
   margin: 0;
   width: 100%;
 }
 
 .help-list li {
+  background: #f7faff;
+  border-radius: 16px;
+  padding: 18px 24px 14px 24px;
+  box-shadow: 0 2px 8px #e0eaff;
+  border: 2.5px solid #b3c6ff;
+  position: relative;
+  font-size: 22px;
+  color: #4e7cff;
+  margin-bottom: 0;
   display: flex;
   align-items: center;
-  margin-bottom: 18px;
-  font-size: 28px;
-  background: rgba(255,255,255,0.85);
-  border-radius: 16px;
-  padding: 18px 28px;
-  box-shadow: 0 2px 8px rgba(78,124,255,0.06);
-  border: 2px dashed #b3c6ff;
-  transition: background 0.2s;
-  position: relative;
+  gap: 18px;
+  transition: box-shadow 0.2s;
+  border-bottom: 5px solid #a3bfff;
+  border-right: 5px solid #a3bfff;
+  border-top: 2.5px solid #e0eaff;
+  border-left: 2.5px solid #e0eaff;
 }
 
-.help-list li:not(:last-child) {
-  margin-bottom: 24px;
+.help-list li:hover {
+  box-shadow: 0 4px 16px #b3c6ff;
 }
 
 .help-list .cmd {
-  flex: 0 0 220px;
-  color: #4e7cff;
-  font-weight: normal;
-  font-size: 30px;
+  background: #fffbe6;
+  color: #e6b800;
+  border-radius: 8px;
+  padding: 2px 10px;
+  font-size: 20px;
+  margin-right: 8px;
+  border: 1px solid #ffe58f;
+  box-shadow: 0 1px 2px #ffe58f44;
+  font-weight: bold;
   letter-spacing: 1px;
+  min-width: 160px;
+  text-align: center;
 }
 
 .help-list .desc {
+  color: #666;
+  font-size: 20px;
+  margin-left: 8px;
   flex: 1;
-  color: #333;
-  font-size: 26px;
-  margin-left: 24px;
+  line-height: 1.6;
 }
