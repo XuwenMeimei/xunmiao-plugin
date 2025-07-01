@@ -5,13 +5,12 @@
     font-style: normal;
 }
 
-body {
+body{
   margin: 0;
   padding: 0;
-  width: 100vw;
-  min-height: 100vh;
-  font-family: 'LcCute', 'Segoe UI', 'Microsoft YaHei', sans-serif;
-  background: linear-gradient(135deg, #f8e1ff 0%, #e0f7fa 100%);
+  width: 950px;
+  font-family: 'LcCute', sans-serif;
+  background: linear-gradient(135deg, #e0f7fa 0%, #fffbe6 100%);
   display: flex;
   align-items: flex-start;
   justify-content: center;
@@ -19,139 +18,60 @@ body {
 
 .fish-list-card {
   min-width: 800px;
-  max-width: 1100px;
+  max-width: 1200px;
   background: #fff;
-  border-radius: 32px;
+  border-radius: 24px;
   box-shadow:
-    0 8px 32px #e1bee7aa,
-    0 0 0 10px #e0f7fa33 inset;
-  padding: 40px 44px 32px 44px;
-  margin: 48px auto;
-  border: 3px solid #ffd6e0;
+    0 4px 24px #b3e5fc99,
+    0 0 0 8px #e0f7fa inset,
+    0 2px 0 #fff inset;
+  padding: 32px 36px 24px 36px;
+  margin: 32px auto;
   position: relative;
-  overflow: hidden;
+  border: 4px solid #b3e5fc;
 }
 
 .fish-list-card h1 {
   text-align: center;
-  color: #ff80ab;
-  font-size: 44px;
-  margin-bottom: 28px;
-  text-shadow: 0 4px 16px #f8bbd0, 0 1px 0 #fff;
-  letter-spacing: 3px;
-
+  color: #4fc3f7;
+  font-size: 38px;
+  margin-bottom: 18px;
+  text-shadow: 0 2px 8px #b3e5fc;
+  letter-spacing: 2px;
 }
 
 .fish-table {
   width: 100%;
-  border-collapse: separate;
-  border-spacing: 0 10px;
-  background: #fff8fc;
-  border-radius: 24px;
-  box-shadow: 0 4px 24px #b3e5fc44;
+  border-collapse: collapse;
+  background: #f8ffffcc;
+  border-radius: 16px;
   overflow: hidden;
+  box-shadow: 0 2px 8px #b3e5fc44;
 }
 
 .fish-table th, .fish-table td {
-  padding: 16px 12px;
+  padding: 12px 8px;
   text-align: center;
-  font-size: 22px;
-  border-bottom: 2px solid #ffe0f0;
-  transition: background 0.2s;
+  font-size: 20px;
+  border-bottom: 1.5px solid #e0f7fa;
 }
 
 .fish-table th {
-  background: linear-gradient(90deg, #f8bbd0 0%, #b3e5fc 100%);
-  color: #fff;
-  font-size: 24px;
-  border: none;
-  letter-spacing: 2px;
+  background: #b3e5fc;
+  color: #0277bd;
+  font-size: 22px;
 }
 
-.fish-table tr {
-  border-radius: 16px;
-  transition: box-shadow 0.2s;
-}
-
-.fish-table tr:hover {
-  background: #fff0f6;
-  box-shadow: 0 2px 12px #ffd6e0aa;
-}
-
-.fish-table td.fish-name {
-  color: #ff80ab;
-  font-size: 24px;
-  text-shadow: 0 2px 8px #fff8, 0 0.5px 0 #f8bbd0;
-  letter-spacing: 1px;
-}
-
-.fish-table td.fish-len,
-.fish-table td.fish-weight,
-.fish-table td.fish-price {
-  color: #7e57c2;
-  font-weight: 500;
-  text-shadow: 0 1px 0 #fff;
-}
-
-.prob-color {
-  display: inline-block;
-  min-width: 70px;
-  padding: 4px 14px;
-  border-radius: 16px;
-  font-size: 20px;
-  box-shadow: 0 2px 8px #b3e5fc66;
-  margin: 0 2px;
-  letter-spacing: 1px;
-  border: 2px solid #fff;
-  transition: transform 0.15s;
-}
-
-.prob-color.prob-high {
-  background: linear-gradient(90deg, #a8ff78 0%, #78ffd6 100%);
-  color: #226d3a;
-  border-color: #b2f7cc;
-}
-
-.prob-color.prob-mid {
-  background: linear-gradient(90deg, #42a5f5 0%, #b388ff 100%);
-  color: #174a7c;
-  border-color: #b3e5fc;
-}
-
-.prob-color.prob-low {
-  background: linear-gradient(90deg, #ffecb3 0%, #ffd6e0 100%);
-  color: #a65c00;
-  border-color: #ffe0b2;
-}
-
-.prob-color.prob-rare {
-  background: linear-gradient(90deg, #ff80ab 0%, #f09819 100%);
-  color: #a60000;
-  border-color: #ffcdd2;
-  animation: rare-glow 1.5s infinite alternate;
-}
-
-@keyframes rare-glow {
-  0% { box-shadow: 0 0 8px #ff80ab88; }
-  100% { box-shadow: 0 0 24px #ff80abcc; }
-}
+.prob-color.prob-high { color: #43a047; text-shadow: 0 1px 2px #c8e6c9; }
+.prob-color.prob-mid  { color: #1976d2; text-shadow: 0 1px 2px #bbdefb; }
+.prob-color.prob-low  { color: #fb8c00; text-shadow: 0 1px 2px #ffe0b2; }
+.prob-color.prob-rare { color: #e53935; text-shadow: 0 1px 2px #ffcdd2; }
 
 .fish-list-footer {
   text-align: center;
-  margin-top: 28px;
-  font-size: 22px;
+  margin-top: 18px;
+  font-size: 20px;
   color: #90caf9;
-  text-shadow: 0 2px 8px #b3e5fc;
-  letter-spacing: 2px;
-  font-weight: 500;
-}
-
-::-webkit-scrollbar {
-  width: 10px;
-  background: #ffe0f0;
-  border-radius: 8px;
-}
-::-webkit-scrollbar-thumb {
-  background: #f8bbd0;
-  border-radius: 8px;
+  text-shadow: 0 1px 4px #b3e5fc;
+  letter-spacing: 1px;
 }
