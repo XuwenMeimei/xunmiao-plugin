@@ -35,21 +35,30 @@ body, html {
 
 .shop-list {
   display: flex;
-  flex-direction: column;
-  gap: 18px;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: space-between;
 }
 
 .shop-item {
-  background: #f7faff;
-  border-radius: 16px;
+  background: linear-gradient(135deg, #f7faff 70%, #e6eeff 100%);
+  border-radius: 18px;
   padding: 18px 24px 14px 24px;
-  box-shadow: 0 2px 8px #e0eaff;
+  box-shadow: 0 4px 24px #b3c6ff, 0 1.5px 0 #fff inset;
+  border: 2px solid #e0eaff;
   position: relative;
-  transition: box-shadow 0.2s;
+  transition: box-shadow 0.25s, transform 0.18s;
+  width: 48%;
+  min-width: 260px;
+  box-sizing: border-box;
+  margin-bottom: 0;
 }
 
 .shop-item:hover {
-  box-shadow: 0 4px 16px #b3c6ff;
+  box-shadow: 0 8px 32px #7faaff, 0 1.5px 0 #fff inset;
+  transform: translateY(-4px) scale(1.025);
+  border-color: #4e7cff;
+  z-index: 2;
 }
 
 .item-header {
@@ -58,6 +67,7 @@ body, html {
   gap: 12px;
   font-size: 26px;
   color: #4e7cff;
+  text-shadow: 0 2px 8px #e0eaff;
 }
 
 .item-id {
@@ -68,6 +78,7 @@ body, html {
   font-size: 20px;
   margin-right: 8px;
   border: 1px solid #ffe58f;
+  box-shadow: 0 1px 2px #ffe58f44;
 }
 
 .item-name {
@@ -94,6 +105,8 @@ body, html {
 .item-price {
   color: #ff6f91;
   font-size: 20px;
+  font-weight: bold;
+  text-shadow: 0 1px 2px #fff0f5;
 }
 
 .item-stock {
@@ -108,6 +121,7 @@ body, html {
   border-radius: 8px;
   padding: 2px 8px;
   margin-left: 8px;
+  box-shadow: 0 1px 2px #ffe0b2;
 }
 
 .shop-tip {
