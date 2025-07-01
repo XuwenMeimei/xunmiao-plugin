@@ -22,7 +22,8 @@ const helpList = [
   { cmd: '#寻喵贴贴|抱抱', desc: '贴贴寻喵' },
   { cmd: '#寻喵帮助', desc: '查看本帮助菜单' },
   { cmd: '#钓鱼', desc: '消耗体力和鱼饵进行钓鱼'},
-  { cmd: '#连续钓鱼', desc: '一直钓鱼到体力或鱼饵耗尽' }
+  { cmd: '#连续钓鱼', desc: '一直钓鱼到体力或鱼饵耗尽' },
+  { cmd: '#鱼图鉴', desc: '查看鱼图鉴' },
 ];
 
 export class help extends plugin {

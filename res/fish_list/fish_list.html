@@ -7,7 +7,7 @@
 </head>
 <body>
   <div class="fish-list-card">
-    <h1>🐟 鱼类图鉴</h1>
+    <h1>鱼类图鉴</h1>
     <table class="fish-table">
       <tr>
         <th>鱼名</th>
@@ -22,7 +22,11 @@
         <td>{{item.name}}</td>
         <td>{{item.len}}</td>
         <td>{{item.weight}}</td>
-        <td>{{item.prob}}</td>
+        <td>
+          <span class="prob-color {{probColor(item.probValue)}}">
+            {{item.prob}}
+          </span>
+        </td>
         <td>{{item.price}}</td>
         <td>{{item.rare}}</td>
       </tr>
@@ -30,5 +34,14 @@
     </table>
     <div class="fish-list-footer">快来收集全部鱼种吧！</div>
   </div>
+  <script>
+    // 伪模板引擎辅助函数
+    function probColor(prob) {
+      if (prob >= 0.08) return 'prob-high';
+      if (prob >= 0.03) return 'prob-mid';
+      if (prob >= 0.01) return 'prob-low';
+      return 'prob-rare';
+    }
+  </script>
 </body>
 </html>

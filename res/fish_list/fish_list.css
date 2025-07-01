@@ -1,17 +1,16 @@
 body {
   margin: 0;
   padding: 0;
-  width: 1100px;
-  height: 700px;
   font-family: 'LcCute', '微软雅黑', sans-serif;
   background: linear-gradient(135deg, #e0f7fa 0%, #fffbe6 100%);
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
 }
 
 .fish-list-card {
-  width: 1000px;
+  min-width: 800px;
+  max-width: 1200px;
   background: #fff;
   border-radius: 24px;
   box-shadow:
@@ -19,7 +18,7 @@ body {
     0 0 0 8px #e0f7fa inset,
     0 2px 0 #fff inset;
   padding: 32px 36px 24px 36px;
-  margin: 0 auto;
+  margin: 32px auto;
   position: relative;
   border: 4px solid #b3e5fc;
 }
@@ -61,6 +60,11 @@ body {
   font-weight: bold;
   box-shadow: 0 0 8px #ffe0b2 inset;
 }
+
+.prob-color.prob-high { color: #43a047; font-weight: bold; text-shadow: 0 1px 2px #c8e6c9; }
+.prob-color.prob-mid  { color: #1976d2; font-weight: bold; text-shadow: 0 1px 2px #bbdefb; }
+.prob-color.prob-low  { color: #fb8c00; font-weight: bold; text-shadow: 0 1px 2px #ffe0b2; }
+.prob-color.prob-rare { color: #e53935; font-weight: bold; text-shadow: 0 1px 2px #ffcdd2; }
 
 .fish-list-footer {
   text-align: center;

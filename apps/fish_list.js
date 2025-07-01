@@ -35,15 +35,18 @@ export class fish_list extends plugin {
     // 计算总权重
     const totalWeight = fishTypes.reduce((sum, f) => sum + (f.weight || 1), 0);
 
-    // 整理数据
+    // 整理数据并排序
     const fishList = fishTypes.map(f => ({
       name: f.name,
       len: `${f.minLen}~${f.maxLen}cm`,
       weight: `${f.minW}~${f.maxW}kg`,
+      probValue: (f.weight || 1) / totalWeight,
       prob: ((f.weight || 1) / totalWeight * 100).toFixed(2) + '%',
       price: `x${f.priceRate}`,
+      priceValue: f.priceRate,
       rare: f.normal ? '普通' : '稀有'
-    }));
+    }))
+    .sort((a, b) => b.probValue - a.probValue || b.priceValue - a.priceValue);
 
     const base64 = await puppeteer.screenshot('xunmiao-plugin', {
       saveId: 'fish_list',
