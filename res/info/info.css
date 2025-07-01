@@ -45,6 +45,8 @@ html, body {
     align-items: center;
     justify-content: center;
     gap: 80px;
+    flex: 1 1 0;
+    min-width: 320px;
 }
 
 .user-avatar {
@@ -72,4 +74,40 @@ html, body {
     text-align: center;
     margin-top: 16px;
     white-space: nowrap;
+}
+
+.info-flex {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 40px;
+}
+
+.equip-info {
+    flex: 0 0 220px;
+    min-width: 180px;
+    background: #f7faff;
+    border-radius: 16px;
+    padding: 18px 12px;
+    margin-top: 10px;
+    font-size: 22px;
+    color: #4e7cff;
+    box-shadow: 0 2px 8px #e0eaff;
+}
+
+.equip-info h2 {
+    margin-top: 0;
+    font-size: 24px;
+    color: #2a4e8a;
+}
+
+.equip-info pre {
+    margin: 0;
+    font-family: inherit;
+    white-space: pre-line;
+    background: none;
+    border: none;
+    color: inherit;
+    font-size: 20px;
 }

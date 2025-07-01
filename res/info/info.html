@@ -4,28 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{pluginResources}}">
-    <link rel="stylesheet" href="./info.css">
     <title>个人信息卡片</title>
 </head>
 <body>
     <div class="card">
-        <div class="user-info">
-            <div class="user-avatar">
-                <img src="{{data.touxiang}}">
-                <div class="nickname">{{data.id}}</div>
+        <div class="info-flex">
+            <div class="user-info">
+                <div class="user-avatar">
+                    <img src="{{data.touxiang}}">
+                    <div class="nickname">{{data.id}}</div>
+                </div>
+                <div>
+                    <h1>个人信息</h1>
+                    <p>喵喵币：{{data.coins}}</p>
+                    <p>好感度：{{data.favorability}}</p>
+                    <p>银行存款：{{data.bank}}</p>
+                    <p>累计签到：{{data.totalSignCount}}天</p>
+                    <p>连续签到：{{data.continueSignCount}}天</p>
+                    <p>体力：{{data.stamina}} / 200</p>
+                    <p>摸鱼次数：{{data.catchFishCount}}次</p>
+                </div>
             </div>
-            <div>
-                <h1>个人信息</h1>
-                <p>喵喵币：{{data.coins}}</p>
-                <p>好感度：{{data.favorability}}</p>
-                <p>银行存款：{{data.bank}}</p>
-                <p>累计签到：{{data.totalSignCount}}天</p>
-                <p>连续签到：{{data.continueSignCount}}天</p>
-                <p>体力：{{data.stamina}} / 200</p>
-                <p>摸鱼次数：{{data.catchFishCount}}次</p>
+            <div class="equip-info">
+                <h2>装备信息</h2>
+                <pre>{{data.equipMsg}}</pre>
             </div>
         </div>
-        <div class="summary-row">{{data.equipMsg}}</div>
     </div>
 </body>
 </html>
