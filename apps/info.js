@@ -7,7 +7,7 @@ import axios from 'axios'
 const _path = process.cwd().replace(/\\/g, "/");
 const dataPath = `${_path}/plugins/xunmiao-plugin/data/user_data.yaml`;
 const invDataPath = `${_path}/plugins/xunmiao-plugin/data/inv_data.yaml`;
-const itemsPath = `${_path}/plugins/xunmiao-plugin/data/items.yaml`;
+const itemsPath = `${_path}/plugins/xunmiao-plugin/config/items.yaml`;
 const MAX_STAMINA = 200;
 const MAX_STAMINA_OVERFLOW = 999999999; // 新增，供物品使用时参考
 const RECOVER_INTERVAL = 60 * 1000;
@@ -111,17 +111,18 @@ export class info extends plugin {
     if (equipData) {
       if (equipData.rod) {
         const rod = shopItems.find(i => i.id === equipData.rod);
-        if (rod) equipMsg += `已装备鱼竿：${rod.name}\n`;
+        if (rod) equipMsg += `鱼竿：${rod.name}\n`;
       }
       if (equipData.bait) {
         const bait = shopItems.find(i => i.id === equipData.bait);
-        if (bait) equipMsg += `已装备鱼饵：${bait.name}\n`;
+        if (bait) equipMsg += `鱼饵：${bait.name}\n`;
       }
       if (equipData.glove) {
         const glove = shopItems.find(i => i.id === equipData.glove);
-        if (glove) equipMsg += `已装备：${glove.name}\n`;
+        if (glove) equipMsg += `手套：${glove.name}\n`;
       }
     }
+    if (!equipMsg) equipMsg = '无';
 
     let touxiangUrl = Bot.pickUser(this.e.user_id).getAvatarUrl();
     let touxiang = '';

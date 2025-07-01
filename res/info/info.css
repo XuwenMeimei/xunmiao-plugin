@@ -111,3 +111,11 @@ html, body {
     color: inherit;
     font-size: 20px;
 }
+
+.equip-list {
+    font-size: 22px;
+    color: #2a4e8a;
+    line-height: 1.7;
+    white-space: pre-line;
+    margin-top: 8px;
+}
