@@ -18,9 +18,9 @@ body, html {
   width: 100vw;
   min-height: 100vh;
   margin: 0;
-  background: #fff9fd;
+  background: transparent;
   border-radius: 0;
-  box-shadow: 0 0 32px #e0eaff88;
+  box-shadow: none;
   padding: 36px 32px 24px 32px;
   box-sizing: border-box;
   position: relative;
@@ -43,16 +43,31 @@ body, html {
 }
 
 .shop-item {
-  background: linear-gradient(135deg, #f7faff 70%, #e6eeff 100%);
+  background: #fff;
   border-radius: 18px;
   padding: 18px 24px 14px 24px;
-  box-shadow: 0 4px 24px #b3c6ff, 0 1.5px 0 #fff inset;
-  border: 2px solid #e0eaff;
+  /* 多层阴影实现伪3D效果 */
+  box-shadow:
+    0 2px 8px #e0eaff,
+    0 8px 24px #b3c6ff99,
+    0 0 0 4px #e0eaff inset,
+    0 1.5px 0 #fff inset;
+  border: 2.5px solid #b3c6ff;
   position: relative;
   width: 48%;
   min-width: 260px;
+  max-width: 48%;
+  min-height: 150px;
   box-sizing: border-box;
   margin-bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  /* 伪3D立体边框 */
+  border-bottom: 5px solid #a3bfff;
+  border-right: 5px solid #a3bfff;
+  border-top: 2.5px solid #e0eaff;
+  border-left: 2.5px solid #e0eaff;
 }
 
 .item-header {
@@ -86,11 +101,12 @@ body, html {
   color: #666;
   margin: 8px 0 6px 0;
   line-height: 1.5;
+  flex: 1 1 auto;
 }
 
 .item-info {
   display: flex;
-  gap: 18px;
+  gap: 12px;
   font-size: 18px;
   color: #888;
   align-items: center;
