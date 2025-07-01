@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>鱼类图鉴</title>
+  <link rel="stylesheet" href="{{pluginResources}}">
+</head>
+<body>
+  <div class="fish-list-card">
+    <h1>🐟 鱼类图鉴</h1>
+    <table class="fish-table">
+      <tr>
+        <th>鱼名</th>
+        <th>长度(cm)</th>
+        <th>重量(kg)</th>
+        <th>概率</th>
+        <th>价格倍率</th>
+        <th>稀有度</th>
+      </tr>
+      {{each data.fishList item}}
+      <tr class="{{item.rare === '稀有' ? 'rare' : ''}}">
+        <td>{{item.name}}</td>
+        <td>{{item.len}}</td>
+        <td>{{item.weight}}</td>
+        <td>{{item.prob}}</td>
+        <td>{{item.price}}</td>
+        <td>{{item.rare}}</td>
+      </tr>
+      {{/each}}
+    </table>
+    <div class="fish-list-footer">快来收集全部鱼种吧！</div>
+  </div>
+</body>
+</html>
