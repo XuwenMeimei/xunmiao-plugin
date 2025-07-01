@@ -51,9 +51,10 @@ export class fish_list extends plugin {
         weight: `${f.minW}~${f.maxW}kg`,
         prob: (probValue * 100).toFixed(2) + '%',
         price: `x${f.priceRate}`,
-        probColor: getProbColor(probValue)
+        probColor: getProbColor(probValue),
+        probValue
       }
-    }).sort((a, b) => b.probColor.localeCompare(a.probColor) || b.price.localeCompare(a.price));
+    }).sort((a, b) => b.probValue - a.probValue);
 
     const base64 = await puppeteer.screenshot('xunmiao-plugin', {
       saveId: 'fish_list',
