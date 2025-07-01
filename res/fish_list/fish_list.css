@@ -5,10 +5,10 @@
     font-style: normal;
 }
 
-body html{
+body{
   margin: 0;
   padding: 0;
-  width: 1300px;
+  width: 950px;
   font-family: 'LcCute', sans-serif;
   background: linear-gradient(135deg, #e0f7fa 0%, #fffbe6 100%);
   display: flex;
