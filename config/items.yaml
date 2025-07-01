@@ -22,7 +22,7 @@
   use:
     type: moyu_glove
     value: 1
-  max_per_day: 10
+  max_per_day: -1
 - id: 4
   name: 初级鱼竿
   price: 500
@@ -31,7 +31,7 @@
   use:
     type: diaoyu_rod
     value: 1
-  max_per_day: 5
+  max_per_day: -1
 - id: 5
   name: 初级鱼饵
   price: 5
