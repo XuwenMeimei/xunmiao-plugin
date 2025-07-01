@@ -31,15 +31,12 @@ body, html {
 }
 .rank-card tr:nth-child(2) td {
   color: #e6b800;
-  font-weight: bold;
 }
 .rank-card tr:nth-child(3) td {
   color: #b5b5b5;
-  font-weight: bold;
 }
 .rank-card tr:nth-child(4) td {
   color: #cd7f32;
-  font-weight: bold;
 }
 .rank-summary {
   text-align: center;
