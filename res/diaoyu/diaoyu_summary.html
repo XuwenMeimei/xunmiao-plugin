@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>钓鱼结算单</title>
+  <link rel="stylesheet" href="{{pluginResources}}">
+</head>
+<body>
+  <div class="moyu-summary">
+    <div class="summary-title">钓鱼结算单</div>
+    <div class="summary-line">------------------------------------------</div>
+    <div class="summary-row">本次使用鱼饵：{{data.baitName}} x{{data.baitUsed}}</div>
+    <div class="summary-row">总计钓鱼：{{data.totalCount}} 条</div>
+    <div class="summary-row">总长度：{{data.totalLength}} cm</div>
+    <div class="summary-row">总重量：{{data.totalWeight}} kg</div>
+    <div class="summary-row">总获得：{{data.totalCoins}} 喵喵币</div>
+    <div class="summary-row">总消耗体力：{{data.totalStaminaCost}}</div>
+    <div class="summary-row">剩余体力：{{data.stamina}}</div>
+    <div class="summary-row">钓空次数：{{data.emptyCount}}</div>
+    <div class="summary-line">------------------------------------------</div>
+    <table class="fish-table">
+      <tr>
+        <th>鱼种</th>
+        <th>数量</th>
+        <th>总长度(cm)</th>
+        <th>总重量(kg)</th>
+        <th>获得喵喵币</th>
+      </tr>
+      {{each data.list item}}
+      <tr>
+        <td>{{item.name}}</td>
+        <td>{{item.count}}</td>
+        <td>{{item.length}}</td>
+        <td>{{item.weight}}</td>
+        <td>{{item.coins}}</td>
+      </tr>
+      {{/each}}
+    </table>
+    <div class="summary-line">------------------------------------------</div>
+    <div class="summary-footer">今天的钓鱼收获满满吗？快去炫耀一下吧！</div>
+  </div>
+</body>
+</html>

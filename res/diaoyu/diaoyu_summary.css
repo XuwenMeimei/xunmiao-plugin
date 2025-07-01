@@ -1,0 +1,69 @@
+@font-face {
+  font-family: 'LcCute';
+  src: url('../asset/font/LcCute.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+body, html {
+  margin: 0;
+  padding: 0;
+  width: 600px;
+  background: #fff;
+  font-family: 'LcCute', 'Courier New', Courier, monospace;
+}
+
+.moyu-summary {
+  width: 540px;
+  margin: 24px auto;
+  background: #fff;
+  color: #222;
+  font-size: 18px;
+  border: 1px dashed #bbb;
+  padding: 28px 20px;
+  box-shadow: 0 2px 8px #eee;
+}
+
+.summary-title {
+  text-align: center;
+  font-weight: bold;
+  font-size: 26px;
+  margin-bottom: 10px;
+}
+
+.summary-line {
+  text-align: center;
+  letter-spacing: 2px;
+  color: #888;
+  margin: 8px 0;
+}
+
+.summary-row {
+  margin: 2px 0;
+  letter-spacing: 1px;
+}
+
+.fish-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 18px;
+}
+
+.fish-table th, .fish-table td {
+  border-bottom: 1px solid #eee;
+  padding: 8px 0;
+  text-align: center;
+}
+
+.fish-table th {
+  background: #f8f8ff;
+  font-weight: bold;
+}
+
+.summary-footer {
+  text-align: center;
+  margin-top: 12px;
+  font-size: 16px;
+  color: #666;
+}
