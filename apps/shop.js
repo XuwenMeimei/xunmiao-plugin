@@ -33,6 +33,16 @@ function saveShopStock(stock) {
   fs.writeFileSync(stockPath, yaml.stringify(stock));
 }
 
+// 新增：每人限购数据存储
+const userBuyPath = `${_path}/plugins/xunmiao-plugin/data/user_buy.yaml`;
+function getUserBuyData() {
+  if (!fs.existsSync(userBuyPath)) fs.writeFileSync(userBuyPath, yaml.stringify({}));
+  return yaml.parse(fs.readFileSync(userBuyPath, 'utf8')) || {};
+}
+function saveUserBuyData(data) {
+  fs.writeFileSync(userBuyPath, yaml.stringify(data));
+}
+
 export class shop extends plugin {
   constructor() {
     super({
@@ -60,9 +70,12 @@ export class shop extends plugin {
     let msg = '【寻喵商店】\n';
     shopItems.forEach(item => {
       let stockStr = '';
-      if (item.max_per_day) {
+      if (item.max_per_day !== undefined && item.max_per_day !== -1) {
         const sold = shopStock[nowDate][item.id] || 0;
         stockStr = `（今日剩余${item.max_per_day - sold}）`;
+      }
+      if (item.only_once) {
+        stockStr += '（每人限购1次）';
       }
       msg += `#${item.id} ${item.name} - ${item.price}喵喵币${stockStr}\n  ${item.desc}\n`;
     });
@@ -89,12 +102,24 @@ export class shop extends plugin {
     if (!shopStock[nowDate]) shopStock[nowDate] = {};
     if (!shopStock[nowDate][itemId]) shopStock[nowDate][itemId] = 0;
 
-    // 检查每日限购
-    if (item.max_per_day) {
+    // 新增：每人限购一次逻辑
+    let userBuyData = getUserBuyData();
+    if (!userBuyData[userId]) userBuyData[userId] = {};
+    if (item.only_once && userBuyData[userId][itemId]) {
+      return e.reply(`【${item.name}】这个物品只能购买一次，你已经买过了哦~`, false, { at: true });
+    }
+
+    // 检查每日限购（-1为无限购买）
+    if (item.max_per_day !== undefined && item.max_per_day !== -1) {
       const sold = shopStock[nowDate][itemId];
       if (sold + buyCount > item.max_per_day) {
         return e.reply(`【${item.name}】今天最多只能卖${item.max_per_day}个，已售${sold}个，剩余${item.max_per_day - sold}个。`, false, { at: true });
       }
+    }
+
+    // 检查每人限购一次数量
+    if (item.only_once && buyCount > 1) {
+      return e.reply(`【${item.name}】每人只能购买1个哦~`, false, { at: true });
     }
 
     let userData = getUserData();
@@ -123,9 +148,15 @@ export class shop extends plugin {
     invData[userId][item.id] = (invData[userId][item.id] || 0) + buyCount;
 
     // 更新库存
-    if (item.max_per_day) {
+    if (item.max_per_day !== undefined && item.max_per_day !== -1) {
       shopStock[nowDate][itemId] += buyCount;
       saveShopStock(shopStock);
+    }
+
+    // 新增：记录每人限购一次
+    if (item.only_once) {
+      userBuyData[userId][itemId] = true;
+      saveUserBuyData(userBuyData);
     }
 
     fs.writeFileSync(userDataPath, yaml.stringify(userData));

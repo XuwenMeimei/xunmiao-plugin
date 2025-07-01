@@ -5,20 +5,16 @@ import puppeteer from '../../../lib/puppeteer/puppeteer.js'
 
 const _path = process.cwd().replace(/\\/g, "/");
 const dataPath = `${_path}/plugins/xunmiao-plugin/data/user_data.yaml`;
+const invDataPath = `${_path}/plugins/xunmiao-plugin/data/inv_data.yaml`;
+const itemsPath = `${_path}/plugins/xunmiao-plugin/config/items.yaml`;
+const fishTypesPath = `${_path}/plugins/xunmiao-plugin/config/fish_types.yaml`;
 
-// 鱼的品种及其大小和重量范围，并增加权重和价格倍率
-const fishTypes = [
-  { name: '鲫鱼',    minLen: 10, maxLen: 30, minW: 0.2, maxW: 1,   weight: 30, priceRate: 1.0 }, // 常见
-  { name: '鲤鱼',    minLen: 20, maxLen: 60, minW: 0.5, maxW: 3,   weight: 20, priceRate: 1.2 },
-  { name: '草鱼',    minLen: 30, maxLen: 80, minW: 1,   maxW: 6,   weight: 15, priceRate: 1.1 },
-  { name: '锦鲤',    minLen: 15, maxLen: 50, minW: 0.3, maxW: 2,   weight: 8,  priceRate: 2.0 }, // 贵
-  { name: '胖头鱼',  minLen: 25, maxLen: 70, minW: 1,   maxW: 5,   weight: 10, priceRate: 1.3 },
-  { name: '鲈鱼',    minLen: 15, maxLen: 40, minW: 0.3, maxW: 1.5, weight: 8,  priceRate: 1.5 },
-  { name: '猫猫鱼',  minLen: 10, maxLen: 25, minW: 0.2, maxW: 0.8, weight: 5,  priceRate: 2.5 }, // 稀有
-  { name: '金龙鱼',  minLen: 40, maxLen: 100,minW: 2,   maxW: 10,  weight: 3,  priceRate: 5.0 }, // 极稀有
-  { name: '神秘鱼',  minLen: 50, maxLen: 120,minW: 5,   maxW: 20,  weight: 1,  priceRate: 10.0 }, // 传说
-  { name: '几把鱼',  minLen: 5,  maxLen: 15, minW: 0.1, maxW: 0.5, weight: 1, priceRate: 0.1 } // 隐藏
-];
+// 加载鱼种配置
+function getFishTypes() {
+  if (!fs.existsSync(fishTypesPath)) return [];
+  const content = fs.readFileSync(fishTypesPath, 'utf8');
+  return yaml.parse(content) || [];
+}
 
 // 体力恢复相关设置
 const MAX_STAMINA = 200;
@@ -46,6 +42,23 @@ function recoverStamina(user) {
     // 防止 lastStaminaTime 超过 now
     if (user.lastStaminaTime > now) user.lastStaminaTime = now;
   }
+}
+
+function getInvData() {
+  if (!fs.existsSync(invDataPath)) fs.writeFileSync(invDataPath, yaml.stringify({}));
+  return yaml.parse(fs.readFileSync(invDataPath, 'utf8')) || {};
+}
+function getShopItems() {
+  if (!fs.existsSync(itemsPath)) return [];
+  const content = fs.readFileSync(itemsPath, 'utf8');
+  return yaml.parse(content) || [];
+}
+function getEquipData(userId, invData) {
+  if (!invData[userId] || !invData[userId]._equip) {
+    if (!invData[userId]) invData[userId] = {};
+    invData[userId]._equip = {};
+  }
+  return invData[userId]._equip;
 }
 
 export class moyu extends plugin {
@@ -78,6 +91,16 @@ export class moyu extends plugin {
     const fileContent = fs.readFileSync(dataPath, 'utf8');
     userData = yaml.parse(fileContent) || {};
 
+    // 获取装备
+    const invData = getInvData();
+    const equipData = getEquipData(userId, invData);
+
+    // 获取装备概率加成
+    let baseRate = 0.25;
+    if (equipData.glove === 3) {
+      baseRate += 0.2; // 摸鱼手套概率+20%
+    }
+
     if (!userData[userId]) {
       userData[userId] = {
         coins: 0,
@@ -100,7 +123,7 @@ export class moyu extends plugin {
       userData[userId].catchFishCount = 0;
     }
 
-    // 自动恢复体力（重写后）
+    // 自动恢复体力
     recoverStamina(userData[userId]);
 
     // 体力不足
@@ -109,49 +132,39 @@ export class moyu extends plugin {
       return e.reply('你已经没有体力了，休息一会儿再来摸鱼吧~', false, { at: true });
     }
 
-    // 按权重随机选择鱼的品种
-    const totalWeight = fishTypes.reduce((sum, fish) => sum + fish.weight, 0);
-    let rand = Math.random() * totalWeight;
-    let fish;
-    for (let i = 0; i < fishTypes.length; i++) {
-      rand -= fishTypes[i].weight;
-      if (rand <= 0) {
-        fish = fishTypes[i];
-        break;
-      }
+    // 概率判定
+    if (Math.random() > baseRate) {
+      userData[userId].stamina -= 10; // 摸鱼失败也消耗10点体力
+      if (userData[userId].stamina < 0) userData[userId].stamina = 0;
+      fs.writeFileSync(dataPath, yaml.stringify(userData));
+      return e.reply(`很遗憾，什么都没摸到，消耗10点体力，当前体力${userData[userId].stamina}`, false, { at: true });
     }
-    if (!fish) fish = fishTypes[0];
 
-    // 随机生成鱼的长度和重量
+    const fishTypes = getFishTypes();
+    // 摸到鱼后再随机种类
+    const fish = fishTypes[Math.floor(Math.random() * fishTypes.length)];
     const length = (Math.random() * (fish.maxLen - fish.minLen) + fish.minLen).toFixed(1);
     const weight = (Math.random() * (fish.maxW - fish.minW) + fish.minW).toFixed(2);
 
-    // 喵喵币奖励 = (长度*2 + 重量*10) * 价格倍率，向下取整，最少1个
     let fishCoins = Math.floor((length * 2 + weight * 10) * fish.priceRate);
     if (fishCoins < 1) fishCoins = 1;
 
     let staminaCost = (
-      Math.pow(Number(length), 0.8) +       // 长度影响（边际递减）
-      Math.pow(Number(weight), 2.2) * 2.2 + // 重量影响（更陡峭）
-      fish.priceRate * 5                    // 稀有度附加
+      Math.pow(Number(length), 0.8) +
+      Math.pow(Number(weight), 2.2) * 2.2 +
+      fish.priceRate * 5
     );
-
-    // 引入 0.85 - 1.25 波动范围（±20%）
     staminaCost *= 0.85 + Math.random() * 0.4;
-
-    // 限制范围：最少 20，最多 120
     staminaCost = Math.max(20, Math.min(120, Math.round(staminaCost)));
-
 
     if (userData[userId].stamina < staminaCost) {
       fs.writeFileSync(dataPath, yaml.stringify(userData));
       return e.reply(`你本次摸鱼需要消耗${staminaCost}点体力，但你当前体力不足，鱼跑掉了！`, false, { at: true });
     }
 
-    // 抓鱼成功后增加次数
     userData[userId].coins += fishCoins;
     userData[userId].stamina -= staminaCost;
-    userData[userId].catchFishCount += 1; // 增加统计
+    userData[userId].catchFishCount += 1;
 
     fs.writeFileSync(dataPath, yaml.stringify(userData));
 
@@ -171,6 +184,16 @@ export class moyu extends plugin {
     }
     const fileContent = fs.readFileSync(dataPath, 'utf8');
     userData = yaml.parse(fileContent) || {};
+
+    // 获取装备
+    const invData = getInvData();
+    const equipData = getEquipData(userId, invData);
+
+    // 获取装备概率加成
+    let baseRate = 0.25;
+    if (equipData.glove === 3) {
+      baseRate += 0.2; // 摸鱼手套概率+20%
+    }
 
     if (!userData[userId]) {
       userData[userId] = {
@@ -209,21 +232,21 @@ export class moyu extends plugin {
     let fishSummary = {};
     let totalLength = 0;
     let totalWeight = 0;
+    let emptyCount = 0;
 
-    while (stamina >= 20) {
-      // 这里改为 let，避免重复声明
-      let totalFishWeight = fishTypes.reduce((sum, fish) => sum + fish.weight, 0);
-      let rand = Math.random() * totalFishWeight;
-      let fish;
-      for (let i = 0; i < fishTypes.length; i++) {
-        rand -= fishTypes[i].weight;
-        if (rand <= 0) {
-          fish = fishTypes[i];
-          break;
-        }
+    const fishTypes = getFishTypes();
+    while (stamina >= 10) {
+      // 概率判定
+      if (Math.random() > baseRate) {
+        stamina -= 10;
+        if (stamina < 0) stamina = 0;
+        emptyCount++;
+        fishList.push(`很遗憾，什么都没摸到，消耗10点体力，当前体力${stamina}`);
+        continue;
       }
-      if (!fish) fish = fishTypes[0];
 
+      // 摸到鱼后再随机种类
+      const fish = fishTypes[Math.floor(Math.random() * fishTypes.length)];
       const length = (Math.random() * (fish.maxLen - fish.minLen) + fish.minLen).toFixed(1);
       const weight = (Math.random() * (fish.maxW - fish.minW) + fish.minW).toFixed(2);
 
@@ -238,7 +261,7 @@ export class moyu extends plugin {
       staminaCost *= 0.85 + Math.random() * 0.4;
       staminaCost = Math.max(20, Math.min(120, Math.round(staminaCost)));
 
-      if (stamina < staminaCost || stamina < 20) {
+      if (stamina < staminaCost) {
         fishList.push(`你本次摸鱼需要消耗${staminaCost}点体力，但你当前体力不足，鱼跑掉了！`);
         break;
       }
@@ -268,13 +291,14 @@ export class moyu extends plugin {
       totalWeight += Number(weight);
     }
 
-    if (totalCount === 0) {
+    if (totalCount === 0 && emptyCount === 0) {
       fs.writeFileSync(dataPath, yaml.stringify(userData));
       return e.reply('你当前体力不足以摸一次鱼哦~', false, { at: true });
     }
 
     userData[userId].coins += totalCoins;
-    userData[userId].stamina -= totalStaminaCost;
+    userData[userId].stamina -= totalStaminaCost + emptyCount * 10;
+    if (userData[userId].stamina < 0) userData[userId].stamina = 0;
     userData[userId].catchFishCount += totalCount;
 
     fs.writeFileSync(dataPath, yaml.stringify(userData));
@@ -294,8 +318,9 @@ export class moyu extends plugin {
       totalCoins,
       totalLength: totalLength.toFixed(1),
       totalWeight: totalWeight.toFixed(2),
-      totalStaminaCost,
-      stamina: userData[userId].stamina
+      totalStaminaCost: totalStaminaCost + emptyCount * 10,
+      stamina: userData[userId].stamina,
+      emptyCount // 新增：摸空次数
     };
 
     const base64 = await puppeteer.screenshot('xunmiao-plugin', {

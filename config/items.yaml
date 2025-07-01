@@ -14,3 +14,53 @@
     type: stamina
     value: 30
   max_per_day: 20000
+- id: 3
+  name: 摸鱼手套
+  price: 200
+  desc: 装备后摸鱼概率提升20%
+  only_once: true
+  use:
+    type: moyu_glove
+    value: 1
+  max_per_day: 10
+- id: 4
+  name: 初级鱼竿
+  price: 500
+  desc: 一把普通的鱼竿，钓鱼概率50%
+  only_once: true
+  use:
+    type: diaoyu_rod
+    value: 1
+  max_per_day: 5
+- id: 5
+  name: 初级鱼饵
+  price: 5
+  desc: 初级鱼饵，似乎只能钓到普通鱼
+  use:
+    type: diaoyu_bait
+    value: 1
+  max_per_day: -1
+- id: 6
+  name: 中级鱼饵
+  price: 20
+  desc: 中级鱼饵，钓到稀有鱼概率提升
+  use:
+    type: diaoyu_bait_mid
+    value: 1
+  max_per_day: -1
+- id: 7
+  name: 高级鱼饵
+  price: 50
+  desc: 高级鱼饵，钓到稀有和传说鱼概率大幅提升
+  use:
+    type: diaoyu_bait_high
+    value: 1
+  max_per_day: -1
+- id: 8
+  name: 特级鱼饵
+  price: 200
+  desc: 特级鱼饵，只能钓到稀有、传说和隐藏鱼
+  use:
+    type: diaoyu_bait_top
+    value: 1
+  max_per_day: -1

@@ -46,6 +46,21 @@ function recoverStamina(user) {
   }
 }
 
+const EQUIP_TYPES = {
+  3: 'glove',   // 摸鱼手套
+  4: 'rod',     // 初级鱼竿
+  5: 'bait'     // 初级鱼饵
+};
+
+// 获取装备状态
+function getEquipData(userId, invData) {
+  if (!invData[userId] || !invData[userId]._equip) {
+    if (!invData[userId]) invData[userId] = {};
+    invData[userId]._equip = {};
+  }
+  return invData[userId]._equip;
+}
+
 export class inv extends plugin {
   constructor() {
     super({
@@ -56,7 +71,9 @@ export class inv extends plugin {
       cron: [],
       rule: [
         { reg: '^#背包$', fnc: 'showInv' },
-        { reg: '^#使用(\\d+)(?:\\s+(\\d+))?$', fnc: 'useItem' }
+        { reg: '^#使用(\\d+)(?:\\s+(\\d+))?$', fnc: 'useItem' },
+        { reg: '^#装备(\\d+)$', fnc: 'equipItem' },
+        { reg: '^#卸下(\\d+)$', fnc: 'unequipItem' }
       ]
     })
   }
@@ -70,15 +87,83 @@ export class inv extends plugin {
       return e.reply('你的背包是空的哦~', false, { at: true });
     }
 
-    let msg = '【你的背包】\n';
+    // 显示装备信息
+    let equipData = getEquipData(userId, invData);
+    let equipMsg = '';
+    for (const [id, type] of Object.entries(EQUIP_TYPES)) {
+      if (equipData[type]) {
+        const item = shopItems.find(i => i.id == id);
+        if (item) equipMsg += `已装备：${item.name}\n`;
+      }
+    }
+
+    let msg = '【你的背包】\n' + (equipMsg ? equipMsg : '');
     for (const item of shopItems) {
       const count = invData[userId][item.id] || 0;
       if (count > 0) {
         msg += `#${item.id} ${item.name} x${count}\n`;
       }
     }
+    msg += '\n发送 #装备物品编号 进行装备，如 #装备3\n发送 #卸下物品编号 进行卸下，如 #卸下3';
     msg += '\n发送 #使用物品编号 或 #使用物品编号 数量 进行使用，如 #使用1 或 #使用1 3';
     return e.reply(msg, false, { at: true });
+  }
+
+  async equipItem(e) {
+    const userId = `${e.user_id}`;
+    const match = e.msg.match(/^#*装备(\d+)$/);
+    if (!match) return e.reply('格式错误，请发送 #装备物品编号', false, { at: true });
+
+    const itemId = parseInt(match[1]);
+    if (!EQUIP_TYPES[itemId]) return e.reply('该物品不可装备或不存在~', false, { at: true });
+
+    let invData = getInvData();
+    const shopItems = getShopItems();
+    const shopItem = shopItems.find(i => i.id === itemId);
+    if (!shopItem) return e.reply('没有这个物品编号哦~', false, { at: true });
+
+    if (!invData[userId] || !invData[userId][itemId] || invData[userId][itemId] <= 0) {
+      return e.reply(`你的背包里没有【${shopItem.name}】`, false, { at: true });
+    }
+
+    let equipData = getEquipData(userId, invData);
+    const type = EQUIP_TYPES[itemId];
+
+    // 只能装备一个同类型物品
+    for (const [id, t] of Object.entries(EQUIP_TYPES)) {
+      if (t === type && equipData[type]) {
+        return e.reply(`你已经装备了${shopItems.find(i => i.id == id).name}，请先卸下再装备新的。`, false, { at: true });
+      }
+    }
+
+    equipData[type] = itemId;
+    fs.writeFileSync(invDataPath, yaml.stringify(invData));
+    return e.reply(`你已装备【${shopItem.name}】`, false, { at: true });
+  }
+
+  async unequipItem(e) {
+    const userId = `${e.user_id}`;
+    const match = e.msg.match(/^#*卸下(\d+)$/);
+    if (!match) return e.reply('格式错误，请发送 #卸下物品编号', false, { at: true });
+
+    const itemId = parseInt(match[1]);
+    if (!EQUIP_TYPES[itemId]) return e.reply('该物品不可卸下或不存在~', false, { at: true });
+
+    let invData = getInvData();
+    const shopItems = getShopItems();
+    const shopItem = shopItems.find(i => i.id === itemId);
+    if (!shopItem) return e.reply('没有这个物品编号哦~', false, { at: true });
+
+    let equipData = getEquipData(userId, invData);
+    const type = EQUIP_TYPES[itemId];
+
+    if (!equipData[type] || equipData[type] !== itemId) {
+      return e.reply(`你没有装备【${shopItem.name}】`, false, { at: true });
+    }
+
+    delete equipData[type];
+    fs.writeFileSync(invDataPath, yaml.stringify(invData));
+    return e.reply(`你已卸下【${shopItem.name}】`, false, { at: true });
   }
 
   async useItem(e) {
