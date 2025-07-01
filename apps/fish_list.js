@@ -52,9 +52,14 @@ export class fish_list extends plugin {
         prob: (probValue * 100).toFixed(2) + '%',
         price: `x${f.priceRate}`,
         probColor: getProbColor(probValue),
-        probValue
+        probValue,
+        priceValue: f.priceRate
       }
-    }).sort((a, b) => b.probValue - a.probValue);
+    }).sort((a, b) => {
+      // 先按概率降序，再按价格倍率降序
+      if (b.probValue !== a.probValue) return b.probValue - a.probValue;
+      return b.priceValue - a.priceValue;
+    });
 
     const base64 = await puppeteer.screenshot('xunmiao-plugin', {
       saveId: 'fish_list',
