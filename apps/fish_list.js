@@ -35,18 +35,28 @@ export class fish_list extends plugin {
     // 计算总权重
     const totalWeight = fishTypes.reduce((sum, f) => sum + (f.weight || 1), 0);
 
-    // 整理数据并排序
-    const fishList = fishTypes.map(f => ({
-      name: f.name,
-      len: `${f.minLen}~${f.maxLen}cm`,
-      weight: `${f.minW}~${f.maxW}kg`,
-      probValue: (f.weight || 1) / totalWeight,
-      prob: ((f.weight || 1) / totalWeight * 100).toFixed(2) + '%',
-      price: `x${f.priceRate}`,
-      priceValue: f.priceRate,
-      rare: f.normal ? '普通' : '稀有'
-    }))
-    .sort((a, b) => b.probValue - a.probValue || b.priceValue - a.priceValue);
+    // 整理数据并排序，并加上概率颜色
+    function getProbColor(prob) {
+      if (prob >= 0.08) return 'prob-high';
+      if (prob >= 0.03) return 'prob-mid';
+      if (prob >= 0.01) return 'prob-low';
+      return 'prob-rare';
+    }
+
+    const fishList = fishTypes.map(f => {
+      const probValue = (f.weight || 1) / totalWeight;
+      return {
+        name: f.name,
+        len: `${f.minLen}~${f.maxLen}cm`,
+        weight: `${f.minW}~${f.maxW}kg`,
+        probValue,
+        prob: (probValue * 100).toFixed(2) + '%',
+        price: `x${f.priceRate}`,
+        priceValue: f.priceRate,
+        rare: f.normal ? '普通' : '稀有',
+        probColor: getProbColor(probValue)
+      }
+    }).sort((a, b) => b.probValue - a.probValue || b.priceValue - a.priceValue);
 
     const base64 = await puppeteer.screenshot('xunmiao-plugin', {
       saveId: 'fish_list',

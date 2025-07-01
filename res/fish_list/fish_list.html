@@ -23,7 +23,7 @@
         <td>{{item.len}}</td>
         <td>{{item.weight}}</td>
         <td>
-          <span class="prob-color {{probColor(item.probValue)}}">
+          <span class="prob-color {{item.probColor}}">
             {{item.prob}}
           </span>
         </td>
@@ -34,14 +34,5 @@
     </table>
     <div class="fish-list-footer">快来收集全部鱼种吧！</div>
   </div>
-  <script>
-    // 伪模板引擎辅助函数
-    function probColor(prob) {
-      if (prob >= 0.08) return 'prob-high';
-      if (prob >= 0.03) return 'prob-mid';
-      if (prob >= 0.01) return 'prob-low';
-      return 'prob-rare';
-    }
-  </script>
 </body>
 </html>
