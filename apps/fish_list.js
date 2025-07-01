@@ -49,14 +49,11 @@ export class fish_list extends plugin {
         name: f.name,
         len: `${f.minLen}~${f.maxLen}cm`,
         weight: `${f.minW}~${f.maxW}kg`,
-        probValue,
         prob: (probValue * 100).toFixed(2) + '%',
         price: `x${f.priceRate}`,
-        priceValue: f.priceRate,
-        rare: f.normal ? '普通' : '稀有',
         probColor: getProbColor(probValue)
       }
-    }).sort((a, b) => b.probValue - a.probValue || b.priceValue - a.priceValue);
+    }).sort((a, b) => b.probColor.localeCompare(a.probColor) || b.price.localeCompare(a.price));
 
     const base64 = await puppeteer.screenshot('xunmiao-plugin', {
       saveId: 'fish_list',

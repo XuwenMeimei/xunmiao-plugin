@@ -15,10 +15,9 @@
         <th>重量(kg)</th>
         <th>概率</th>
         <th>价格倍率</th>
-        <th>稀有度</th>
       </tr>
       {{each data.fishList item}}
-      <tr class="{{item.rare === '稀有' ? 'rare' : ''}}">
+      <tr>
         <td>{{item.name}}</td>
         <td>{{item.len}}</td>
         <td>{{item.weight}}</td>
@@ -28,7 +27,6 @@
           </span>
         </td>
         <td>{{item.price}}</td>
-        <td>{{item.rare}}</td>
       </tr>
       {{/each}}
     </table>
