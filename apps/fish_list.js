@@ -47,8 +47,8 @@ export class fish_list extends plugin {
       const probValue = (f.weight || 1) / totalWeight;
       return {
         name: f.name,
-        len: `${f.minLen}~${f.maxLen}cm`,
-        weight: `${f.minW}~${f.maxW}kg`,
+        len: `${f.minLen}~${f.maxLen}`,
+        weight: `${f.minW}~${f.maxW}`,
         prob: (probValue * 100).toFixed(2) + '%',
         price: `x${f.priceRate}`,
         probColor: getProbColor(probValue),
