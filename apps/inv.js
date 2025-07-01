@@ -93,11 +93,18 @@ export class inv extends plugin {
     // 显示装备信息
     let equipData = getEquipData(userId, invData);
     let equipMsg = '';
-    for (const [id, type] of Object.entries(EQUIP_TYPES)) {
-      if (equipData[type]) {
-        const item = shopItems.find(i => i.id == id);
-        if (item) equipMsg += `已装备：${item.name}\n`;
-      }
+    // 只显示当前装备的鱼竿、手套和唯一的鱼饵
+    if (equipData.rod) {
+      const rod = shopItems.find(i => i.id == equipData.rod);
+      if (rod) equipMsg += `已装备：${rod.name}\n`;
+    }
+    if (equipData.glove) {
+      const glove = shopItems.find(i => i.id == equipData.glove);
+      if (glove) equipMsg += `已装备：${glove.name}\n`;
+    }
+    if (equipData.bait) {
+      const bait = shopItems.find(i => i.id == equipData.bait);
+      if (bait) equipMsg += `已装备：${bait.name}\n`;
     }
 
     let msg = '【你的背包】\n' + (equipMsg ? equipMsg : '');
