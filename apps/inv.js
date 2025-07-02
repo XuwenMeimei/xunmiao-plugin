@@ -1,6 +1,7 @@
 import plugin from '../../../lib/plugins/plugin.js'
 import fs from 'fs'
 import yaml from 'yaml'
+import puppeteer from 'puppeteer'
 
 const _path = process.cwd().replace(/\\/g, "/");
 const invDataPath = `${_path}/plugins/xunmiao-plugin/data/inv_data.yaml`;
@@ -111,49 +112,74 @@ export class inv extends plugin {
       return e.reply('你的背包是空的哦~', false, { at: true });
     }
 
-    // 分类排序
+    // 分类排序并按数字ID升序
     let sorted = [];
     for (const cat of CATEGORY_ORDER) {
       let items = shopItems.filter(i => getItemCategory(i) === cat.key);
+      items.sort((a, b) => id2num[a.id] - id2num[b.id]);
       if (items.length > 0) {
         sorted.push({ cat: cat.name, items });
       }
     }
-    // 其他未分类
     let otherItems = shopItems.filter(i => !CATEGORY_ORDER.some(c => getItemCategory(i) === c.key));
+    otherItems.sort((a, b) => id2num[a.id] - id2num[b.id]);
     if (otherItems.length > 0) {
       sorted.push({ cat: '其他', items: otherItems });
     }
 
-    // 显示装备信息
+    // 装备信息
     let equipData = getEquipData(userId, invData);
-    let equipMsg = '';
+    let equipList = [];
     if (equipData.rod) {
       const rod = shopItems.find(i => i.id == equipData.rod);
-      if (rod) equipMsg += `已装备：${rod.name}\n`;
+      if (rod) equipList.push({ type: '鱼竿', name: rod.name });
     }
     if (equipData.glove) {
       const glove = shopItems.find(i => i.id == equipData.glove);
-      if (glove) equipMsg += `已装备：${glove.name}\n`;
+      if (glove) equipList.push({ type: '手套', name: glove.name });
     }
     if (equipData.bait) {
       const bait = shopItems.find(i => i.id == equipData.bait);
-      if (bait) equipMsg += `已装备：${bait.name}\n`;
+      if (bait) equipList.push({ type: '鱼饵', name: bait.name });
     }
 
-    let msg = '【你的背包】\n' + (equipMsg ? equipMsg : '');
+    // 整理背包物品
+    let invList = [];
     for (const group of sorted) {
-      msg += `\n【${group.cat}】\n`;
+      let groupItems = [];
       for (const item of group.items) {
         const count = invData[userId][item.id] || 0;
         if (count > 0) {
-          msg += `#${id2num[item.id]} ${item.name} x${count}\n`;
+          groupItems.push({
+            id: id2num[item.id],
+            name: item.name,
+            count,
+            desc: item.desc
+          });
         }
       }
+      if (groupItems.length > 0) {
+        invList.push({
+          cat: group.cat,
+          items: groupItems
+        });
+      }
     }
-    msg += '\n发送 #装备物品编号 进行装备，如 #装备3\n发送 #卸下物品编号 进行卸下，如 #卸下3';
-    msg += '\n发送 #使用物品编号 或 #使用物品编号 数量 进行使用，如 #使用1 或 #使用1 3';
-    return e.reply(msg, false, { at: true });
+
+    // 渲染图片
+    const base64 = await puppeteer.screenshot('xunmiao-plugin', {
+      saveId: 'inv',
+      imgType: 'png',
+      tplFile: `${_path}/plugins/xunmiao-plugin/res/inv/inv.html`,
+      pluginResources: `${_path}/plugins/xunmiao-plugin/res/inv/inv.css`,
+      data: {
+        equipList,
+        invList,
+        tip: '发送 #装备物品编号 进行装备，如 #装备3\n发送 #卸下物品编号 进行卸下，如 #卸下3\n发送 #使用物品编号 或 #使用物品编号 数量 进行使用，如 #使用1 或 #使用1 3'
+      }
+    });
+
+    return e.reply(base64, false, { at: true });
   }
 
   async equipItem(e) {

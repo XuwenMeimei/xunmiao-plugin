@@ -1,0 +1,116 @@
+@font-face {
+  font-family: 'LcCute';
+  src: url('../asset/font/LcCute.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  width: 800px;
+  background: linear-gradient(135deg, #fbefff 0%, #e0f7fa 100%);
+  font-family: 'LcCute', 'Microsoft YaHei', sans-serif;
+}
+
+.inv-card {
+  width: 720px;
+  margin: 32px auto;
+  background: #fff;
+  border-radius: 24px;
+  box-shadow: 0 4px 24px #b3e5fc99, 0 0 0 8px #fbefff inset;
+  padding: 32px 36px 24px 36px;
+}
+
+.inv-title {
+  text-align: center;
+  color: #ff6f91;
+  font-size: 38px;
+  margin-bottom: 18px;
+  text-shadow: 0 2px 8px #fbefff;
+  letter-spacing: 2px;
+}
+
+.equip-section {
+  margin-bottom: 18px;
+}
+
+.equip-list {
+  font-size: 22px;
+  color: #4e7cff;
+  margin: 0 0 0 8px;
+  padding: 0;
+  list-style: none;
+}
+
+.inv-list {
+  margin-bottom: 18px;
+}
+
+.inv-group {
+  margin-bottom: 12px;
+}
+
+.group-title {
+  font-size: 24px;
+  color: #e67e22;
+  margin-bottom: 4px;
+  font-weight: bold;
+}
+
+.inv-group ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.inv-group li {
+  background: #f7faff;
+  border-radius: 12px;
+  padding: 8px 12px;
+  margin-bottom: 6px;
+  font-size: 20px;
+  color: #4e7cff;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 1px 4px #e0eaff44;
+}
+
+.item-id {
+  background: #fffbe6;
+  color: #e6b800;
+  border-radius: 8px;
+  padding: 2px 10px;
+  font-size: 18px;
+  margin-right: 8px;
+  border: 1px solid #ffe58f;
+  box-shadow: 0 1px 2px #ffe58f44;
+}
+
+.item-name {
+  font-weight: bold;
+  font-size: 20px;
+  color: #ff6f91;
+}
+
+.item-count {
+  color: #4e7cff;
+  font-size: 18px;
+  margin-left: 8px;
+}
+
+.item-desc {
+  color: #888;
+  font-size: 16px;
+  margin-left: 12px;
+  flex: 1 1 auto;
+}
+
+.inv-tip {
+  margin-top: 18px;
+  text-align: center;
+  font-size: 18px;
+  color: #e67e22;
+  letter-spacing: 1px;
+}

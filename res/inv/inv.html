@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>我的背包</title>
+  <link rel="stylesheet" href="{{pluginResources}}">
+</head>
+<body>
+  <div class="inv-card">
+    <h1 class="inv-title">喵喵背包</h1>
+    <div class="equip-section">
+      <h2>已装备</h2>
+      <ul class="equip-list">
+        {{if data.equipList.length === 0}}
+        <li>无</li>
+        {{/if}}
+        {{each data.equipList item}}
+        <li>{{item.type}}：{{item.name}}</li>
+        {{/each}}
+      </ul>
+    </div>
+    <div class="inv-list">
+      {{each data.invList group}}
+      <div class="inv-group">
+        <div class="group-title">{{group.cat}}</div>
+        <ul>
+          {{each group.items item}}
+          <li>
+            <span class="item-id">#{{item.id}}</span>
+            <span class="item-name">{{item.name}}</span>
+            <span class="item-count">x{{item.count}}</span>
+            <span class="item-desc">{{item.desc}}</span>
+          </li>
+          {{/each}}
+        </ul>
+      </div>
+      {{/each}}
+    </div>
+    <div class="inv-tip">{{data.tip}}</div>
+  </div>
+</body>
+</html>

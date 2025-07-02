@@ -105,11 +105,15 @@ export class shop extends plugin {
     let sorted = [];
     for (const cat of CATEGORY_ORDER) {
       let items = shopItems.filter(i => getItemCategory(i) === cat.key);
+      // 按数字ID升序排序
+      items.sort((a, b) => id2num[a.id] - id2num[b.id]);
       if (items.length > 0) {
         sorted.push({ cat: cat.name, items });
       }
     }
     let otherItems = shopItems.filter(i => !CATEGORY_ORDER.some(c => getItemCategory(i) === c.key));
+    // 其他分类也排序
+    otherItems.sort((a, b) => id2num[a.id] - id2num[b.id]);
     if (otherItems.length > 0) {
       sorted.push({ cat: '其他', items: otherItems });
     }
