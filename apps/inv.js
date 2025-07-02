@@ -56,11 +56,7 @@ const CATEGORY_ORDER = [
 
 // 物品分类函数
 function getItemCategory(item) {
-  if (item.use && item.use.type === 'stamina') return 'stamina';
-  if (item.id.includes('glove')) return 'glove';
-  if (item.id.includes('rod')) return 'rod';
-  if (item.id.includes('bait')) return 'bait';
-  return 'other';
+  return item.category || 'other';
 }
 
 // 构建数字ID与英文ID映射
@@ -115,13 +111,13 @@ export class inv extends plugin {
     // 分类排序并按数字ID升序
     let sorted = [];
     for (const cat of CATEGORY_ORDER) {
-      let items = shopItems.filter(i => getItemCategory(i) === cat.key);
+      let items = shopItems.filter(i => (i.category || 'other') === cat.key);
       items.sort((a, b) => id2num[a.id] - id2num[b.id]);
       if (items.length > 0) {
         sorted.push({ cat: cat.name, items });
       }
     }
-    let otherItems = shopItems.filter(i => !CATEGORY_ORDER.some(c => getItemCategory(i) === c.key));
+    let otherItems = shopItems.filter(i => !CATEGORY_ORDER.some(c => (i.category || 'other') === c.key));
     otherItems.sort((a, b) => id2num[a.id] - id2num[b.id]);
     if (otherItems.length > 0) {
       sorted.push({ cat: '其他', items: otherItems });
@@ -200,7 +196,7 @@ export class inv extends plugin {
     if (!shopItem) return e.reply('没有这个物品编号哦~', false, { at: true });
 
     // 分类判断装备类型
-    const type = getItemCategory(shopItem);
+    const type = shopItem.category || 'other';
     if (!['glove', 'rod', 'bait'].includes(type)) {
       return e.reply('该物品不可装备或不存在~', false, { at: true });
     }
