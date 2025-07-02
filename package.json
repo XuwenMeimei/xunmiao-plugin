@@ -1,4 +1,22 @@
 {
   "name": "xunmiao-plugin",
-  "type": "module"
+  "type": "module",
+  "version": "1.0.0",
+  "description": "寻喵互动插件",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/XuwenMeimei/xunmiao-plugin.git"
+  },
+  "keywords": [
+    "Yunzai-Bot",
+    "xunmiao-plugin"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "yaml": "^2.3.4",
+    "puppeteer": "^21.3.8",
+    "axios": "^1.6.8"
+  }
 }
