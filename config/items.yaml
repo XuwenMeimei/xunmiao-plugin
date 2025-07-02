@@ -25,6 +25,7 @@
     type: moyu_glove
     value: 1
   max_per_day: -1
+  probability_bonus: 0.2
 - id: 4
   name: 初级鱼竿
   price: 500
@@ -34,6 +35,7 @@
     type: diaoyu_rod
     value: 1
   max_per_day: -1
+  probability: 0.5
 - id: 5
   name: 初级鱼饵
   price: 5
@@ -66,3 +68,33 @@
     type: diaoyu_bait_top
     value: 1
   max_per_day: -1
+- id: 9
+  name: 中级鱼竿
+  price: 1000
+  desc: 一把中级鱼竿，钓鱼概率70%
+  only_once: true
+  use:
+    type: diaoyu_rod_mid
+    value: 1
+  max_per_day: -1
+  probability: 0.7
+- id: 10
+  name: 高级鱼竿
+  price: 2000
+  desc: 一把高级鱼竿，钓鱼概率90%
+  only_once: true
+  use:
+    type: diaoyu_rod_high
+    value: 1
+  max_per_day: -1
+  probability: 0.9
+- id: 11
+  name: 特级鱼竿
+  price: 5000
+  desc: 一把特级鱼竿，钓鱼概率100%
+  only_once: true
+  use:
+    type: diaoyu_rod_top
+    value: 1
+  max_per_day: -1
+  probability: 1.0

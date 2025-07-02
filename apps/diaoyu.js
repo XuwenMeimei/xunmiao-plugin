@@ -147,12 +147,8 @@ export class diaoyu extends plugin {
     let fishRate = 0.25;
     const rodItem = shopItems.find(i => i.id === rodEquipped);
     if (rodItem && rodItem.use && rodItem.use.type === 'diaoyu_rod') {
-      const match = rodItem.desc && rodItem.desc.match(/(\d+(\.\d+)?)%/);
-      if (match) {
-        fishRate = parseFloat(match[1]) / 100;
-      } else {
-        fishRate = 0.5;
-      }
+      // 直接读取 probability 字段
+      fishRate = rodItem.probability ?? 0.5;
     }
 
     // 钓鱼判定
@@ -280,12 +276,8 @@ export class diaoyu extends plugin {
     let fishRate = 0.25;
     const rodItem = shopItems.find(i => i.id === rodEquipped);
     if (rodItem && rodItem.use && rodItem.use.type === 'diaoyu_rod') {
-        const match = rodItem.desc && rodItem.desc.match(/(\d+(\.\d+)?)%/);
-        if (match) {
-            fishRate = parseFloat(match[1]) / 100;
-        } else {
-            fishRate = 0.5;
-        }
+        // 直接读取 probability 字段
+        fishRate = rodItem.probability ?? 0.5;
     }
 
     let stamina = userData[userId].stamina;

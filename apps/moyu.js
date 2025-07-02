@@ -97,8 +97,11 @@ export class moyu extends plugin {
 
     // 获取装备概率加成
     let baseRate = 0.25;
-    if (equipData.glove === 3) {
-      baseRate += 0.2; // 摸鱼手套概率+20%
+    const shopItems = getShopItems();
+    const gloveItem = shopItems.find(i => i.id === equipData.glove);
+    if (gloveItem && gloveItem.use && gloveItem.use.type === 'moyu_glove') {
+      // 直接读取 probability_bonus 字段
+      baseRate += gloveItem.probability_bonus ?? 0;
     }
 
     if (!userData[userId]) {
@@ -191,8 +194,11 @@ export class moyu extends plugin {
 
     // 获取装备概率加成
     let baseRate = 0.25;
-    if (equipData.glove === 3) {
-      baseRate += 0.2; // 摸鱼手套概率+20%
+    const shopItems = getShopItems();
+    const gloveItem = shopItems.find(i => i.id === equipData.glove);
+    if (gloveItem && gloveItem.use && gloveItem.use.type === 'moyu_glove') {
+      // 直接读取 probability_bonus 字段
+      baseRate += gloveItem.probability_bonus ?? 0;
     }
 
     if (!userData[userId]) {

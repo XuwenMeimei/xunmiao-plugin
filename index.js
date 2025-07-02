@@ -16,6 +16,12 @@ const invDataPath = path.join(dataDir, 'inv_data.yaml')
 const shopTemplatePath = path.join(dataDir, 'shop_stock.template.yaml')
 const shopDataPath = path.join(dataDir, 'shop_stock.yaml')
 
+const userBuy = path.join(dataDir, 'user_buy.template.yaml')
+const userBuyPath = path.join(dataDir, 'user_buy.yaml')
+
+const userDailyBuy = path.join(dataDir, 'user_daily_buy.template.yaml')
+const userDailyBuyPath = path.join(dataDir, 'user_daily_buy.yaml')
+
 // 初始化 user_data.yaml
 if (!fs.existsSync(userDataPath)) {
   if (fs.existsSync(templatePath)) {
@@ -47,6 +53,22 @@ if (!fs.existsSync(invDataPath)) {
     // 没有模板则创建空文件
     fs.writeFileSync(invDataPath, '')
     console.log('创建了空的 inv_data.yaml')
+  }
+}
+
+//初始化 user_buy.yaml
+if (!fs.existsSync(userBuyPath)) {
+  if (fs.existsSync(userBuy)) {
+    fs.copyFileSync(userBuy, userBuyPath)
+    console.log('从模板复制了 user_buy.yaml')
+  }
+}
+
+//初始化 user_daily_buy.yaml
+if (!fs.existsSync(userDailyBuyPath)) {
+  if (fs.existsSync(userDailyBuy)) {
+    fs.copyFileSync(userDailyBuy, userDailyBuyPath) 
+    console.log('从模板复制了 user_daily_buy.yaml')
   }
 }
 
