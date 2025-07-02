@@ -53,6 +53,7 @@ function saveUserDailyBuyData(data) {
   fs.writeFileSync(userDailyBuyPath, yaml.stringify(data));
 }
 
+// 分类顺序与分类名
 const CATEGORY_ORDER = [
   { key: 'stamina', name: '体力道具' },
   { key: 'glove', name: '手套' },
@@ -60,14 +61,12 @@ const CATEGORY_ORDER = [
   { key: 'bait', name: '鱼饵' }
 ];
 
+// 物品分类函数（直接用category字段）
 function getItemCategory(item) {
-  if (item.use && item.use.type === 'stamina') return 'stamina';
-  if (item.id.includes('glove')) return 'glove';
-  if (item.id.includes('rod')) return 'rod';
-  if (item.id.includes('bait')) return 'bait';
-  return 'other';
+  return item.category || 'other';
 }
 
+// 构建数字ID与英文ID映射
 function buildIdMaps(shopItems) {
   const num2id = {};
   const id2num = {};
@@ -101,42 +100,57 @@ export class shop extends plugin {
 
     const { num2id, id2num } = buildIdMaps(shopItems);
 
-    // 按数字ID整体排序
-    const sortedItems = shopItems.slice().sort((a, b) => id2num[a.id] - id2num[b.id]);
+    // 分类排序并按数字ID升序
+    let sorted = [];
+    for (const cat of CATEGORY_ORDER) {
+      let items = shopItems.filter(i => (i.category || 'other') === cat.key);
+      items.sort((a, b) => id2num[a.id] - id2num[b.id]);
+      if (items.length > 0) {
+        sorted.push({ cat: cat.name, items });
+      }
+    }
+    let otherItems = shopItems.filter(i => !CATEGORY_ORDER.some(c => (i.category || 'other') === c.key));
+    otherItems.sort((a, b) => id2num[a.id] - id2num[b.id]);
+    if (otherItems.length > 0) {
+      sorted.push({ cat: '其他', items: otherItems });
+    }
 
     // 构建渲染用的商品列表
     let list = [];
-    for (const item of sortedItems) {
-      let stockStr = '';
-      const nowDate = new Date().toLocaleDateString('zh-CN', { timeZone: 'Asia/Shanghai' }).replace(/\//g, '-');
-      let shopStock = getShopStock();
-      if (!shopStock[nowDate]) shopStock[nowDate] = {};
-      if (item.max_per_day !== undefined && item.max_per_day !== -1) {
-        const sold = shopStock[nowDate][item.id] || 0;
-        stockStr = `今日剩余${item.max_per_day - sold}`;
-      } else {
-        stockStr = '无限';
-      }
-      let limitStr = '';
-      if (item.only_once) {
-        limitStr = '每人限购1次';
-      }
-      if (item.max_per_user_per_day !== undefined && item.max_per_user_per_day !== -1) {
-        if (limitStr) {
-          limitStr += `，每日限购${item.max_per_user_per_day}个`;
+    const nowDate = new Date().toLocaleDateString('zh-CN', { timeZone: 'Asia/Shanghai' }).replace(/\//g, '-');
+    let shopStock = getShopStock();
+    if (!shopStock[nowDate]) shopStock[nowDate] = {};
+
+    for (const group of sorted) {
+      for (const item of group.items) {
+        let stockStr = '';
+        if (item.max_per_day !== undefined && item.max_per_day !== -1) {
+          const sold = shopStock[nowDate][item.id] || 0;
+          stockStr = `今日剩余${item.max_per_day - sold}`;
         } else {
-          limitStr = `每日限购${item.max_per_user_per_day}个`;
+          stockStr = '无限';
         }
+        let limitStr = '';
+        if (item.only_once) {
+          limitStr = '每人限购1次';
+        }
+        if (item.max_per_user_per_day !== undefined && item.max_per_user_per_day !== -1) {
+          if (limitStr) {
+            limitStr += `，每日限购${item.max_per_user_per_day}个`;
+          } else {
+            limitStr = `每日限购${item.max_per_user_per_day}个`;
+          }
+        }
+        list.push({
+          id: id2num[item.id],
+          name: item.name,
+          price: item.price,
+          stock: stockStr,
+          limit: limitStr,
+          desc: item.desc,
+          cat: group.cat
+        });
       }
-      list.push({
-        id: id2num[item.id],
-        name: item.name,
-        price: item.price,
-        stock: stockStr,
-        limit: limitStr,
-        desc: item.desc,
-        cat: getItemCategory(item)
-      });
     }
 
     // 渲染图片
