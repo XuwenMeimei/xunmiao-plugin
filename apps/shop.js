@@ -101,60 +101,42 @@ export class shop extends plugin {
 
     const { num2id, id2num } = buildIdMaps(shopItems);
 
-    // 分类排序
-    let sorted = [];
-    for (const cat of CATEGORY_ORDER) {
-      let items = shopItems.filter(i => getItemCategory(i) === cat.key);
-      // 按数字ID升序排序
-      items.sort((a, b) => id2num[a.id] - id2num[b.id]);
-      if (items.length > 0) {
-        sorted.push({ cat: cat.name, items });
-      }
-    }
-    let otherItems = shopItems.filter(i => !CATEGORY_ORDER.some(c => getItemCategory(i) === c.key));
-    // 其他分类也排序
-    otherItems.sort((a, b) => id2num[a.id] - id2num[b.id]);
-    if (otherItems.length > 0) {
-      sorted.push({ cat: '其他', items: otherItems });
-    }
-
-    // 获取库存
-    const nowDate = new Date().toLocaleDateString('zh-CN', { timeZone: 'Asia/Shanghai' }).replace(/\//g, '-');
-    let shopStock = getShopStock();
-    if (!shopStock[nowDate]) shopStock[nowDate] = {};
+    // 按数字ID整体排序
+    const sortedItems = shopItems.slice().sort((a, b) => id2num[a.id] - id2num[b.id]);
 
     // 构建渲染用的商品列表
     let list = [];
-    for (const group of sorted) {
-      for (const item of group.items) {
-        let stockStr = '';
-        if (item.max_per_day !== undefined && item.max_per_day !== -1) {
-          const sold = shopStock[nowDate][item.id] || 0;
-          stockStr = `今日剩余${item.max_per_day - sold}`;
-        } else {
-          stockStr = '无限';
-        }
-        let limitStr = '';
-        if (item.only_once) {
-          limitStr = '每人限购1次';
-        }
-        if (item.max_per_user_per_day !== undefined && item.max_per_user_per_day !== -1) {
-          if (limitStr) {
-            limitStr += `，每日限购${item.max_per_user_per_day}个`;
-          } else {
-            limitStr = `每日限购${item.max_per_user_per_day}个`;
-          }
-        }
-        list.push({
-          id: id2num[item.id],
-          name: item.name,
-          price: item.price,
-          stock: stockStr,
-          limit: limitStr,
-          desc: item.desc,
-          cat: group.cat
-        });
+    for (const item of sortedItems) {
+      let stockStr = '';
+      const nowDate = new Date().toLocaleDateString('zh-CN', { timeZone: 'Asia/Shanghai' }).replace(/\//g, '-');
+      let shopStock = getShopStock();
+      if (!shopStock[nowDate]) shopStock[nowDate] = {};
+      if (item.max_per_day !== undefined && item.max_per_day !== -1) {
+        const sold = shopStock[nowDate][item.id] || 0;
+        stockStr = `今日剩余${item.max_per_day - sold}`;
+      } else {
+        stockStr = '无限';
       }
+      let limitStr = '';
+      if (item.only_once) {
+        limitStr = '每人限购1次';
+      }
+      if (item.max_per_user_per_day !== undefined && item.max_per_user_per_day !== -1) {
+        if (limitStr) {
+          limitStr += `，每日限购${item.max_per_user_per_day}个`;
+        } else {
+          limitStr = `每日限购${item.max_per_user_per_day}个`;
+        }
+      }
+      list.push({
+        id: id2num[item.id],
+        name: item.name,
+        price: item.price,
+        stock: stockStr,
+        limit: limitStr,
+        desc: item.desc,
+        cat: getItemCategory(item)
+      });
     }
 
     // 渲染图片
