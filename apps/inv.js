@@ -139,6 +139,21 @@ export class inv extends plugin {
       if (bait) equipList.push({ type: '鱼饵', name: bait.name });
     }
 
+    // 计算钓鱼概率和摸鱼概率
+    let diaoyuProb = null, moyuProb = null;
+    if (equipData.rod) {
+      const rod = shopItems.find(i => i.id == equipData.rod && i.category === 'rod');
+      if (rod && typeof rod.probability !== 'undefined') {
+        diaoyuProb = Number(rod.probability);
+      }
+    }
+    if (equipData.glove) {
+      const glove = shopItems.find(i => i.id == equipData.glove && i.category === 'glove');
+      if (glove && typeof glove.probability_bonus !== 'undefined') {
+        moyuProb = Number(glove.probability_bonus);
+      }
+    }
+
     // 整理背包物品
     let invList = [];
     for (const group of sorted) {
@@ -171,6 +186,8 @@ export class inv extends plugin {
       data: {
         equipList,
         invList,
+        diaoyuProb,
+        moyuProb,
         tip: '发送 #装备[物品编号] 进行装备，如 #装备3',
         tip1: '发送 #卸下[物品编号] 进行卸下，如 #卸下3',
         tip2: '发送 #使用[物品编号] 或 #使用[物品编号] 数量 进行使用，如 #使用1 或 #使用1 3'
