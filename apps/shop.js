@@ -43,6 +43,16 @@ function saveUserBuyData(data) {
   fs.writeFileSync(userBuyPath, yaml.stringify(data));
 }
 
+// 新增：每人每日限购数据存储
+const userDailyBuyPath = `${_path}/plugins/xunmiao-plugin/data/user_daily_buy.yaml`;
+function getUserDailyBuyData() {
+  if (!fs.existsSync(userDailyBuyPath)) fs.writeFileSync(userDailyBuyPath, yaml.stringify({}));
+  return yaml.parse(fs.readFileSync(userDailyBuyPath, 'utf8')) || {};
+}
+function saveUserDailyBuyData(data) {
+  fs.writeFileSync(userDailyBuyPath, yaml.stringify(data));
+}
+
 export class shop extends plugin {
   constructor() {
     super({
@@ -74,7 +84,7 @@ export class shop extends plugin {
         const sold = shopStock[nowDate][item.id] || 0;
         stockStr = `今日剩余${item.max_per_day - sold}`;
       } else {
-        stockStr = '不限购';
+        stockStr = '无限';
       }
       let limitStr = '';
       if (item.only_once) {
@@ -125,6 +135,17 @@ export class shop extends plugin {
     if (!shopStock[nowDate]) shopStock[nowDate] = {};
     if (!shopStock[nowDate][itemId]) shopStock[nowDate][itemId] = 0;
 
+    // 新增：每人每日限购逻辑
+    let userDailyBuyData = getUserDailyBuyData();
+    if (!userDailyBuyData[nowDate]) userDailyBuyData[nowDate] = {};
+    if (!userDailyBuyData[nowDate][userId]) userDailyBuyData[nowDate][userId] = {};
+    const userDailyBought = userDailyBuyData[nowDate][userId][itemId] || 0;
+    if (item.max_per_user_per_day !== undefined && item.max_per_user_per_day !== -1) {
+      if (userDailyBought + buyCount > item.max_per_user_per_day) {
+        return e.reply(`【${item.name}】你今天最多只能买${item.max_per_user_per_day}个，已买${userDailyBought}个，剩余${item.max_per_user_per_day - userDailyBought}个。`, false, { at: true });
+      }
+    }
+
     // 新增：每人限购一次逻辑
     let userBuyData = getUserBuyData();
     if (!userBuyData[userId]) userBuyData[userId] = {};
@@ -174,6 +195,12 @@ export class shop extends plugin {
     if (item.max_per_day !== undefined && item.max_per_day !== -1) {
       shopStock[nowDate][itemId] += buyCount;
       saveShopStock(shopStock);
+    }
+
+    // 新增：记录每人每日购买数量
+    if (item.max_per_user_per_day !== undefined && item.max_per_user_per_day !== -1) {
+      userDailyBuyData[nowDate][userId][itemId] = userDailyBought + buyCount;
+      saveUserDailyBuyData(userDailyBuyData);
     }
 
     // 新增：记录每人限购一次
