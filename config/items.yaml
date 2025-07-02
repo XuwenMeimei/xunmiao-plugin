@@ -8,6 +8,7 @@
     value: 10
   max_per_day: -1
   max_per_user_per_day: 100
+
 - id: fish_big_dry
   name: 大包小鱼干
   price: 50
@@ -18,6 +19,7 @@
     value: 30
   max_per_day: -1
   max_per_user_per_day: 50
+
 - id: glove_moyu
   name: 摸鱼手套
   price: 200
@@ -29,6 +31,7 @@
     value: 1
   max_per_day: -1
   probability_bonus: 0.2
+
 - id: rod_basic
   name: 初级鱼竿
   price: 500
@@ -40,42 +43,7 @@
     value: 1
   max_per_day: -1
   probability: 0.5
-- id: bait_basic
-  name: 初级鱼饵
-  price: 5
-  desc: 初级鱼饵，似乎只能钓到普通鱼
-  category: bait
-  use:
-    type: diaoyu_bait
-    value: 1
-  max_per_day: -1
-- id: bait_mid
-  name: 中级鱼饵
-  price: 20
-  desc: 中级鱼饵，钓到稀有鱼概率提升
-  category: bait
-  use:
-    type: diaoyu_bait_mid
-    value: 1
-  max_per_day: -1
-- id: bait_high
-  name: 高级鱼饵
-  price: 50
-  desc: 高级鱼饵，钓到稀有和传说鱼概率大幅提升
-  category: bait
-  use:
-    type: diaoyu_bait_high
-    value: 1
-  max_per_day: -1
-- id: bait_top
-  name: 特级鱼饵
-  price: 200
-  desc: 特级鱼饵，只能钓到稀有、传说和隐藏鱼
-  category: bait
-  use:
-    type: diaoyu_bait_top
-    value: 1
-  max_per_day: -1
+
 - id: rod_mid
   name: 中级鱼竿
   price: 1000
@@ -87,6 +55,7 @@
     value: 1
   max_per_day: -1
   probability: 0.7
+
 - id: rod_high
   name: 高级鱼竿
   price: 2000
@@ -98,6 +67,7 @@
     value: 1
   max_per_day: -1
   probability: 0.9
+
 - id: rod_top
   name: 特级鱼竿
   price: 5000
@@ -109,3 +79,43 @@
     value: 1
   max_per_day: -1
   probability: 1.0
+
+- id: bait_basic
+  name: 初级鱼饵
+  price: 5
+  desc: 初级鱼饵，似乎只能钓到普通鱼
+  category: bait
+  use:
+    type: diaoyu_bait
+    value: 1
+  max_per_day: -1
+
+- id: bait_mid
+  name: 中级鱼饵
+  price: 20
+  desc: 中级鱼饵，钓到稀有鱼概率提升
+  category: bait
+  use:
+    type: diaoyu_bait_mid
+    value: 1
+  max_per_day: -1
+- id: bait_high
+
+  name: 高级鱼饵
+  price: 50
+  desc: 高级鱼饵，钓到稀有和传说鱼概率大幅提升
+  category: bait
+  use:
+    type: diaoyu_bait_high
+    value: 1
+  max_per_day: -1
+
+- id: bait_top
+  name: 特级鱼饵
+  price: 200
+  desc: 特级鱼饵，只能钓到稀有、传说和隐藏鱼
+  category: bait
+  use:
+    type: diaoyu_bait_top
+    value: 1
+  max_per_day: -1
