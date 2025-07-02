@@ -2,6 +2,7 @@
   name: 小鱼干
   price: 20
   desc: 喵最爱的零食，回复10体力
+  category: stamina
   use:
     type: stamina
     value: 10
@@ -11,6 +12,7 @@
   name: 大包小鱼干
   price: 50
   desc: 喵最爱的零食，回复30体力
+  category: stamina
   use:
     type: stamina
     value: 30
@@ -20,6 +22,7 @@
   name: 摸鱼手套
   price: 200
   desc: 装备后摸鱼概率提升20%
+  category: glove
   only_once: true
   use:
     type: moyu_glove
@@ -30,6 +33,7 @@
   name: 初级鱼竿
   price: 500
   desc: 一把普通的鱼竿，钓鱼概率50%
+  category: rod
   only_once: true
   use:
     type: diaoyu_rod
@@ -40,6 +44,7 @@
   name: 初级鱼饵
   price: 5
   desc: 初级鱼饵，似乎只能钓到普通鱼
+  category: bait
   use:
     type: diaoyu_bait
     value: 1
@@ -48,6 +53,7 @@
   name: 中级鱼饵
   price: 20
   desc: 中级鱼饵，钓到稀有鱼概率提升
+  category: bait
   use:
     type: diaoyu_bait_mid
     value: 1
@@ -56,6 +62,7 @@
   name: 高级鱼饵
   price: 50
   desc: 高级鱼饵，钓到稀有和传说鱼概率大幅提升
+  category: bait
   use:
     type: diaoyu_bait_high
     value: 1
@@ -64,6 +71,7 @@
   name: 特级鱼饵
   price: 200
   desc: 特级鱼饵，只能钓到稀有、传说和隐藏鱼
+  category: bait
   use:
     type: diaoyu_bait_top
     value: 1
@@ -72,6 +80,7 @@
   name: 中级鱼竿
   price: 1000
   desc: 一把中级鱼竿，钓鱼概率70%
+  category: rod
   only_once: true
   use:
     type: diaoyu_rod_mid
@@ -82,6 +91,7 @@
   name: 高级鱼竿
   price: 2000
   desc: 一把高级鱼竿，钓鱼概率90%
+  category: rod
   only_once: true
   use:
     type: diaoyu_rod_high
@@ -92,6 +102,7 @@
   name: 特级鱼竿
   price: 5000
   desc: 一把特级鱼竿，钓鱼概率100%
+  category: rod
   only_once: true
   use:
     type: diaoyu_rod_top
