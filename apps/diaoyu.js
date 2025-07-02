@@ -144,6 +144,7 @@ export class diaoyu extends plugin {
     fs.writeFileSync(invDataPath, yaml.stringify(invData));
 
     // 钓鱼概率：以鱼竿配置为主
+    let fishRate = 0;
     const rodItem = shopItems.find(i => i.id === rodEquipped && i.category === 'rod');
     if (rodItem && typeof rodItem.probability !== 'undefined') {
       fishRate = Number(rodItem.probability);
@@ -271,6 +272,7 @@ export class diaoyu extends plugin {
     }
 
     // 钓鱼概率：以鱼竿配置为主
+    let fishRate = 0;
     const rodItem = shopItems.find(i => i.id === rodEquipped && i.category === 'rod');
     if (rodItem && typeof rodItem.probability !== 'undefined') {
       fishRate = Number(rodItem.probability);
