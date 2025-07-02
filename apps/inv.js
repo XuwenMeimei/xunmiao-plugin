@@ -150,8 +150,12 @@ export class inv extends plugin {
     if (equipData.glove) {
       const glove = shopItems.find(i => i.id == equipData.glove && i.category === 'glove');
       if (glove && typeof glove.probability_bonus !== 'undefined') {
-        moyuProb = Number(glove.probability_bonus);
+        moyuProb = 0.25 + Number(glove.probability_bonus); // 默认25%+装备加成
+      } else {
+        moyuProb = 0.25; // 只有默认25%
       }
+    } else {
+      moyuProb = 0.25; // 没有装备手套也有默认25%
     }
 
     // 整理背包物品
