@@ -1,4 +1,4 @@
-- id: 1
+- id: fish_small_dry
   name: 小鱼干
   price: 20
   desc: 喵最爱的零食，回复10体力
@@ -7,7 +7,7 @@
     value: 10
   max_per_day: -1
   max_per_user_per_day: 100
-- id: 2
+- id: fish_big_dry
   name: 大包小鱼干
   price: 50
   desc: 喵最爱的零食，回复30体力
@@ -16,7 +16,7 @@
     value: 30
   max_per_day: -1
   max_per_user_per_day: 50
-- id: 3
+- id: glove_moyu
   name: 摸鱼手套
   price: 200
   desc: 装备后摸鱼概率提升20%
@@ -26,7 +26,7 @@
     value: 1
   max_per_day: -1
   probability_bonus: 0.2
-- id: 4
+- id: rod_basic
   name: 初级鱼竿
   price: 500
   desc: 一把普通的鱼竿，钓鱼概率50%
@@ -36,7 +36,7 @@
     value: 1
   max_per_day: -1
   probability: 0.5
-- id: 5
+- id: bait_basic
   name: 初级鱼饵
   price: 5
   desc: 初级鱼饵，似乎只能钓到普通鱼
@@ -44,7 +44,7 @@
     type: diaoyu_bait
     value: 1
   max_per_day: -1
-- id: 6
+- id: bait_mid
   name: 中级鱼饵
   price: 20
   desc: 中级鱼饵，钓到稀有鱼概率提升
@@ -52,7 +52,7 @@
     type: diaoyu_bait_mid
     value: 1
   max_per_day: -1
-- id: 7
+- id: bait_high
   name: 高级鱼饵
   price: 50
   desc: 高级鱼饵，钓到稀有和传说鱼概率大幅提升
@@ -60,7 +60,7 @@
     type: diaoyu_bait_high
     value: 1
   max_per_day: -1
-- id: 8
+- id: bait_top
   name: 特级鱼饵
   price: 200
   desc: 特级鱼饵，只能钓到稀有、传说和隐藏鱼
@@ -68,7 +68,7 @@
     type: diaoyu_bait_top
     value: 1
   max_per_day: -1
-- id: 9
+- id: rod_mid
   name: 中级鱼竿
   price: 1000
   desc: 一把中级鱼竿，钓鱼概率70%
@@ -78,7 +78,7 @@
     value: 1
   max_per_day: -1
   probability: 0.7
-- id: 10
+- id: rod_high
   name: 高级鱼竿
   price: 2000
   desc: 一把高级鱼竿，钓鱼概率90%
@@ -88,7 +88,7 @@
     value: 1
   max_per_day: -1
   probability: 0.9
-- id: 11
+- id: rod_top
   name: 特级鱼竿
   price: 5000
   desc: 一把特级鱼竿，钓鱼概率100%
