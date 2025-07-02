@@ -161,30 +161,9 @@ export class diaoyu extends plugin {
     // 加载鱼种
     const fishTypes = getFishTypes();
 
-    function buildFishPool(fishTypes, filterFn) {
-      let pool = [];
-      fishTypes.forEach(f => {
-        if (!filterFn || filterFn(f)) {
-          for (let i = 0; i < (f.weight || 1); i++) {
-            pool.push(f);
-          }
-        }
-      });
-      return pool;
-    }
-
-    let fishPool;
-    if (baitEquipped === 5) {
-      fishPool = buildFishPool(fishTypes, f => f.normal);
-    } else if (baitEquipped === 6) {
-      fishPool = buildFishPool(fishTypes, f => f.normal || (!f.normal && f.weight > 0));
-    } else if (baitEquipped === 7) {
-      fishPool = buildFishPool(fishTypes, f => f.normal || (!f.normal && f.weight > 0));
-    } else if (baitEquipped === 8) {
-      fishPool = buildFishPool(fishTypes, f => !f.normal && f.weight > 0);
-    } else {
-      fishPool = buildFishPool(fishTypes);
-    }
+    // 优化后的鱼池构建
+    let baitItem = shopItems.find(i => i.id === baitEquipped);
+    let fishPool = buildFishPoolByBait(fishTypes, baitItem ? baitItem.id : null);
 
     const fish = fishPool[Math.floor(Math.random() * fishPool.length)];
     const length = (Math.random() * (fish.maxLen - fish.minLen) + fish.minLen).toFixed(1);
@@ -289,34 +268,10 @@ export class diaoyu extends plugin {
     let emptyCount = 0;
     let baitCount = invData[userId][baitEquipped];
 
+    // 优化后的鱼池构建
     const fishTypes = getFishTypes();
-
-    // 构建概率鱼池工具函数
-    function buildFishPool(fishTypes, filterFn) {
-        let pool = [];
-        fishTypes.forEach(f => {
-            if (!filterFn || filterFn(f)) {
-                for (let i = 0; i < (f.weight || 1); i++) {
-                    pool.push(f);
-                }
-            }
-        });
-        return pool;
-    }
-
-    // 预先构建鱼池，避免每次循环都构建
-    let fishPool;
-    if (baitEquipped === 5) {
-        fishPool = buildFishPool(fishTypes, f => f.normal);
-    } else if (baitEquipped === 6) {
-        fishPool = buildFishPool(fishTypes, f => f.normal || (!f.normal && f.weight > 0));
-    } else if (baitEquipped === 7) {
-        fishPool = buildFishPool(fishTypes, f => f.normal || (!f.normal && f.weight > 0));
-    } else if (baitEquipped === 8) {
-        fishPool = buildFishPool(fishTypes, f => !f.normal && f.weight > 0);
-    } else {
-        fishPool = buildFishPool(fishTypes);
-    }
+    let baitItem = shopItems.find(i => i.id === baitEquipped);
+    let fishPool = buildFishPoolByBait(fishTypes, baitItem ? baitItem.id : null);
 
     while (stamina >= 20 && baitCount > 0) {
         // 每次消耗一个鱼饵
@@ -405,7 +360,7 @@ export class diaoyu extends plugin {
     const baitUsed = invData[userId][baitEquipped] !== undefined
         ? (invData[userId][baitEquipped] + totalCount + emptyCount) - baitCount
         : totalCount + emptyCount;
-    const baitItem = shopItems.find(i => i.id === baitEquipped);
+    // 这里直接用上面已声明的 baitItem
     const baitName = baitItem ? baitItem.name : `#${baitEquipped}`;
 
     const summaryData = {
@@ -430,5 +385,44 @@ export class diaoyu extends plugin {
     });
 
     return e.reply(base64, false, { at: true });
+  }
 }
+
+// 构建概率鱼池工具函数
+function buildFishPoolByBait(fishTypes, baitType) {
+    // 计算总权重
+    const totalWeight = fishTypes.reduce((sum, f) => sum + (f.weight || 1), 0);
+    // 计算每条鱼的概率
+    const fishWithProb = fishTypes.map(f => ({
+        ...f,
+        prob: (f.weight || 1) / totalWeight
+    }));
+    // 区间定义
+    let filterFn;
+    switch (baitType) {
+        case 'bait_basic': // 高概率鱼
+            filterFn = f => f.prob >= 0.08;
+            break;
+        case 'bait_mid': // 中概率鱼
+            filterFn = f => f.prob >= 0.03 && f.prob < 0.08;
+            break;
+        case 'bait_high': // 低概率鱼
+            filterFn = f => f.prob >= 0.01 && f.prob < 0.03;
+            break;
+        case 'bait_top': // 极低概率鱼
+            filterFn = f => f.prob < 0.01;
+            break;
+        default: // 默认全鱼池
+            filterFn = () => true;
+    }
+    // 构建鱼池
+    let pool = [];
+    fishWithProb.forEach(f => {
+        if (filterFn(f)) {
+            for (let i = 0; i < (f.weight || 1); i++) {
+                pool.push(f);
+            }
+        }
+    });
+    return pool;
 }
