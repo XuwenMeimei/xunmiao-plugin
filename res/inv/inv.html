@@ -18,6 +18,14 @@
         <li>{{item.type}}：{{item.name}}</li>
         {{/each}}
       </ul>
+      <div class="prob-section">
+        {{if data.diaoyuProb !== null}}
+        <div class="prob-row">钓鱼概率：<span class="prob-value">{{(data.diaoyuProb * 100).toFixed(1)}}%</span></div>
+        {{/if}}
+        {{if data.moyuProb !== null}}
+        <div class="prob-row">摸鱼概率：<span class="prob-value">{{(data.moyuProb * 100).toFixed(1)}}%</span></div>
+        {{/if}}
+      </div>
     </div>
     <div class="inv-list">
       {{each data.invList group}}
