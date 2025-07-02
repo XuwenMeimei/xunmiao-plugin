@@ -109,7 +109,6 @@ export class shop extends plugin {
         sorted.push({ cat: cat.name, items });
       }
     }
-    // 其他未分类
     let otherItems = shopItems.filter(i => !CATEGORY_ORDER.some(c => getItemCategory(i) === c.key));
     if (otherItems.length > 0) {
       sorted.push({ cat: '其他', items: otherItems });
@@ -120,9 +119,9 @@ export class shop extends plugin {
     let shopStock = getShopStock();
     if (!shopStock[nowDate]) shopStock[nowDate] = {};
 
-    let msg = '【商店商品列表】\n';
+    // 构建渲染用的商品列表
+    let list = [];
     for (const group of sorted) {
-      msg += `\n【${group.cat}】\n`;
       for (const item of group.items) {
         let stockStr = '';
         if (item.max_per_day !== undefined && item.max_per_day !== -1) {
@@ -142,11 +141,31 @@ export class shop extends plugin {
             limitStr = `每日限购${item.max_per_user_per_day}个`;
           }
         }
-        msg += `#${id2num[item.id]} ${item.name} ${item.price}币 ${stockStr} ${limitStr}\n${item.desc}\n`;
+        list.push({
+          id: id2num[item.id],
+          name: item.name,
+          price: item.price,
+          stock: stockStr,
+          limit: limitStr,
+          desc: item.desc,
+          cat: group.cat
+        });
       }
     }
-    msg += '\n发送 #购买商品编号 进行购买，如 #购买1 或 #购买1 2';
-    return e.reply(msg, false, { at: true });
+
+    // 渲染图片
+    const base64 = await puppeteer.screenshot('xunmiao-plugin', {
+      saveId: 'shop',
+      imgType: 'png',
+      tplFile: `${_path}/plugins/xunmiao-plugin/res/shop/shop.html`,
+      pluginResources: `${_path}/plugins/xunmiao-plugin/res/shop/shop.css`,
+      data: {
+        list,
+        tip: '发送 #购买商品编号 进行购买，如 #购买1 或 #购买1 2'
+      }
+    });
+
+    return e.reply(base64, false, { at: true });
   }
 
   async buyItem(e) {
