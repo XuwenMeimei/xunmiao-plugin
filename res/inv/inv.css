@@ -55,7 +55,6 @@ body {
   font-size: 24px;
   color: #e67e22;
   margin-bottom: 4px;
-  font-weight: bold;
 }
 
 .inv-group ul {
@@ -89,7 +88,6 @@ body {
 }
 
 .item-name {
-  font-weight: bold;
   font-size: 20px;
   color: #ff6f91;
 }

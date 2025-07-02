@@ -175,7 +175,9 @@ export class inv extends plugin {
       data: {
         equipList,
         invList,
-        tip: '发送 #装备物品编号 进行装备，如 #装备3\n发送 #卸下物品编号 进行卸下，如 #卸下3\n发送 #使用物品编号 或 #使用物品编号 数量 进行使用，如 #使用1 或 #使用1 3'
+        tip: '发送 #装备[物品编号] 进行装备，如 #装备3',
+        tip1: '发送 #卸下[物品编号] 进行卸下，如 #卸下3',
+        tip2: '发送 #使用[物品编号] 或 #使用[物品编号] 数量 进行使用，如 #使用1 或 #使用1 3'
       }
     });
 
@@ -187,7 +189,7 @@ export class inv extends plugin {
     const shopItems = getShopItems();
     const { num2id } = buildIdMaps(shopItems);
     const match = e.msg.match(/^#*装备(\d+)$/);
-    if (!match) return e.reply('格式错误，请发送 #装备物品编号', false, { at: true });
+    if (!match) return e.reply('格式错误，请发送 #装备[物品编号]', false, { at: true });
 
     const numId = parseInt(match[1]);
     const itemId = num2id[numId];
@@ -229,7 +231,7 @@ export class inv extends plugin {
     const shopItems = getShopItems();
     const { num2id } = buildIdMaps(shopItems);
     const match = e.msg.match(/^#*卸下(\d+)$/);
-    if (!match) return e.reply('格式错误，请发送 #卸下物品编号', false, { at: true });
+    if (!match) return e.reply('格式错误，请发送 #卸下[物品编号]', false, { at: true });
 
     const numId = parseInt(match[1]);
     const itemId = num2id[numId];
@@ -261,7 +263,7 @@ export class inv extends plugin {
     const { num2id } = buildIdMaps(shopItems);
     // 支持 #使用1 或 #使用1 3
     const match = e.msg.match(/^#*使用(\d+)(?:\s+(\d+))?$/);
-    if (!match) return e.reply('格式错误，请发送 #使用物品编号 或 #使用物品编号 数量', false, { at: true });
+    if (!match) return e.reply('格式错误，请发送 #使用[物品编号] 或 #使用[物品编号] 数量', false, { at: true });
 
     const numId = parseInt(match[1]);
     const itemId = num2id[numId];

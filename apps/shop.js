@@ -165,7 +165,7 @@ export class shop extends plugin {
       pluginResources: `${_path}/plugins/xunmiao-plugin/res/shop/shop.css`,
       data: {
         list,
-        tip: '发送 #购买商品编号 进行购买，如 #购买1 或 #购买1 2'
+        tip: '发送 #购买[商品编号] 进行购买，如 #购买1 或 #购买1 2'
       }
     });
 
@@ -178,7 +178,7 @@ export class shop extends plugin {
     const { num2id } = buildIdMaps(shopItems);
 
     const match = e.msg.match(/^#*购买(\d+)(?:\s+(\d+))?$/);
-    if (!match) return e.reply('格式错误，请发送 #购买商品编号 或 #购买商品编号 数量', false, { at: true });
+    if (!match) return e.reply('格式错误，请发送 #购买[商品编号] 或 #购买[商品编号] 数量', false, { at: true });
 
     const numId = parseInt(match[1]);
     const itemId = num2id[numId];
