@@ -90,6 +90,14 @@ export class shop extends plugin {
       if (item.only_once) {
         limitStr = '每人限购1次';
       }
+      // 新增：每日每人限购显示
+      if (item.max_per_user_per_day !== undefined && item.max_per_user_per_day !== -1) {
+        if (limitStr) {
+          limitStr += `，每日限购${item.max_per_user_per_day}个`;
+        } else {
+          limitStr = `每日限购${item.max_per_user_per_day}个`;
+        }
+      }
       return {
         id: item.id,
         name: item.name,
