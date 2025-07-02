@@ -1,7 +1,7 @@
 import plugin from '../../../lib/plugins/plugin.js'
 import fs from 'fs'
 import yaml from 'yaml'
-import puppeteer from 'puppeteer'
+import puppeteer from '../../../lib/puppeteer/puppeteer.js'
 
 const _path = process.cwd().replace(/\\/g, "/");
 const invDataPath = `${_path}/plugins/xunmiao-plugin/data/inv_data.yaml`;
