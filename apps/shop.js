@@ -53,6 +53,33 @@ function saveUserDailyBuyData(data) {
   fs.writeFileSync(userDailyBuyPath, yaml.stringify(data));
 }
 
+const CATEGORY_ORDER = [
+  { key: 'stamina', name: '体力道具' },
+  { key: 'glove', name: '手套' },
+  { key: 'rod', name: '鱼竿' },
+  { key: 'bait', name: '鱼饵' }
+];
+
+function getItemCategory(item) {
+  if (item.use && item.use.type === 'stamina') return 'stamina';
+  if (item.id.includes('glove')) return 'glove';
+  if (item.id.includes('rod')) return 'rod';
+  if (item.id.includes('bait')) return 'bait';
+  return 'other';
+}
+
+function buildIdMaps(shopItems) {
+  const num2id = {};
+  const id2num = {};
+  let idx = 1;
+  for (const item of shopItems) {
+    num2id[idx] = item.id;
+    id2num[item.id] = idx;
+    idx++;
+  }
+  return { num2id, id2num };
+}
+
 export class shop extends plugin {
   constructor() {
     super({
@@ -72,68 +99,71 @@ export class shop extends plugin {
     const shopItems = getShopItems();
     if (!shopItems.length) return e.reply('商店暂无商品~', false, { at: true });
 
+    const { num2id, id2num } = buildIdMaps(shopItems);
+
+    // 分类排序
+    let sorted = [];
+    for (const cat of CATEGORY_ORDER) {
+      let items = shopItems.filter(i => getItemCategory(i) === cat.key);
+      if (items.length > 0) {
+        sorted.push({ cat: cat.name, items });
+      }
+    }
+    // 其他未分类
+    let otherItems = shopItems.filter(i => !CATEGORY_ORDER.some(c => getItemCategory(i) === c.key));
+    if (otherItems.length > 0) {
+      sorted.push({ cat: '其他', items: otherItems });
+    }
+
     // 获取库存
     const nowDate = new Date().toLocaleDateString('zh-CN', { timeZone: 'Asia/Shanghai' }).replace(/\//g, '-');
     let shopStock = getShopStock();
     if (!shopStock[nowDate]) shopStock[nowDate] = {};
 
-    // 组装渲染数据
-    const itemList = shopItems.map(item => {
-      let stockStr = '';
-      if (item.max_per_day !== undefined && item.max_per_day !== -1) {
-        const sold = shopStock[nowDate][item.id] || 0;
-        stockStr = `今日剩余${item.max_per_day - sold}`;
-      } else {
-        stockStr = '无限';
-      }
-      let limitStr = '';
-      if (item.only_once) {
-        limitStr = '每人限购1次';
-      }
-      // 新增：每日每人限购显示
-      if (item.max_per_user_per_day !== undefined && item.max_per_user_per_day !== -1) {
-        if (limitStr) {
-          limitStr += `，每日限购${item.max_per_user_per_day}个`;
+    let msg = '【商店商品列表】\n';
+    for (const group of sorted) {
+      msg += `\n【${group.cat}】\n`;
+      for (const item of group.items) {
+        let stockStr = '';
+        if (item.max_per_day !== undefined && item.max_per_day !== -1) {
+          const sold = shopStock[nowDate][item.id] || 0;
+          stockStr = `今日剩余${item.max_per_day - sold}`;
         } else {
-          limitStr = `每日限购${item.max_per_user_per_day}个`;
+          stockStr = '无限';
         }
+        let limitStr = '';
+        if (item.only_once) {
+          limitStr = '每人限购1次';
+        }
+        if (item.max_per_user_per_day !== undefined && item.max_per_user_per_day !== -1) {
+          if (limitStr) {
+            limitStr += `，每日限购${item.max_per_user_per_day}个`;
+          } else {
+            limitStr = `每日限购${item.max_per_user_per_day}个`;
+          }
+        }
+        msg += `#${id2num[item.id]} ${item.name} ${item.price}币 ${stockStr} ${limitStr}\n${item.desc}\n`;
       }
-      return {
-        id: item.id,
-        name: item.name,
-        price: item.price,
-        desc: item.desc,
-        stock: stockStr,
-        limit: limitStr
-      }
-    });
-
-    const data = {
-      list: itemList,
-      tip: '发送 #购买商品编号 进行购买，如 #购买1'
-    };
-
-    const base64 = await puppeteer.screenshot('xunmiao-plugin', {
-      saveId: 'shop',
-      imgType: 'png',
-      tplFile: `${_path}/plugins/xunmiao-plugin/res/shop/shop.html`,
-      pluginResources: `${_path}/plugins/xunmiao-plugin/res/shop/shop.css`,
-      data
-    });
-
-    return e.reply(base64, false, { at: true });
+    }
+    msg += '\n发送 #购买商品编号 进行购买，如 #购买1 或 #购买1 2';
+    return e.reply(msg, false, { at: true });
   }
 
   async buyItem(e) {
     const userId = `${e.user_id}`;
+    const shopItems = getShopItems();
+    const { num2id } = buildIdMaps(shopItems);
+
     const match = e.msg.match(/^#*购买(\d+)(?:\s+(\d+))?$/);
     if (!match) return e.reply('格式错误，请发送 #购买商品编号 或 #购买商品编号 数量', false, { at: true });
 
-    const itemId = parseInt(match[1]);
+    const numId = parseInt(match[1]);
+    const itemId = num2id[numId];
+    if (!itemId) return e.reply('没有这个商品编号哦~', false, { at: true });
+
     let buyCount = match[2] ? parseInt(match[2]) : 1;
     if (buyCount < 1) buyCount = 1;
 
-    const shopItems = getShopItems();
     const item = shopItems.find(i => i.id === itemId);
     if (!item) return e.reply('没有这个商品编号哦~', false, { at: true });
 
