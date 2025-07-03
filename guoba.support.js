@@ -1,6 +1,5 @@
 import path from 'path'
 import lodash from 'lodash'
-import { _paths, cfg } from '#guoba.platform'
 
 // 支持锅巴
 export function supportGuoba () {
