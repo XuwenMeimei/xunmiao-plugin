@@ -1,5 +1,6 @@
 import path from 'path'
 import lodash from 'lodash'
+import { fileURLToPath } from 'node:url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
