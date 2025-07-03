@@ -1,6 +1,8 @@
 import path from 'path'
 import lodash from 'lodash'
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
 // 支持锅巴
 export function supportGuoba () {
   return {
@@ -20,7 +22,7 @@ export function supportGuoba () {
       showInMenu: 'auto',
       icon: 'mdi:stove',
       iconColor: '#d19f56',
-      iconPath: path.join(_paths.pluginRoot, 'res/icon.png')
+      iconPath: path.join(__dirname, 'res/icon.png')
     },
     configInfo: {
       schemas: [
