@@ -12,8 +12,8 @@
     "Yunzai-Bot",
     "xunmiao-plugin"
   ],
-  "author": "",
-  "license": "MIT",
+  "author": "NekoXuwen",
+  "license": "UNLICENSED",
   "dependencies": {
     "yaml": "^2.3.4",
     "puppeteer": "^21.3.8",
