@@ -79,12 +79,12 @@ export class chat extends plugin {
     const checkReply = checkData.choices?.[0]?.message?.content?.trim().toLowerCase();
 
     if (checkReply.includes('是')) {
-      const masterQQ = Config.masterQQ || [];
+      const masterQQ = cfg.masterQQ || [];
       const group = this.e.bot.pickGroup(e.group_id, true);
       const member = group.pickMember(e.user_id);
       const memberInfo = member?.info || await member?.getInfo?.();
 
-      if (cfg.masterQQ.includes(e.user_id)) {
+      if (masterQQ.includes(e.user_id)) {
         await e.reply("宝宝，说脏话是不对的哦~");
         return;
       }
@@ -96,7 +96,7 @@ export class chat extends plugin {
         }
       }
 
-      // 普通成员禁言30秒
+      await group.recallMsg(source.message_id);
       await e.reply("不可以说脏话哦~");
       await member.mute(30);
       return;
