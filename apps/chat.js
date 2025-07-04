@@ -9,7 +9,7 @@ const configPath = `${_path}/plugins/xunmiao-plugin/config/deepseek/config.yaml`
 
 export class chat extends plugin {
   constructor() {
-    super({
+    super({ 
       name: '寻喵聊天',
       dsc: '寻喵聊天功能',
       event: 'message',
@@ -70,41 +70,62 @@ export class chat extends plugin {
     };
 
     try {
-    const checkRes = await fetch(deepseek_url, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify(checkBody)
-    });
-    const checkData = await checkRes.json();
-    const checkReply = checkData.choices?.[0]?.message?.content?.trim().toLowerCase();
+      const checkRes = await fetch(deepseek_url, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(checkBody)
+      });
+      const checkData = await checkRes.json();
+      const checkReply = checkData.choices?.[0]?.message?.content?.trim().toLowerCase();
 
-    if (checkReply.includes('是')) {
-      const masterQQ = cfg.masterQQ || [];
-      const group = this.e.bot.pickGroup(e.group_id, true);
-      const member = group.pickMember(e.user_id);
-      const memberInfo = member?.info || await member?.getInfo?.();
+      if (!checkReply) return;
 
-      if (masterQQ.includes(e.user_id)) {
-        await e.reply("宝宝，说脏话是不对的哦~", false, { at: true });
-        await e.group.recallMsg(e.message_id);
-        return;
-      }
+      if (checkReply.includes('是')) {
+        const masterQQ = cfg.masterQQ || [];
 
-      if (memberInfo) {
-        if (memberInfo.role === "owner" || memberInfo.role === "admin") {
-          await e.reply("不要再说脏话了哦~", false, { at: true });
-          await e.group.recallMsg(e.message_id);
+        if (masterQQ.includes(e.user_id)) {
+          await e.reply("宝宝，说脏话是不对的哦~", false, { at: true });
+          try {
+            if (e.group) {
+              await e.group.recallMsg(e.message_id);
+            }
+            await new Promise(res => setTimeout(res, 1000));
+          } catch {
+            await e.reply("唔...撤回不掉呢...不过不要说脏话了哦~", false, { at: true });
+          }
+          return;
+        }
+
+        if (e.group) {
+          const member = e.group.pickMember(e.user_id);
+          const memberInfo = member?.info || await member?.getInfo?.();
+
+          if (memberInfo) {
+            if (memberInfo.role === "owner" || memberInfo.role === "admin") {
+              await e.reply("不要再说脏话了哦~", false, { at: true });
+              try {
+                await e.group.recallMsg(e.message_id);
+                await new Promise(res => setTimeout(res, 1000));
+              } catch {
+                await e.reply("唔...撤回不掉呢...不过不要说脏话了哦~", false, { at: true });
+              }
+              return;
+            }
+          }
+
+          try {
+            await e.reply("不可以说脏话哦~", false, { at: true });
+            await e.group.recallMsg(e.message_id);
+            await new Promise(res => setTimeout(res, 1000));
+          } catch {
+            await e.reply("唔...撤回不掉呢...不过不要说脏话了哦~", false, { at: true });
+          }
+          await member.mute(30);
           return;
         }
       }
-
-      await e.group.recallMsg(e.message_id);
-      await e.reply("不可以说脏话哦~", false, { at: true });
-      await member.mute(30);
-      return;
+    } catch (err) {
+      console.error('请求失败:', err);
     }
-  } catch (err) {
-    console.error('请求失败:', err);
   }
-}
 }
