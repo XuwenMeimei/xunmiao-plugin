@@ -86,12 +86,14 @@ export class chat extends plugin {
 
       if (masterQQ.includes(e.user_id)) {
         await e.reply("宝宝，说脏话是不对的哦~");
+        await group.recallMsg(source.message_id);
         return;
       }
 
       if (memberInfo) {
         if (memberInfo.role === "owner" || memberInfo.role === "admin") {
           await e.reply("不要再说脏话了哦~");
+          await group.recallMsg(source.message_id);
           return;
         }
       }
