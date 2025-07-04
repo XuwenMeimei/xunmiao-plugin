@@ -60,7 +60,7 @@ export class chat extends plugin {
       messages: [
         {
           role: 'system',
-          content: '你是一个内容审核助手，只回答“是”或“否”。请判断用户这句话是否包含不文明、侮辱、色情或攻击性语言，只回答“是”或“否”，不要添加解释。'
+          content: '你是一个内容审核助手，只回答“是”或“否”。请判断用户这句话是否包含不文明、侮辱、色情或攻击性语言，但忽略类似“我超”“卧槽”等表达情绪的感叹词。只回答“是”或“否”，不要添加解释。'
         },
         {
           role: 'user',
@@ -85,21 +85,21 @@ export class chat extends plugin {
       const memberInfo = member?.info || await member?.getInfo?.();
 
       if (masterQQ.includes(e.user_id)) {
-        await e.reply("宝宝，说脏话是不对的哦~", true, { at: false });
+        await e.reply("宝宝，说这种话是不对的哦~", true, { at: false });
         await e.group.recallMsg(e.message_id);
         return;
       }
 
       if (memberInfo) {
         if (memberInfo.role === "owner" || memberInfo.role === "admin") {
-          await e.reply("不要再说脏话了哦~", true, { at: false });
+          await e.reply("不要再说这些了哦~", true, { at: false });
           await e.group.recallMsg(e.message_id);
           return;
         }
       }
 
       await e.group.recallMsg(e.message_id);
-      await e.reply("不可以说脏话哦~", true, { at: false });
+      await e.reply("不可以说这种话哦~", true, { at: false });
       await member.mute(30);
       return;
     }
