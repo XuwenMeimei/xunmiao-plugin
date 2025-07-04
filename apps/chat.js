@@ -41,6 +41,7 @@ export class chat extends plugin {
 
   async chat(e) {
     if (!e.msg || typeof e.msg !== 'string') return;
+
     const msg = e.msg.trim();
     if (!msg || !this.deepseekConfig.api_key) return;
 
@@ -78,11 +79,19 @@ export class chat extends plugin {
       const checkReply = checkData.choices?.[0]?.message?.content?.trim().toLowerCase();
 
       if (checkReply.includes('是')) {
-        await e.reply('不可以说脏话哦~', false, { at: true });
+
+        await e.reply('不可以说脏话哦~');
+
+        const group = this.e.bot.pickGroup(e.group_id, true);
+        const member = group.pickMember(e.user_id);
+
+        await member.mute(30);
+
+        return;
       }
 
     } catch (err) {
-      console.error('请求失败:', err);
+      console.error('💥 DeepSeek 请求失败:', err);
     }
   }
 }
