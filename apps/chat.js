@@ -6,11 +6,11 @@ import fetch from 'node-fetch'
 const _path = process.cwd().replace(/\\/g, "/");
 const configPath = `${_path}/plugins/xunmiao-plugin/config/deepseek/config.yaml`;
 
-export class duel extends plugin {
+export class chat extends plugin {
   constructor() {
     super({
       name: '寻喵聊天',
-      dsc: '调用 DeepSeek API 进行对话',
+      dsc: '寻喵聊天功能',
       event: 'message',
       priority: 5000,
       rule: [
@@ -21,7 +21,6 @@ export class duel extends plugin {
       ]
     });
 
-    // 读取配置
     this.deepseekConfig = this.loadConfig();
   }
 
@@ -44,8 +43,8 @@ export class duel extends plugin {
     const msg = e.msg.trim();
     if (!msg || !this.deepseekConfig.api_key) return;
 
-    const deepseek_url = 'https://api.deepseek.com/v1/chat/completions';
-    const ai_model = this.deepseekConfig.model || 'deepseek-chat';
+    const deepseek_url = 'https://api.deepseek.com/chat/completions';
+    const model = this.deepseekConfig.model || 'deepseek-chat';
     const api_key = this.deepseekConfig.api_key;
 
     const headers = {
@@ -53,36 +52,36 @@ export class duel extends plugin {
       'Authorization': `Bearer ${api_key}`
     };
 
-    const body = {
-      model: ai_model,
+    const checkBody = {
+      model,
       messages: [
-        { role: 'system', content: '你是一个可爱又聪明的猫娘助手，请用亲切有趣的语气回答用户问题。' },
-        { role: 'user', content: msg }
+        {
+          role: 'system',
+          content: '你是一个内容审核助手，只回答“是”或“否”。请判断用户这句话是否包含不文明、侮辱、色情或攻击性语言，只回答“是”或“否”，不要添加解释。'
+        },
+        {
+          role: 'user',
+          content: msg
+        }
       ]
     };
 
     try {
-      const response = await fetch(deepseek_url, {
+      const checkRes = await fetch(deepseek_url, {
         method: 'POST',
-        headers: headers,
-        body: JSON.stringify(body)
+        headers,
+        body: JSON.stringify(checkBody)
       });
 
-      if (!response.ok) {
-        return e.reply(`请求失败：${response.status}`);
+      const checkData = await checkRes.json();
+      const checkReply = checkData.choices?.[0]?.message?.content?.trim().toLowerCase();
+
+      if (checkReply.includes('是')) {
+        await e.reply('不可以说脏话哦~');
       }
 
-      const data = await response.json();
-      const reply = data.choices?.[0]?.message?.content?.trim();
-
-      if (reply) {
-        return e.reply(reply);
-      } else {
-        return e.reply('喵呜~ 这次没有收到回复呢。');
-      }
-    } catch (error) {
-      console.error('DeepSeek 请求错误：', error);
-      return e.reply('请求 DeepSeek 失败喵，可能是网络问题或配置错误。');
+    } catch (err) {
+      console.error('请求失败:', err);
     }
   }
 }
