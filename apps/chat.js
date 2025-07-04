@@ -84,7 +84,7 @@ export class chat extends plugin {
       const member = group.pickMember(e.user_id);
       const memberInfo = member?.info || await member?.getInfo?.();
 
-      if (masterQQ.includes(Number(e.user_id))) {
+      if (cfg.masterQQ.includes(e.user_id)) {
         await e.reply("宝宝，说脏话是不对的哦~");
         return;
       }
