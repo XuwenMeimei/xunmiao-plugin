@@ -44,7 +44,7 @@ export class duel extends plugin {
     const msg = e.msg.trim();
     if (!msg || !this.deepseekConfig.api_key) return;
 
-    const deepseek_url = 'https://api.deepseek.com/v1';
+    const deepseek_url = 'https://api.deepseek.com/v1/chat/completions';
     const ai_model = this.deepseekConfig.model || 'deepseek-chat';
     const api_key = this.deepseekConfig.api_key;
 
