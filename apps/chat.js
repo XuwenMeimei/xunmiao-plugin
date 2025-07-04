@@ -15,11 +15,7 @@ export class duel extends plugin {
   }
 
     async chat(e) {
-    const message = e.message;
-    const groupId = e.group_id;
-
-    // 这里可以添加聊天逻辑，比如回复用户的消息
-    // 例如，简单地回复用户发送的消息
-        return e.reply(`${groupId}说: ${message}`, false, { at: false });
+    const msg = e.msg;
+        console.log(msg);
     }
 }
