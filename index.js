@@ -22,6 +22,19 @@ const userBuyPath = path.join(dataDir, 'user_buy.yaml')
 const userDailyBuy = path.join(dataDir, 'user_daily_buy.template.yaml')
 const userDailyBuyPath = path.join(dataDir, 'user_daily_buy.yaml')
 
+const deepseek_config = path.join(__dirname, 'config/deepseek/config.template.yaml')
+const deepseek_config_path = path.join(__dirname, 'config/deepseek/config.yaml')
+
+// 初始化 DeepSeek 配置文件
+if (!fs.existsSync(deepseek_config_path)) {
+  if (fs.existsSync(deepseek_config)) {
+    fs.copyFileSync(deepseek_config, deepseek_config_path)
+    console.log('从模板复制了 DeepSeek 配置文件')
+  } else {
+    console.warn('未找到模板文件：', deepseek_config)
+  }
+}
+
 // 初始化 user_data.yaml
 if (!fs.existsSync(userDataPath)) {
   if (fs.existsSync(templatePath)) {
