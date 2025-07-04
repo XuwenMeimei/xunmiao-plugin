@@ -29,7 +29,7 @@ export class chat extends plugin {
 
   loadConfig() {
     if (!fs.existsSync(configPath)) {
-      console.error(`❌ DeepSeek 配置文件未找到: ${configPath}`);
+      console.error(`DeepSeek 配置文件未找到: ${configPath}`);
       return {};
     }
 
@@ -37,7 +37,7 @@ export class chat extends plugin {
       const file = fs.readFileSync(configPath, 'utf8');
       return yaml.parse(file);
     } catch (err) {
-      console.error('❌ 读取 DeepSeek 配置失败:', err);
+      console.error('读取 DeepSeek 配置失败:', err);
       return {};
     }
   }
@@ -106,7 +106,7 @@ export class chat extends plugin {
       return;
     }
   } catch (err) {
-    console.error('DeepSeek 请求失败:', err);
+    console.error('请求失败:', err);
   }
 }
 }
