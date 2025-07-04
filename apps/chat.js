@@ -86,25 +86,25 @@ export class chat extends plugin {
 
       if (masterQQ.includes(e.user_id)) {
         await e.reply("宝宝，说脏话是不对的哦~", false, { at: true });
-        await e.recallMsg();
+        await e.group.recallMsg(e.message_id);
         return;
       }
 
       if (memberInfo) {
         if (memberInfo.role === "owner" || memberInfo.role === "admin") {
           await e.reply("不要再说脏话了哦~", false, { at: true });
-          await e.recallMsg();
+          await e.group.recallMsg(e.message_id);
           return;
         }
       }
 
-      await e.recallMsg();
+      await e.group.recallMsg(e.message_id);
       await e.reply("不可以说脏话哦~", false, { at: true });
       await member.mute(30);
       return;
     }
   } catch (err) {
-    console.error('DeepSeek 请求失败:', err);
+    console.error('请求失败:', err);
   }
 }
 }
