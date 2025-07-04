@@ -85,7 +85,7 @@ export class chat extends plugin {
       const memberInfo = member?.info || await member?.getInfo?.();
 
       if (masterQQ.includes(e.user_id)) {
-        await e.reply("宝宝，说脏话是不对的哦~");
+        await e.reply("宝宝，说脏话是不对的哦~", true, { at: true });
         await e.group.recallMsg(e.message_id);
         return;
       }
