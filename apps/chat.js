@@ -86,19 +86,19 @@ export class chat extends plugin {
 
       if (masterQQ.includes(e.user_id)) {
         await e.reply("宝宝，说脏话是不对的哦~", false, { at: true });
-        await group.recallMsg(source.message_id);
+        await this.e.bot.deleteMsg(e.message_id);
         return;
       }
 
       if (memberInfo) {
         if (memberInfo.role === "owner" || memberInfo.role === "admin") {
           await e.reply("不要再说脏话了哦~", false, { at: true });
-          await group.recallMsg(source.message_id);
+          await this.e.bot.deleteMsg(e.message_id);
           return;
         }
       }
 
-      await group.recallMsg(source.message_id);
+      await this.e.bot.deleteMsg(e.message_id);
       await e.reply("不可以说脏话哦~", false, { at: true });
       await member.mute(30);
       return;
