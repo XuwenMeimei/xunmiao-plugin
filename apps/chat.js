@@ -40,6 +40,7 @@ export class chat extends plugin {
   }
 
   async chat(e) {
+    if (!e.msg || typeof e.msg !== 'string') return;
     const msg = e.msg.trim();
     if (!msg || !this.deepseekConfig.api_key) return;
 
