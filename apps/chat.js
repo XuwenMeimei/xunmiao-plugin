@@ -2,6 +2,7 @@ import plugin from '../../../lib/plugins/plugin.js'
 import fs from 'fs'
 import yaml from 'yaml'
 import fetch from 'node-fetch'
+import cfg from '../../../lib/config/config.js'
 
 const _path = process.cwd().replace(/\\/g, "/");
 const configPath = `${_path}/plugins/xunmiao-plugin/config/deepseek/config.yaml`;
