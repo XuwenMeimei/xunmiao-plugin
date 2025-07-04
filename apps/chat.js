@@ -69,29 +69,39 @@ export class chat extends plugin {
     };
 
     try {
-      const checkRes = await fetch(deepseek_url, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify(checkBody)
-      });
+    const checkRes = await fetch(deepseek_url, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(checkBody)
+    });
+    const checkData = await checkRes.json();
+    const checkReply = checkData.choices?.[0]?.message?.content?.trim().toLowerCase();
 
-      const checkData = await checkRes.json();
-      const checkReply = checkData.choices?.[0]?.message?.content?.trim().toLowerCase();
+    if (checkReply.includes('是')) {
+      const masterQQ = Config.masterQQ || [];
+      const group = this.e.bot.pickGroup(e.group_id, true);
+      const member = group.pickMember(e.user_id);
+      const memberInfo = member?.info || await member?.getInfo?.();
 
-      if (checkReply.includes('是')) {
-
-        await e.reply('不可以说脏话哦~');
-
-        const group = this.e.bot.pickGroup(e.group_id, true);
-        const member = group.pickMember(e.user_id);
-
-        await member.mute(30);
-
+      if (masterQQ.includes(Number(e.user_id))) {
+        await e.reply("宝宝，说脏话是不对的哦~");
         return;
       }
 
-    } catch (err) {
-      console.error('💥 DeepSeek 请求失败:', err);
+      if (memberInfo) {
+        if (memberInfo.role === "owner" || memberInfo.role === "admin") {
+          await e.reply("不要再说脏话了哦~");
+          return;
+        }
+      }
+
+      // 普通成员禁言30秒
+      await e.reply("不可以说脏话哦~");
+      await member.mute(30);
+      return;
     }
+  } catch (err) {
+    console.error('DeepSeek 请求失败:', err);
   }
+}
 }
