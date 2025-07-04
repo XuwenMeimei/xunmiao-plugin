@@ -77,7 +77,7 @@ export class chat extends plugin {
       const checkReply = checkData.choices?.[0]?.message?.content?.trim().toLowerCase();
 
       if (checkReply.includes('是')) {
-        await e.reply('不可以说脏话哦~');
+        await e.reply('不可以说脏话哦~', false, { at: true });
       }
 
     } catch (err) {
