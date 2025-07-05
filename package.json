@@ -17,6 +17,7 @@
   "dependencies": {
     "yaml": "^2.3.4",
     "puppeteer": "^21.3.8",
-    "axios": "^1.6.8"
+    "axios": "^1.6.8",
+    "minecraft-server-util": "^5.4.4"
   }
 }
