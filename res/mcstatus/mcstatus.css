@@ -1,27 +1,60 @@
-body {
-  font-family: "Microsoft YaHei", sans-serif;
-  background: #1e1e1e;
-  color: #ffffff;
-  padding: 20px;
+@font-face {
+  font-family: 'LcCute';
+  src: url('../asset/font/LcCute.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+body, html {
   margin: 0;
+  padding: 0;
+  width: 700px;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #fff1f9 0%, #e6f0ff 100%);
+  font-family: 'LcCute', 'Microsoft YaHei', sans-serif;
+  color: #444;
 }
 
 .card {
-  background: #2b2b2b;
-  border-radius: 12px;
-  border: 2px solid #00ccff;
-  padding: 20px;
-  width: 440px;
-  box-shadow: 0 0 10px rgba(0, 204, 255, 0.5);
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 32px;
+  margin: 32px auto;
+  width: 90%;
+  box-shadow:
+    0 2px 6px rgba(255, 192, 203, 0.3),
+    0 8px 20px rgba(173, 216, 230, 0.4),
+    0 0 0 4px #ffeaf5 inset;
+  border: 3px solid #ffc8dd;
+  box-sizing: border-box;
+  transition: transform 0.2s ease;
 }
 
-h2 {
-  margin: 0 0 12px;
-  font-size: 20px;
-  color: #00ccff;
+.card:hover {
+  transform: scale(1.01);
 }
 
-p {
-  margin: 6px 0;
-  font-size: 16px;
+.card h2 {
+  text-align: center;
+  font-size: 40px;
+  color: #ff70a6;
+  margin-bottom: 24px;
+  text-shadow: 0 2px 8px #ffd6eb;
+  letter-spacing: 2px;
+}
+
+.card p {
+  font-size: 22px;
+  margin: 12px 0;
+  line-height: 1.6;
+  color: #555;
+  padding-left: 12px;
+  border-left: 5px solid #ffcce0;
+  background: #fff8fb;
+  border-radius: 6px;
+  box-shadow: 0 1px 2px rgba(255, 192, 203, 0.2) inset;
+}
+
+.card p strong {
+  color: #ff6699;
 }
