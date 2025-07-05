@@ -22,20 +22,21 @@ export class mcstatus extends plugin {
 
   async mcstatus(e) {
   const input = e.msg.match(/^#服务器状态\s*(.*)$/)?.[1].trim();
-  if (!input) return e.reply('请提供服务器地址，例如：#服务器状态 mc.hypixel.net');
+    if (!input) return e.reply('请提供服务器地址，例如：#服务器状态 mc.hypixel.net');
 
-  const [host, port] = input.includes(':') ? input.split(':') : [input, 25565];
+    const [host, port] = input.includes(':') ? input.split(':') : [input, '25565'];
 
-  let ping_cn = null;
-  try {
-    const res = await fetch(`http://106.14.14.210:52001/?url=${encodeURIComponent(host)}`, { timeout: 5000 });
-    if (res.ok) {
-      const data = await res.json();
-      ping_cn = data.latency_ms;
+    let ping_cn = null;
+    try {
+        const url = `http://106.14.14.210:52001/?url=${encodeURIComponent(host + ':' + port)}`;
+        const res = await fetch(url, { timeout: 5000 });
+        if (res.ok) {
+        const data = await res.json();
+        ping_cn = data.latency_ms;
+        }
+    } catch (err) {
+    console.error('error:', err);
     }
-  } catch (err) {
-    // 获取失败，ping_cn保持null
-  }
 
   try {
     const result = await status(host, parseInt(port), { timeout: 5000, enableSRV: true });
