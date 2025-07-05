@@ -1,7 +1,6 @@
 import plugin from '../../../lib/plugins/plugin.js';
 import puppeteer from '../../../lib/puppeteer/puppeteer.js';
 import { status } from 'minecraft-server-util';
-import _path from 'path';
 
 const _path = process.cwd().replace(/\\/g, "/");
 
