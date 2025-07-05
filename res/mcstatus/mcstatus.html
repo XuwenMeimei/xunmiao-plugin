@@ -6,12 +6,29 @@
   </head>
   <body>
     <div class="card">
-      <h2>Minecraft 服务器状态</h2>
-      <p><strong>地址：</strong> {{data.address}}</p>
-      <p><strong>MOTD：</strong> {{data.motd}}</p>
-      <p><strong>版本：</strong> {{data.version}}</p>
-      <p><strong>在线人数：</strong> {{data.players}}</p>
-      <p><strong>延迟：</strong> {{data.ping}} ms</p>
+        <div class="title">Minecraft 服务器状态</div>
+        <div class="row">
+            <div class="row-label">地址：</div>
+            <div class="row-value">{{address}}</div>
     </div>
-  </body>
-</html>
+
+    <div class="row">
+        <div class="row-label">MOTD：</div>
+        <div class="row-value">{{motd}}</div>
+    </div>
+
+    <div class="row">
+        <div class="row-label">版本：</div>
+        <div class="row-value">{{version}}</div>
+    </div>
+
+    <div class="row">
+        <div class="row-label">在线人数：</div>
+        <div class="row-value">{{players}}</div>
+    </div>
+
+    <div class="row">
+        <div class="row-label">延迟：</div>
+        <div class="row-value">{{ping}} ms</div>
+    </div>
+</div>
