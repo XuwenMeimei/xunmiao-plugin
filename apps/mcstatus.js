@@ -13,7 +13,7 @@ export class mcstatus extends plugin {
       priority: 5000,
       rule: [
         {
-          reg: '^#MC状态(.*)$',
+          reg: '^#服务器状态(.*)$',
           fnc: 'mcstatus'
         }
       ]
@@ -21,7 +21,7 @@ export class mcstatus extends plugin {
   }
 
   async mcstatus(e) {
-    const input = e.msg.match(/^#MC状态\s*(.*)$/)?.[1].trim();
+    const input = e.msg.match(/^#服务器状态\s*(.*)$/)?.[1].trim();
     if (!input) return e.reply('请提供服务器地址，例如：#MC状态 mc.hypixel.net');
 
     const [host, port] = input.includes(':') ? input.split(':') : [input, 25565];
