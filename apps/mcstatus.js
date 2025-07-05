@@ -40,8 +40,8 @@ export class mcstatus extends plugin {
       const base64 = await puppeteer.screenshot('xunmiao-plugin', {
         saveId: 'mcstatus',
         imgType: 'png',
-        tplFile: `${_path}/res/mcstatus/mcstatus.html`,
-        pluginResources: `${_path}/res/mcstatus/mcstatus.css`,
+        tplFile: `${_path}/plugins/xunmiao-plugin/res/mcstatus/mcstatus.html`,
+        pluginResources: `${_path}/plugins/xunmiao-plugin/res/mcstatus/mcstatus.css`,
         data
       });
 
