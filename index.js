@@ -25,6 +25,20 @@ const userDailyBuyPath = path.join(dataDir, 'user_daily_buy.yaml')
 const deepseek_config = path.join(__dirname, 'config/deepseek/config.template.yaml')
 const deepseek_config_path = path.join(__dirname, 'config/deepseek/config.yaml')
 
+const marry_data = path.join(dataDir, 'marry_data.yaml')
+const marry_data_path = path.join(dataDir, 'marry_data.template.yaml')
+
+
+//初始化 marry_data 配置文件
+if (!fs.existsSync(marry_data)) {
+  if (fs.existsSync(marry_data_path)) {
+    fs.copyFileSync(marry_data_path, marry_data)
+    console.log('从模板复制了 marry_data.yaml')
+  } else {
+    console.warn('未找到模板文件：', marry_data_path)
+  }
+}
+
 // 初始化 DeepSeek 配置文件
 if (!fs.existsSync(deepseek_config_path)) {
   if (fs.existsSync(deepseek_config)) {
