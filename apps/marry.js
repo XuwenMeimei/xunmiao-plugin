@@ -79,9 +79,9 @@
                     sex = '先生';
                 }
                 e.reply([
-                segment.at(e.at), "\n",
+                segment.at(atUserId), "\n",
                 segment.image(`https://q1.qlogo.cn/g?b=qq&s=0&nk=${atUserId}`), "\n",
-                segment.at(id), "\n",
+                segment.at(userId), "\n",
                 segment.image(`https://q1.qlogo.cn/g?b=qq&s=0&nk=${userId}`), "\n",
                 `向你求婚：‘亲爱的${sex}您好！`, "\n",
                 `在茫茫人海中，能够与${sex}相遇相知相恋，我深感幸福，守护你是我今生的选择，我想有个自己的家，一个有你的家,嫁给我好吗？’`, "\n",
