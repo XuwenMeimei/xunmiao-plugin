@@ -55,7 +55,7 @@ export class marry extends plugin {
             return e.reply('你不能和自己结婚哦~', false, { at: true });
         }
 
-        if (message.some(item => item.qq == '2582312528')) {
+        if (message.some(item => item.qq === '2582312528')) {
             return e.reply('啊嘞?这...这样不行啦~(害羞)', false, { at: true });
         }
 
