@@ -41,7 +41,6 @@ export class mcstatus extends plugin {
   try {
     const result = await status(host, parseInt(port), { timeout: 5000, enableSRV: true });
 
-    // 将motd JSON 转为 HTML
     function motdJsonToHtml(motdRaw) {
       if (!motdRaw || !Array.isArray(motdRaw)) return '';
       return motdRaw.map(part => {
@@ -74,7 +73,8 @@ export class mcstatus extends plugin {
 
     return e.reply(base64);
   } catch (err) {
-    return e.reply('无法获取服务器状态，请确认地址是否正确或服务器是否在线。');
+  console.error('status() 错误：', err);
+  return e.reply('无法获取服务器状态，请确认地址是否正确或服务器是否在线。');
   }
 }
 }
