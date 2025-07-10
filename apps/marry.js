@@ -81,8 +81,14 @@ export class marry extends plugin {
         if (!marryData[userId] || !marryData[userId].married) {
 
             marryData[userId] = {
+                wait: true,
                 married: false,
-                target: atUserId
+                target: atUserId,
+            };
+            marryData[atUserId] = {
+                wait: true,
+                married: false,
+                target: userId,
             };
             fs.writeFileSync(marryDataPath, yaml.stringify(marryData));
 
@@ -107,58 +113,108 @@ export class marry extends plugin {
         if (!e.isGroup) return e.reply('这个功能仅支持群聊使用哦~');
         const marryData = getMarryData();
         const userId = e.user_id;
+        const atUserId = e.at;
 
-        let proposerId = null
-        for (let id in marryData) {
-            if (marryData[id].target === userId && !marryData[id].married) {
-                proposerId = id;
-                break;
+        if (!atUserId) {
+            return e.reply([segment.at(userId), ' 请@你想要同意的人哦~ ']);
+        }
+
+        if (userId == atUserId) {
+            return e.reply([segment.at(userId), ' 你@自己干嘛呀? ']);
+        }
+
+        if (!marryData[userId] || !marryData[userId].wait) {
+            return e.reply([segment.at(userId), ' 没有人向你求婚哦~ ']);
+        }
+
+        if (!marryData[atUserId] || !marryData[atUserId].wait) {
+            return e.reply([segment.at(userId), ' 你@的人没有向你求婚哦~ ']);
+        }
+
+        if (marryData[userId].married) {
+            return e.reply([segment.at(userId), ' 你已经结婚了，还来捣乱干什么? ']);
+        }
+
+        if (marryData[atUserId].married) {
+            if (marryData[userId].target !== atUserId || marryData[atUserId].target !== userId) {
+                return e.reply([segment.at(userId), ' 对方已经结婚了，你还来捣乱干什么? ']);
+            }else{
+                return e.reply([segment.at(userId), ' 你们已经结婚了，还来捣乱干什么? ']);
             }
         }
-        if (!proposerId) {
-            return e.reply([segment.at(userId), ' 还没有人向你求婚哦~']);
+
+        if (message.some(item => item.qq === '2582312528')) {
+            return e.reply([segment.at(userId), ' 你在想什么呀! ']);
         }
 
-        marryData[userId] = {
-            married: true,
-            partner: proposerId
-        };
-        marryData[proposerId].married = true;
-        marryData[proposerId].partner = userId;
-        delete marryData[proposerId].target;
+        if (marryData[userId].wait || marryData[atUserId].wait) {
+            if (marryData[userId].target === atUserId && marryData[atUserId].target === userId) {
+                marryData[userId].wait = false;
+                marryData[atUserId].wait = false;
+                marryData[userId].married = true;
+                marryData[atUserId].married = true;
+                fs.writeFileSync(marryDataPath, yaml.stringify(marryData));
 
-        fs.writeFileSync(marryDataPath, yaml.stringify(marryData));
-
-        return e.reply([
-            segment.at(userId), "\n",
-            '相亲相爱幸福永，同德同心幸福长。愿你俩情比海深！祝福你们新婚愉快，幸福美满，激情永在，白头偕老！',
-        ])
+                return e.reply([
+                    segment.at(userId), "\n",
+                    '相亲相爱幸福永，同德同心幸福长。愿你俩情比海深！祝福你们新婚愉快，幸福美满，激情永在，白头偕老！'
+                ]);
+            }
+        }
     }
 
     async rejectmarry(e) {
         if (!e.isGroup) return e.reply('这个功能仅支持群聊使用哦~');
-
         const marryData = getMarryData();
         const userId = e.user_id;
-        
-        let proposerId = null;
-        for (let id in marryData) {
-            if (marryData[id].target === userId && !marryData[id].married) {
-                proposerId = id;
-                break;
+        const atUserId = e.at;
+
+        if (!atUserId) {
+            return e.reply([segment.at(userId), ' 请@你想要拒绝的人哦~ ']);
+        }
+
+        if (userId == atUserId) {
+            return e.reply([segment.at(userId), ' 你@自己干嘛呀? ']);
+        }
+
+        if (!marryData[userId] || !marryData[userId].wait) {
+            return e.reply([segment.at(userId), ' 没有人向你求婚哦~ ']);
+        }
+
+        if (!marryData[atUserId] || !marryData[atUserId].wait) {
+            return e.reply([segment.at(userId), ' 你@的人没有向你求婚哦~ ']);
+        }
+
+        if (marryData[userId].married) {
+            return e.reply([segment.at(userId), ' 你已经结婚了，还来捣乱干什么? ']);
+        }
+
+        if (marryData[atUserId].married) {
+            if (marryData[userId].target !== atUserId || marryData[atUserId].target !== userId) {
+                return e.reply([segment.at(userId), ' 对方已经结婚了，你还来捣乱干什么? ']);
+            }else{
+                return e.reply([segment.at(userId), ' 你们已经结婚了，还来捣乱干什么? ']);
             }
         }
-        if (!proposerId) {
-            return e.reply([segment.at(userId), ' 没有人向你求婚，不要捣乱啦~']);
+
+        if (message.some(item => item.qq === '2582312528')) {
+            return e.reply([segment.at(userId), ' 你在想什么呀! ']);
         }
 
-        delete marryData[proposerId];
-        fs.writeFileSync(marryDataPath, yaml.stringify(marryData));
+        if (marryData[userId].wait || marryData[atUserId].wait) {
+            if (marryData[userId].target === atUserId && marryData[atUserId].target === userId) {
+                marryData[userId].wait = false;
+                marryData[atUserId].wait = false;
+                marryData[userId].target = null;
+                marryData[atUserId].target = null;
+                fs.writeFileSync(marryDataPath, yaml.stringify(marryData));
 
-        return e.reply([
-            segment.at(userId), "\n",
-            '抱歉，拒绝了对方的求婚。希望你们能找到更合适的人选！'
-        ]);
+                return e.reply([
+                    segment.at(userId), "\n",
+                    '你拒绝了对方的求婚，希望你们都能找到属于自己的幸福！'
+                ]);
+            }
+        }
     }
 
     async people(e, keys, id) {
