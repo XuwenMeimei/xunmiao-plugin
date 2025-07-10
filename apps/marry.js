@@ -30,16 +30,16 @@ export class marry extends plugin {
   async marry(e) {
     if (!e.isGroup) {
         return e.reply('这个功能仅支持群聊使用哦~');
-    }
-    const marryData = getMarryData();
-    const userId = e.user_id;
-    const atUserId = e.at;
-    let message = e.message;
+        }
+        const marryData = getMarryData();
+        const userId = e.user_id;
+        const atUserId = e.at;
+        let message = e.message;
 
-    console.log(e.msg);
-    console.log(message);
-    console.log(userId);
-    console.log(atUserId);
+        console.log(e.msg);
+        console.log(message);
+        console.log(userId);
+        console.log(atUserId);
 
         if (message.some(item => item.qq === 'all')) {
           return e.reply([segment.at(userId), ' 不可以这样！']);
