@@ -34,6 +34,19 @@ export class marry extends plugin {
         const atUserId = e.at;
         let message = e.message;
 
+        console.log(e.msg);
+        console.log(message);
+        console.log(userId);
+        console.log(atUserId);
+
+        if (message.some(item => item.qq === 'all')) {
+          return e.reply('6', false, { at: true });
+        }
+
+        if (message.filter(item => item.type === 'at').length > 1) {
+          return e.reply('不能同时和两个人结婚哦~', false, { at: true });
+        }
+
         if (!atUserId) {
             return e.reply('请@你想要结婚的人哦~', false, { at: true });
         }
