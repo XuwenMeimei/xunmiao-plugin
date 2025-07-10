@@ -72,10 +72,13 @@ export class marry extends plugin {
         
         const allMarryData = getMarryData();
         const groupId = String(e.group_id);
-        const marryData = allMarryData[groupId] || {};
         const userId = this.normalizeId(e.user_id);
         const atUserId = this.normalizeId(e.at);
         const message = e.message;
+
+        allMarryData[groupId] = allMarryData[groupId] || {};
+        const marryData = allMarryData[groupId];
+
 
         if (message.some(item => item.qq === 'all')) {
             return e.reply([segment.at(userId), ' 不可以这样！']);
