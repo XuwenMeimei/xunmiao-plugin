@@ -86,6 +86,13 @@
                 } else if (sex == 'female') {
                     sex = '先生';
                 }
+
+                marryData[userId] = {
+                    married: false,
+                    target: atUserId
+                };
+                fs.writeFileSync(marryDataPath, yaml.stringify(marryData));
+
                 e.reply([
                 segment.at(atUserId), "\n",
                 segment.image(`https://q1.qlogo.cn/g?b=qq&s=0&nk=${atUserId}`), "\n",
@@ -118,11 +125,12 @@
             return name
         }
     }
+
     async accept(e) {
         if (!e.isGroup) return e.reply('这个功能仅支持群聊使用哦~');
         const marryData = getMarryData();
-        const userId = e.user_id
-        
+        const userId = e.user_id;
+
         let proposerId = null
         for (let id in marryData) {
             if (marryData[id].target === userId && !marryData[id].married) {
