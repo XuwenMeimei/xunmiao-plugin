@@ -47,16 +47,16 @@ export class marry extends plugin {
           return e.reply('不能同时和两个人结婚哦~', false, { at: true });
         }
 
+        if (message.some(item => item.qq === '2582312528')) {
+            return e.reply('啊嘞?这...这样不行啦~(害羞)', false, { at: true });
+        }
+
         if (!atUserId) {
             return e.reply('请@你想要结婚的人哦~', false, { at: true });
         }
 
         if (userId == atUserId) {
             return e.reply('你不能和自己结婚哦~', false, { at: true });
-        }
-
-        if (message.some(item => item.qq === '2582312528')) {
-            return e.reply('啊嘞?这...这样不行啦~(害羞)', false, { at: true });
         }
 
         if (marryData[userId] && marryData[userId].married) {
