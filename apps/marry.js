@@ -29,6 +29,10 @@ export class marry extends plugin {
             {
             reg: '^#?我拒绝$',
             fnc: 'rejectmarry'
+            },
+            {
+            reg: '^#离婚$',
+            fnc: 'divorce'
             }
             ]
         })
@@ -216,6 +220,53 @@ export class marry extends plugin {
                     '你拒绝了对方的求婚，希望你们都能找到属于自己的幸福！'
                 ]);
             }
+        }
+    }
+
+    async divorce(e) {
+        if (!e.isGroup) return e.reply('这个功能仅支持群聊使用哦~');
+        const marryData = getMarryData();
+        const userId = e.user_id;
+        const atUserId = e.at;
+        let message = e.message;
+
+        if (!atUserId) {
+            return e.reply([segment.at(userId), ' 请@你想要离婚的人哦~ ']);
+        }
+
+        if (userId == atUserId) {
+            return e.reply([segment.at(userId), ' 你@自己干嘛呀? ']);
+        }
+
+        if (!marryData[userId] || !marryData[userId].married) {
+            return e.reply([segment.at(userId), ' 你还没有结婚哦~ ']);
+        }
+
+        if (!marryData[atUserId] || !marryData[atUserId].married) {
+            return e.reply([segment.at(userId), ' 你@的人没有结婚哦~ ']);
+        }
+
+        if (marryData[userId].target !== atUserId || marryData[atUserId].target !== userId) {
+            return e.reply([segment.at(userId), ' 你们并没有结婚哦~ ']);
+        }
+
+        if (message.some(item => item.qq === '2582312528')) {
+            return e.reply([segment.at(userId), ' 你在想什么呀! ']);
+        }
+
+        if (marryData[userId].married && marryData[atUserId].married) {
+            marryData[userId].wait = false;
+            marryData[atUserId].wait = false;
+            marryData[userId].married = false;
+            marryData[atUserId].married = false;
+            marryData[userId].target = null;
+            marryData[atUserId].target = null;
+            fs.writeFileSync(marryDataPath, yaml.stringify(marryData));
+
+            return e.reply([
+                segment.at(userId), "\n",
+                '你们离婚了，希望你们都能找到属于自己的幸福！'
+            ]);
         }
     }
 
