@@ -86,17 +86,18 @@ export class marry extends plugin {
             };
             fs.writeFileSync(marryDataPath, yaml.stringify(marryData));
 
-            const name = segment.at(atUserId);
+            let atUserInfo = await Bot.pickFriend(atUserId).getInfo();
+            let atUserName = atUserInfo?.nickname || "这位用户";
 
             return e.reply([
             segment.at(atUserId), "\n",
             segment.image(`https://q1.qlogo.cn/g?b=qq&s=0&nk=${atUserId}`), "\n",
             segment.at(userId), "\n",
             segment.image(`https://q1.qlogo.cn/g?b=qq&s=0&nk=${userId}`), "\n",
-            `向你求婚：‘亲爱的${name}您好！`, "\n",
-            `在茫茫人海中，能够与${name}相遇相知相恋，我深感幸福，守护你是我今生的选择，我想有个自己的家，一个有你的家,嫁给我好吗？`, "\n",
+            `向你求婚：‘亲爱的${atUserName}您好！`, "\n",
+            `在茫茫人海中，能够与${atUserName}相遇相知相恋，我深感幸福，守护你是我今生的选择，我想有个自己的家，一个有你的家,嫁给我好吗？`, "\n",
             segment.at(atUserId), "\n",
-            `那么这位${name}，你愿意嫁给ta吗？at并发送【我愿意】或者【我拒绝】，回应${she_he}哦！`]);
+            `那么这位${atUserName}，你愿意嫁给ta吗？at并发送【我愿意】或者【我拒绝】，回应${she_he}哦！`]);
         }else{
             return;
         }
