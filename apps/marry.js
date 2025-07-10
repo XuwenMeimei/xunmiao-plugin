@@ -93,7 +93,7 @@
                 };
                 fs.writeFileSync(marryDataPath, yaml.stringify(marryData));
 
-                e.reply([
+                return e.reply([
                 segment.at(atUserId), "\n",
                 segment.image(`https://q1.qlogo.cn/g?b=qq&s=0&nk=${atUserId}`), "\n",
                 segment.at(userId), "\n",
