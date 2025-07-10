@@ -22,32 +22,46 @@ export class mcstatus extends plugin {
 
   async mcstatus(e) {
   const input = e.msg.match(/^#服务器状态\s*(.*)$/)?.[1].trim();
-    if (!input) return e.reply('请提供服务器地址，例如：#服务器状态 mc.hypixel.net');
+  if (!input) return e.reply('请提供服务器地址，例如：#服务器状态 mc.hypixel.net');
 
-    const [host, port] = input.includes(':') ? input.split(':') : [input, '25565'];
+  const [host, port] = input.includes(':') ? input.split(':') : [input, '25565'];
 
-    let ping_cn = null;
-    try {
-        const url = `http://106.14.14.210:52001/?url=${encodeURIComponent(host + ':' + port)}`;
-        const res = await fetch(url, { timeout: 5000 });
-        if (res.ok) {
-        const data = await res.json();
-        ping_cn = data.latency_ms;
-        }
-    } catch (err) {
-    console.error('error:', err);
+  let ping_cn = null;
+  try {
+    const url = `http://106.14.14.210:52001/?url=${encodeURIComponent(host + ':' + port)}`;
+    const res = await fetch(url, { timeout: 5000 });
+    if (res.ok) {
+      const data = await res.json();
+      ping_cn = data.latency_ms;
     }
+  } catch (err) {
+    console.error('error:', err);
+  }
 
   try {
     const result = await status(host, parseInt(port), { timeout: 5000, enableSRV: true });
+
+    // 将motd JSON 转为 HTML
+    function motdJsonToHtml(motdRaw) {
+      if (!motdRaw || !Array.isArray(motdRaw)) return '';
+      return motdRaw.map(part => {
+        let color = part.color || 'white';
+        return `<span style="color:${color}">${part.text || ''}</span>`;
+      }).join('');
+    }
+
+    const motdHtml = motdJsonToHtml(result.motd.raw);
+    const faviconBase64 = result.favicon || null;
 
     const data = {
       address: `${host}:${port}`,
       version: result.version.name,
       players: `${result.players.online} / ${result.players.max}`,
+      motdHtml,
       motd: result.motd.clean,
       ping_us: result.roundTripLatency,
-      ping_cn: ping_cn !== null ? ping_cn : 'N/A'
+      ping_cn: ping_cn !== null ? ping_cn : 'N/A',
+      faviconBase64
     };
 
     const base64 = await puppeteer.screenshot('xunmiao-plugin', {
