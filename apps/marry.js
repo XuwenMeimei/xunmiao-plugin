@@ -11,6 +11,10 @@ function getMarryData() {
     return yaml.parse(fs.readFileSync(marryDataPath, 'utf8')) || {};
 }
 
+function saveMarryData(data) {
+    fs.writeFileSync(marryDataPath, yaml.stringify(data));
+}
+
 export class marry extends plugin {
     constructor() {
         super({
@@ -33,8 +37,13 @@ export class marry extends plugin {
     }
 
     async marryadmin(e) {
+        const allMarryData = getMarryData();
+        const groupId = String(e.group_id);
         const userId = this.normalizeId(e.user_id);
         const atUserId = this.normalizeId(e.at);
+
+        allMarryData[groupId] = allMarryData[groupId] || {};
+        const marryData = allMarryData[groupId];
 
         if (!cfg.masterQQ.includes(e.user_id)) {
             return e.reply('只有我的主人才能使用哦~', false, { at: true });
@@ -44,11 +53,9 @@ export class marry extends plugin {
             return e.reply('这个功能仅支持群聊使用哦~');
         }
 
-        const marryData = getMarryData();
-
         marryData[userId] = { wait: false, married: true, target: atUserId };
         marryData[atUserId] = { wait: false, married: true, target: userId };
-        fs.writeFileSync(marryDataPath, yaml.stringify(marryData));
+        saveMarryData(allMarryData);
 
         return e.reply([
             segment.at(userId), "\n",
@@ -62,8 +69,10 @@ export class marry extends plugin {
 
     async marry(e) {
         if (!e.isGroup) return e.reply('这个功能仅支持群聊使用哦~');
-
-        const marryData = getMarryData();
+        
+        const allMarryData = getMarryData();
+        const groupId = String(e.group_id);
+        const marryData = allMarryData[groupId] || {};
         const userId = this.normalizeId(e.user_id);
         const atUserId = this.normalizeId(e.at);
         const message = e.message;
@@ -100,7 +109,7 @@ export class marry extends plugin {
 
         marryData[userId] = { wait: true, married: false, target: atUserId };
         marryData[atUserId] = { wait: true, married: false, target: userId };
-        fs.writeFileSync(marryDataPath, yaml.stringify(marryData));
+        saveMarryData(allMarryData);
 
         let atUserInfo = await Bot.pickFriend(atUserId).getInfo();
         let atUserName = atUserInfo?.nickname;
@@ -119,7 +128,10 @@ export class marry extends plugin {
 
     async acceptmarry(e) {
         if (!e.isGroup) return e.reply('这个功能仅支持群聊使用哦~');
-        const marryData = getMarryData();
+
+        const allMarryData = getMarryData();
+        const groupId = String(e.group_id);
+        const marryData = allMarryData[groupId] || {};
         const userId = this.normalizeId(e.user_id);
         const atUserId = this.normalizeId(e.at);
         const message = e.message;
@@ -144,7 +156,7 @@ export class marry extends plugin {
             marryData[atUserId].wait = false;
             marryData[userId].married = true;
             marryData[atUserId].married = true;
-            fs.writeFileSync(marryDataPath, yaml.stringify(marryData));
+            saveMarryData(allMarryData);
 
             return e.reply([
                 segment.at(userId), "\n",
@@ -155,7 +167,9 @@ export class marry extends plugin {
 
     async rejectmarry(e) {
         if (!e.isGroup) return e.reply('这个功能仅支持群聊使用哦~');
-        const marryData = getMarryData();
+        const allMarryData = getMarryData();
+        const groupId = String(e.group_id);
+        const marryData = allMarryData[groupId] || {};
         const userId = this.normalizeId(e.user_id);
         const atUserId = this.normalizeId(e.at);
         const message = e.message;
@@ -178,7 +192,7 @@ export class marry extends plugin {
         if (marryData[userId].target === atUserId && marryData[atUserId].target === userId) {
             marryData[userId] = { wait: false, married: false, target: null };
             marryData[atUserId] = { wait: false, married: false, target: null };
-            fs.writeFileSync(marryDataPath, yaml.stringify(marryData));
+            saveMarryData(allMarryData);
 
             return e.reply([
                 segment.at(userId), "\n",
@@ -189,7 +203,9 @@ export class marry extends plugin {
 
     async divorce(e) {
         if (!e.isGroup) return e.reply('这个功能仅支持群聊使用哦~');
-        const marryData = getMarryData();
+        const allMarryData = getMarryData();
+        const groupId = String(e.group_id);
+        const marryData = allMarryData[groupId] || {};
         const userId = this.normalizeId(e.user_id);
         const atUserId = this.normalizeId(e.at);
         const message = e.message;
@@ -211,7 +227,7 @@ export class marry extends plugin {
 
         marryData[userId] = { wait: false, married: false, target: null };
         marryData[atUserId] = { wait: false, married: false, target: null };
-        fs.writeFileSync(marryDataPath, yaml.stringify(marryData));
+        saveMarryData(allMarryData);
 
         return e.reply([
             segment.at(userId), "\n",
