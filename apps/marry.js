@@ -23,11 +23,11 @@ export class marry extends plugin {
             fnc: 'marry'
             },
             {
-            reg: '^#*我愿意$',
+            reg: '^#?我愿意$',
             fnc: 'accept'
             },
             {
-            reg: '^#*我拒绝$',
+            reg: '^#?我拒绝$',
             fnc: 'reject'
             }
         ]

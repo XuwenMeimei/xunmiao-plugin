@@ -16,7 +16,7 @@ export class nekologin extends plugin {
       priority: 5000,
       rule: [
         {
-          reg: '^#*签到$',
+          reg: '^#?签到$',
           fnc: 'nekologin'
         }
       ]
