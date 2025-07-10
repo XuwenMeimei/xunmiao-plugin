@@ -32,6 +32,7 @@ export class marry extends plugin {
         const marryData = getMarryData();
         const userId = e.user_id;
         const atUserId = e.at;
+        let message = e.message;
 
         if (!atUserId) {
             return e.reply('请@你想要结婚的人哦~', false, { at: true });
