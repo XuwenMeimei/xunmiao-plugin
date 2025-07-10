@@ -41,34 +41,34 @@ export class marry extends plugin {
     console.log(atUserId);
 
         if (message.some(item => item.qq === 'all')) {
-          return e.reply([segment.at(userId), '不可以这样！']);
+          return e.reply([segment.at(userId), ' 不可以这样！']);
         }
 
         if (message.filter(item => item.type === 'at').length > 1) {
-          return e.reply([segment.at(userId), '不能同时和两个人结婚哦~']);
+          return e.reply([segment.at(userId), ' 不能同时和两个人结婚哦~ ']);
         }
 
         if (message.some(item => item.qq === '2582312528')) {
-            return e.reply([segment.at(userId), '啊嘞?这...这样不行啦~(害羞)']);
+            return e.reply([segment.at(userId), ' 啊嘞?这...这样不行啦~(害羞) ']);
         }
 
         if (!atUserId) {
-            return e.reply([segment.at(userId), '请@你想要结婚的人哦~']);
+            return e.reply([segment.at(userId), ' 请@你想要结婚的人哦~ ']);
         }
 
         if (userId == atUserId) {
-            return e.reply([segment.at(userId), '你不能和自己结婚哦~']);
+            return e.reply([segment.at(userId), ' 你不能和自己结婚哦~ ']);
         }
 
         if (marryData[userId] && marryData[userId].married) {
-            return e.reply([segment.at(userId), '你已经结婚了哦~']);
+            return e.reply([segment.at(userId), ' 你已经结婚了哦~ ']);
         }
 
         if (marryData[atUserId] && marryData[atUserId].married) {
-            return e.reply([segment.at(userId), '对方已经结婚了哦~']);
+            return e.reply([segment.at(userId), ' 对方已经结婚了哦~ ']);
         }
 
-        if (!marryData[userID].married) {
+        if (!marryData[userId].married) {
             
         }
     }
