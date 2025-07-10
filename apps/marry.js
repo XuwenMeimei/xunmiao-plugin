@@ -87,12 +87,12 @@ export class marry extends plugin {
             marryData[userId] = {
                 wait: true,
                 married: false,
-                target: String(atUserId),
+                target: atUserId,
             };
             marryData[atUserId] = {
                 wait: true,
                 married: false,
-                target: String(userId),
+                target: userId,
             };
             fs.writeFileSync(marryDataPath, yaml.stringify(marryData));
 
