@@ -1,6 +1,7 @@
 import plugin from '../../../lib/plugins/plugin.js';
 import fs from 'fs';
 import yaml from 'yaml';
+import cfg from '../../../lib/config/config.js'
 
 const _path = process.cwd().replace(/\\/g, '/');
 const marryDataPath = `${_path}/plugins/xunmiao-plugin/data/marry_data.yaml`;
@@ -33,9 +34,49 @@ export class marry extends plugin {
             {
             reg: '^#离婚$',
             fnc: 'divorce'
+            },
+            {
+            reg: '^#强娶$',
+            fnc: 'marryadmin'
             }
             ]
         })
+    }
+
+    async marryadmin(e) {
+        if (!cfg.masterQQ.includes(e.user_id)) {
+            return e.reply('只有我的主人才能使用哦~', false, { at:true });
+        }
+
+        if (!e.isGroup) {
+            return e.reply('这个功能仅支持群聊使用哦~');
+        }
+
+        const marryData = getMarryData();
+        const userId = e.user_id;
+        const atUserId = e.at;
+        let message = e.message;
+
+        marryData[userId] = {
+            wait: false,
+            married: true,
+            target: atUserId,
+        };
+        marryData[atUserId] = {
+            wait: false,
+            married: true,
+            target: userId,
+        };
+        fs.writeFileSync(marryDataPath, yaml.stringify(marryData));
+
+        return e.reply([
+            segment.at(userId), "\n",
+            segment.image(`https://q1.qlogo.cn/g?b=qq&s=0&nk=${userId}`), "\n",
+            segment.at(atUserId), "\n",
+            segment.image(`https://q1.qlogo.cn/g?b=qq&s=0&nk=${atUserId}`), "\n",
+            `主人强行将你结婚了哦~`, "\n",
+            '相亲相爱幸福永，同德同心幸福长。愿你俩情比海深！祝福你们新婚愉快，幸福美满，激情永在，白头偕老！'
+        ]);
     }
 
     async marry(e) {
