@@ -1,4 +1,6 @@
 import plugin from '../../../lib/plugins/plugin.js';
+import fs from 'fs';
+import yaml from 'yaml';
 
 const _path = process.cwd().replace(/\\/g, '/');
 const marryDataPath = `${_path}/plugins/xunmiao-plugin/data/marry_data.yaml`;
