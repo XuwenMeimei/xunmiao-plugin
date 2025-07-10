@@ -31,7 +31,7 @@ export class marry extends plugin {
             fnc: 'reject'
             }
         ]
-        })
+        });
     }
 
     async marry(e) {
