@@ -114,6 +114,7 @@ export class marry extends plugin {
         const marryData = getMarryData();
         const userId = e.user_id;
         const atUserId = e.at;
+        let message = e.message;
 
         if (!atUserId) {
             return e.reply([segment.at(userId), ' 请@你想要同意的人哦~ ']);
@@ -168,6 +169,7 @@ export class marry extends plugin {
         const marryData = getMarryData();
         const userId = e.user_id;
         const atUserId = e.at;
+        let message = e.message;
 
         if (!atUserId) {
             return e.reply([segment.at(userId), ' 请@你想要拒绝的人哦~ ']);
