@@ -41,26 +41,15 @@ export class mcstatus extends plugin {
   try {
     const result = await status(host, parseInt(port), { timeout: 5000, enableSRV: true });
 
-    function motdJsonToHtml(motdRaw) {
-      if (!motdRaw || !Array.isArray(motdRaw)) return '';
-      return motdRaw.map(part => {
-        let color = part.color || 'white';
-        return `<span style="color:${color}">${part.text || ''}</span>`;
-      }).join('');
-    }
-
-    const motdHtml = motdJsonToHtml(result.motd.raw);
-    const faviconBase64 = result.favicon || null;
-
     const data = {
       address: `${host}:${port}`,
       version: result.version.name,
       players: `${result.players.online} / ${result.players.max}`,
-      motdHtml,
-      motd: result.motd.clean,
+      // motd 保留颜色，使用html格式
+      motd: result.motd.html || result.motd.clean,
       ping_us: result.roundTripLatency,
       ping_cn: ping_cn !== null ? ping_cn : 'N/A',
-      faviconBase64
+      favicon: result.favicon || null,  // 服务器图标 base64字符串
     };
 
     const base64 = await puppeteer.screenshot('xunmiao-plugin', {
@@ -73,8 +62,8 @@ export class mcstatus extends plugin {
 
     return e.reply(base64);
   } catch (err) {
-  console.error('status() 错误：', err);
-  return e.reply('无法获取服务器状态，请确认地址是否正确或服务器是否在线。');
+    return e.reply('无法获取服务器状态，请确认地址是否正确或服务器是否在线。');
   }
 }
+
 }
