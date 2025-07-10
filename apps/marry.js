@@ -131,7 +131,7 @@ export class marry extends plugin {
 
         fs.writeFileSync(marryDataPath, yaml.stringify(marryData));
 
-        e.reply([
+        return e.reply([
             segment.at(userId), "\n",
             '相亲相爱幸福永，同德同心幸福长。愿你俩情比海深！祝福你们新婚愉快，幸福美满，激情永在，白头偕老！',
         ])
