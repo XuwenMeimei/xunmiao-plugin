@@ -28,7 +28,8 @@ export class marry extends plugin {
   }
 
   async marry(e) {
-    if (e.isGroup) {
+    if (!e.isGroup) {
+        return e.reply('这个功能仅支持群聊使用哦~');
     }
     const marryData = getMarryData();
     const userId = e.user_id;
