@@ -58,21 +58,3 @@ body, html {
 .card p strong {
   color: #ff6699;
 }
-
-.favicon {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.favicon img {
-  width: 64px;
-  height: 64px;
-  border-radius: 12px;
-  border: 2px solid #ff70a6;
-  box-shadow: 0 0 8px #ff70a6aa;
-}
-
-.motd-html {
-  display: inline-block;
-  /* motd本身带颜色，这里不用再额外上色 */
-}

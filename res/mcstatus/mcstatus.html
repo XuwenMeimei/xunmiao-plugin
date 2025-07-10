@@ -1,22 +1,18 @@
-<body>
-  <div class="card">
-    <h2>Minecraft 服务器状态</h2>
-
-    <!-- 服务器图标 -->
-    {{#if data.favicon}}
-      <div class="favicon">
-        <img src="{{data.favicon}}" alt="服务器图标" />
-      </div>
-    {{/if}}
-
-    <p><strong>地址：</strong> {{data.address}}</p>
-
-    <!-- motd支持HTML -->
-    <p><strong>MOTD：</strong> <span class="motd-html">{{{data.motd}}}</span></p>
-
-    <p><strong>版本：</strong> {{data.version}}</p>
-    <p><strong>在线人数：</strong> {{data.players}}</p>
-    <p><strong>延迟(CN-上海)：</strong> {{data.ping_cn}} ms</p>
-    <p><strong>延迟(US-洛杉矶)：</strong> {{data.ping_us}} ms</p>
-  </div>
-</body>
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="{{pluginResources}}" />
+  </head>
+  <body>
+    <div class="card">
+      <h2>Minecraft 服务器状态</h2>
+      <p><strong>地址：</strong> {{data.address}}</p>
+      <p><strong>MOTD：</strong> {{data.motd}}</p>
+      <p><strong>版本：</strong> {{data.version}}</p>
+      <p><strong>在线人数：</strong> {{data.players}}</p>
+      <p><strong>延迟(CN-上海)：</strong> {{data.ping_cn}} ms</p>
+      <p><strong>延迟(US-洛杉矶)：</strong> {{data.ping_us}} ms</p>
+    </div>
+  </body>
+</html>
