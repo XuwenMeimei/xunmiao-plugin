@@ -30,8 +30,8 @@ export class marry extends plugin {
             reg: '^#?我拒绝$',
             fnc: 'reject'
             }
-        ]
-        });
+            ]
+        })
     }
 
     async marry(e) {
@@ -92,7 +92,7 @@ export class marry extends plugin {
             };
             fs.writeFileSync(marryDataPath, yaml.stringify(marryData));
 
-            e.reply([
+            return e.reply([
             segment.at(atUserId), "\n",
             segment.image(`https://q1.qlogo.cn/g?b=qq&s=0&nk=${atUserId}`), "\n",
             segment.at(userId), "\n",
@@ -101,8 +101,9 @@ export class marry extends plugin {
             `在茫茫人海中，能够与${sex}相遇相知相恋，我深感幸福，守护你是我今生的选择，我想有个自己的家，一个有你的家,嫁给我好吗？’`, "\n",
             segment.at(atUserId), "\n",
             `那么这位${sex}，你愿意嫁给ta吗？at并发送【我愿意】或者【我拒绝】，回应${she_he}哦！`]);
+        }else{
+            return;
         }
-        return;
     }
 
     async accept(e) {
