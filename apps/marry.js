@@ -29,48 +29,47 @@ export class marry extends plugin {
 
   async marry(e) {
     if (e.isGroup) {
-        const marryData = getMarryData();
-        const userId = e.user_id;
-        const atUserId = e.at;
-        let message = e.message;
+    }
+    const marryData = getMarryData();
+    const userId = e.user_id;
+    const atUserId = e.at;
+    let message = e.message;
 
-        console.log(e.msg);
-        console.log(message);
-        console.log(userId);
-        console.log(atUserId);
+    console.log(e.msg);
+    console.log(message);
+    console.log(userId);
+    console.log(atUserId);
 
         if (message.some(item => item.qq === 'all')) {
-          return e.reply('6', false, { at: true });
+          return e.reply([segment.at(userId), '不可以这样！']);
         }
 
         if (message.filter(item => item.type === 'at').length > 1) {
-          return e.reply('不能同时和两个人结婚哦~', false, { at: true });
+          return e.reply([segment.at(userId), '不能同时和两个人结婚哦~']);
         }
 
         if (message.some(item => item.qq === '2582312528')) {
-            return e.reply('啊嘞?这...这样不行啦~(害羞)', false, { at: true });
+            return e.reply([segment.at(userId), '啊嘞?这...这样不行啦~(害羞)']);
         }
 
         if (!atUserId) {
-            return e.reply('请@你想要结婚的人哦~', false, { at: true });
+            return e.reply([segment.at(userId), '请@你想要结婚的人哦~']);
         }
 
         if (userId == atUserId) {
-            return e.reply('你不能和自己结婚哦~', false, { at: true });
+            return e.reply([segment.at(userId), '你不能和自己结婚哦~']);
         }
 
         if (marryData[userId] && marryData[userId].married) {
-            return e.reply('你已经结婚了哦~', false, { at: true });
+            return e.reply([segment.at(userId), '你已经结婚了哦~']);
         }
 
         if (marryData[atUserId] && marryData[atUserId].married) {
-            return e.reply('对方已经结婚了哦~', false, { at: true });
+            return e.reply([segment.at(userId), '对方已经结婚了哦~']);
         }
 
-        return e.reply('咕咕咕', false, { at: true })
-    }
-    else {
-        return e.reply('这个功能只能在群聊中使用哦~', false, { at: false });
+        if (!marryData[userID].married) {
+            
+        }
     }
   }
-}
