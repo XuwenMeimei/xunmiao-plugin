@@ -3,7 +3,7 @@ import fs from 'fs';
 import yaml from 'yaml';
 
 const _path = process.cwd().replace(/\\/g, '/');
-const marryDataPath = `${_path}/plugins/xunmiao-plugin/data/marry_datayaml`;
+const marryDataPath = `${_path}/plugins/xunmiao-plugin/data/marry_data.yaml`;
 
 function getMarryData() {
     if (!fs.existsSync(marryDataPath)) fs.writeFileSync(marryDataPath,yaml.stringify({}));
