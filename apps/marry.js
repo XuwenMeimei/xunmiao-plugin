@@ -103,7 +103,7 @@ export class marry extends plugin {
         fs.writeFileSync(marryDataPath, yaml.stringify(marryData));
 
         let atUserInfo = await Bot.pickFriend(atUserId).getInfo();
-        let atUserName = atUserInfo?.nickname || "这位用户";
+        let atUserName = atUserInfo?.nickname;
 
         return e.reply([
             segment.at(atUserId), "\n",
