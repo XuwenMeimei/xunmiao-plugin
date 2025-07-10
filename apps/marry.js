@@ -255,7 +255,7 @@ export class marry extends plugin {
         }
 
         if (marryData[userId].married && marryData[atUserId].married) {
-            marryData[userId].wait = false;
+            marryData[userId].wait = false; 
             marryData[atUserId].wait = false;
             marryData[userId].married = false;
             marryData[atUserId].married = false;
