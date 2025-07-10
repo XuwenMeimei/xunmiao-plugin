@@ -57,7 +57,7 @@ export class marry extends plugin {
         let targetMemberInfo = await Bot.pickGroup(groupId).pickMember(marryData[userId].target).getInfo();
         let targetName = targetMemberInfo?.card || targetMemberInfo?.nickname || she_he;
 
-        return e.reply([segment.at(userId), '你抱了抱' + targetName + '，感受到了温暖和幸福~']);
+        return e.reply([segment.at(userId), ' 你抱了抱' + targetName + '，感受到了温暖和幸福~']);
 
     }
 
@@ -80,7 +80,7 @@ export class marry extends plugin {
         let targetMemberInfo = await Bot.pickGroup(groupId).pickMember(marryData[userId].target).getInfo();
         let targetName = targetMemberInfo?.card || targetMemberInfo?.nickname || she_he;
 
-        return e.reply([segment.at(userId), '你亲吻了' + targetName + '，感受到了甜蜜和幸福~']);
+        return e.reply([segment.at(userId), ' 你亲吻了' + targetName + '，感受到了甜蜜和幸福~']);
     }
 
     async marryadmin(e) {
