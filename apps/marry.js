@@ -153,8 +153,7 @@
         fs.writeFileSync(marryDataPath, yaml.stringify(marryData));
 
         e.reply([
-            segment.at(UserId), "\n",
-            segment.at(atuserId), "\n",
+            segment.at(userId), "\n",
             '相亲相爱幸福永，同德同心幸福长。愿你俩情比海深！祝福你们新婚愉快，幸福美满，激情永在，白头偕老！',
         ])
     }
@@ -181,7 +180,6 @@
 
         return e.reply([
             segment.at(userId), "\n",
-            segment.at(proposerId), "\n",
             '抱歉，拒绝了对方的求婚。希望你们能找到更合适的人选！'
         ]);
     }
