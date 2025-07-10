@@ -22,6 +22,14 @@
             {
             reg: '^#结婚$',
             fnc: 'marry'
+            },
+            {
+            reg: '^#*我愿意$',
+            fnc: 'accept'
+            },
+            {
+            reg: '^#*我拒绝$',
+            fnc: 'reject'
             }
         ]
         });
@@ -90,26 +98,84 @@
             ])
             }
         }
-        async people(e, keys, id) {
-            let memberMap = await e.group.getMemberMap();
-            let arrMember = Array.from(memberMap.values());
-            var this_one = arrMember.filter(item => {
-                return item.user_id == id
-            })
-            var lp = this_one[0]
-            if (keys == 'sex') {
-                var she_he = '她'
-                if (lp.sex == 'male')
-                    she_he = '他'
-                return she_he
-            }
-            if (keys == 'nickname') {
-                var name = lp.nickname
-                if (lp.card !== '')
-                    name = lp.card
-                return name
-            }
-
+    async people(e, keys, id) {
+        let memberMap = await e.group.getMemberMap();
+        let arrMember = Array.from(memberMap.values());
+        var this_one = arrMember.filter(item => {
+            return item.user_id == id
+        })
+        var lp = this_one[0]
+        if (keys == 'sex') {
+            var she_he = '她'
+            if (lp.sex == 'male')
+                she_he = '他'
+            return she_he
+        }
+        if (keys == 'nickname') {
+            var name = lp.nickname
+            if (lp.card !== '')
+                name = lp.card
+            return name
         }
     }
+    async accept(e) {
+        if (!e.isGroup) return e.reply('这个功能仅支持群聊使用哦~');
+        const marryData = getMarryData();
+        const userId = e.user_id
+        
+        let proposerId = null
+        for (let id in marryData) {
+            if (marryData[id].target === userId && !marryData[id].married) {
+                proposerId = id;
+                break;
+            }
+        }
+        if (!proposerId) {
+            return e.reply([segment.at(userId), ' 还没有人向你求婚哦~']);
+        }
+
+        marryData[userId] = {
+            married: true,
+            partner: proposerId
+        };
+        marryData[proposerId].married = true;
+        marryData[proposerId].partner = userId;
+        delete marryData[proposerId].target;
+
+        fs.writeFileSync(marryDataPath, yaml.stringify(marryData));
+
+        e.reply([
+            segment.at(UserId), "\n",
+            segment.at(atuserId), "\n",
+            '相亲相爱幸福永，同德同心幸福长。愿你俩情比海深！祝福你们新婚愉快，幸福美满，激情永在，白头偕老！',
+        ])
+    }
+
+    async reject(e) {
+        if (!e.isGroup) return e.reply('这个功能仅支持群聊使用哦~');
+
+        const marryData = getMarryData();
+        const userId = e.user_id;
+        
+        let proposerId = null;
+        for (let id in marryData) {
+            if (marryData[id].target === userId && !marryData[id].married) {
+                proposerId = id;
+                break;
+            }
+        }
+        if (!proposerId) {
+            return e.reply([segment.at(userId), ' 没有人向你求婚，不要捣乱啦~']);
+        }
+
+        delete marryData[proposerId];
+        fs.writeFileSync(marryDataPath, yaml.stringify(marryData));
+
+        return e.reply([
+            segment.at(userId), "\n",
+            segment.at(proposerId), "\n",
+            '抱歉，拒绝了对方的求婚。希望你们能找到更合适的人选！'
+        ]);
+    }
+}
     
