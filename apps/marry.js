@@ -24,11 +24,11 @@ export class marry extends plugin {
             },
             {
             reg: '^#?我愿意$',
-            fnc: 'accept'
+            fnc: 'acceptmarry'
             },
             {
             reg: '^#?我拒绝$',
-            fnc: 'reject'
+            fnc: 'rejectmarry'
             }
             ]
         })
@@ -106,7 +106,7 @@ export class marry extends plugin {
         }
     }
 
-    async accept(e) {
+    async acceptmarry(e) {
         if (!e.isGroup) return e.reply('这个功能仅支持群聊使用哦~');
         const marryData = getMarryData();
         const userId = e.user_id;
@@ -138,7 +138,7 @@ export class marry extends plugin {
         ])
     }
 
-    async reject(e) {
+    async rejectmarry(e) {
         if (!e.isGroup) return e.reply('这个功能仅支持群聊使用哦~');
 
         const marryData = getMarryData();
