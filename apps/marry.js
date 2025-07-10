@@ -90,4 +90,27 @@ export class marry extends plugin {
         ])
         }
     }
+    async people(e, keys, id) {
+        let memberMap = await e.group.getMemberMap();
+        let arrMember = Array.from(memberMap.values());
+        var this_one = arrMember.filter(item => {
+            return item.user_id == id
+            //用过滤器返回了user_id==id的人
+        })
+        var lp = this_one[0]
+        if (keys == 'sex') {
+            var she_he = '她'
+            if (lp.sex == 'male')
+                she_he = '他'
+            return she_he
+        }
+        if (keys == 'nickname') {
+            var name = lp.nickname
+            if (lp.card !== '')
+                name = lp.card
+            return name
+        }
+
+    }
   }
+  
