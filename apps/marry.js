@@ -27,13 +27,57 @@ export class marry extends plugin {
                 { reg: '^#?我愿意$', fnc: 'acceptmarry' },
                 { reg: '^#?我拒绝$', fnc: 'rejectmarry' },
                 { reg: '^#离婚$', fnc: 'divorce' },
-                { reg: '^#强娶$', fnc: 'marryadmin' }
+                { reg: '^#强娶$', fnc: 'marryadmin' },
+                { reg: '^#抱抱$', fnc: 'marryhug'}
             ]
         });
     }
 
     normalizeId(id) {
         return id != null ? String(id) : null;
+    }
+
+    async marryhug(e) {
+        if (!e.isGroup) return e.reply('这个功能仅支持群聊使用哦~');
+
+        const allMarryData = getMarryData();
+        const groupId = String(e.group_id);
+        const userId = this.normalizeId(e.user_id);
+        
+        allMarryData[groupId] = allMarryData[groupId] || {};
+        const marryData = allMarryData[groupId];
+
+        if (!marryData[userId].married) {
+            return e.reply([segment.at(userId), ' 你还没有结婚哦~ ']);
+        }
+
+        const she_he = await this.people(e, 'sex', userId);
+
+        let targetInfo = await Bot.pickGroup(marryData[userId].target).getInfo();
+        let targetName = targetInfo?.groupName || she_he;
+
+        return e.reply('你抱了抱 ' + targetName + '，感受到了温暖和幸福~');
+
+    }
+
+    async marrykiss(e) {
+        if (!e.isGroup) return e.reply('这个功能仅支持群聊使用哦~');
+
+        const allMarryData = getMarryData();
+        const groupId = String(e.group_id);
+        const userId = this.normalizeId(e.user_id);
+
+        allMarryData[groupId] = allMarryData[groupId] || {};
+        const marryData = allMarryData[groupId];
+
+        if (!marryData[userId].married) {
+            return e.reply([segment.at(userId), ' 你还没有结婚哦~ ']);
+        }
+
+        const she_he = await this.people(e, 'sex', userId);
+        let targetInfo = await Bot.pickGroup(marryData[userId].target).getInfo();
+        let targetName = targetInfo?.groupName || she_he;
+        return e.reply('你亲吻了 ' + targetName + '，感受到了甜蜜和幸福~');
     }
 
     async marryadmin(e) {
@@ -114,8 +158,8 @@ export class marry extends plugin {
         marryData[atUserId] = { wait: true, married: false, target: userId };
         saveMarryData(allMarryData);
 
-        let atUserInfo = await Bot.pickFriend(atUserId).getInfo();
-        let atUserName = atUserInfo?.nickname;
+        let atUserInfo = await Bot.pickGroup(atUserId).getInfo();
+        let atUserName = atUserInfo?.groupName;
 
         return e.reply([
             segment.at(atUserId), "\n",
