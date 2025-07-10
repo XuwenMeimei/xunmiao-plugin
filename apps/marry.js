@@ -55,7 +55,7 @@ export class marry extends plugin {
         const she_he = await this.people(e, 'sex', userId);
 
         let targetMemberInfo = await Bot.pickGroup(groupId).pickMember(marryData[userId].target).getInfo();
-        let targetName = targetMemberInfo?.card || atUserInfo?.nickname || she_he;
+        let targetName = targetMemberInfo?.card || targetMemberInfo?.nickname || she_he;
 
         return e.reply('你抱了抱' + targetName + '，感受到了温暖和幸福~');
 
@@ -78,7 +78,7 @@ export class marry extends plugin {
         const she_he = await this.people(e, 'sex', userId);
         
         let targetMemberInfo = await Bot.pickGroup(groupId).pickMember(marryData[userId].target).getInfo();
-        let targetName = targetMemberInfo?.card || atUserInfo?.nickname || she_he;
+        let targetName = targetMemberInfo?.card || targetMemberInfo?.nickname || she_he;
 
         return e.reply('你亲吻了' + targetName + '，感受到了甜蜜和幸福~');
     }
