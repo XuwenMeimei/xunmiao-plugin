@@ -58,3 +58,13 @@ body, html {
 .card p strong {
   color: #ff6699;
 }
+
+
+.favicon {
+  width: 64px;
+  height: 64px;
+  display: block;
+  margin: 0 auto 16px auto;
+  border-radius: 8px;
+  box-shadow: 0 0 8px rgba(255, 192, 203, 0.5);
+}
