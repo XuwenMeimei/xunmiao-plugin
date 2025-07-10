@@ -28,7 +28,8 @@ export class marry extends plugin {
                 { reg: '^#?我拒绝$', fnc: 'rejectmarry' },
                 { reg: '^#离婚$', fnc: 'divorce' },
                 { reg: '^#强娶$', fnc: 'marryadmin' },
-                { reg: '^#抱抱$', fnc: 'marryhug'}
+                { reg: '^#抱抱$', fnc: 'marryhug'},
+                { reg: '^#亲亲$', fnc: 'marrykiss'}
             ]
         });
     }
