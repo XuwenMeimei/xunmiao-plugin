@@ -55,7 +55,6 @@ export class marry extends plugin {
         const marryData = getMarryData();
         const userId = e.user_id;
         const atUserId = e.at;
-        let message = e.message;
 
         marryData[userId] = {
             wait: false,
