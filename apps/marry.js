@@ -149,7 +149,7 @@ export class marry extends plugin {
         }
 
         if (marryData[userId].wait || marryData[atUserId].wait) {
-            if (marryData[userId].target === atUserId && marryData[atUserId].target === userId) {
+            if (marryData[userId].target == atUserId && marryData[atUserId].target == userId) {
                 marryData[userId].wait = false;
                 marryData[atUserId].wait = false;
                 marryData[userId].married = true;
@@ -204,7 +204,7 @@ export class marry extends plugin {
         }
 
         if (marryData[userId].wait || marryData[atUserId].wait) {
-            if (marryData[userId].target === atUserId && marryData[atUserId].target === userId) {
+            if (marryData[userId].target == atUserId && marryData[atUserId].target == userId) {
                 marryData[userId].wait = false;
                 marryData[atUserId].wait = false;
                 marryData[userId].target = null;
