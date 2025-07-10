@@ -6,7 +6,7 @@ import cfg from '../../../lib/config/config.js'
 const _path = process.cwd().replace(/\\/g, "/");
 const dataPath = `${_path}/plugins/xunmiao-plugin/data/user_data.yaml`;
 
-export class duel extends plugin {
+export class admin extends plugin {
     constructor() {
       super({
         name: '寻喵查询',
