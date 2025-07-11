@@ -168,8 +168,8 @@ export class marry extends plugin {
         let atUserInfo = await Bot.pickGroup(groupId).pickMember(atUserId).getInfo();
         let atUserName = atUserInfo?.card || atUserInfo?.nickname;
 
-        let userImg = 'https://q1.qlogo.cn/g?b=qq&s=0&nk=${userId}'
-        let atUserImg = 'https://q1.qlogo.cn/g?b=qq&s=0&nk=${atUserId}';
+        let userImg = 'https://q1.qlogo.cn/g?b=qq&s=0&nk='+userId;
+        let atUserImg = 'https://q1.qlogo.cn/g?b=qq&s=0&nk='+atUserId;
 
         const data = {
             userName,
@@ -189,7 +189,10 @@ export class marry extends plugin {
             data: data
         });
 
-        return await e.reply([segment.at(userId)], ' ',[segment.at(atUserId)], base64)
+        return await e.reply([
+            segment.at(userId),segment.at(userId),
+            base64
+        ]);
     }
 
     async acceptmarry(e) {
