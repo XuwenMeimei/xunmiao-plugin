@@ -16,7 +16,7 @@
 
 body {
   margin: 0;
-  padding: 0;
+  padding: 20px;
   background: var(--bg-color);
   font-family: var(--font-family);
   width: 100vw;
