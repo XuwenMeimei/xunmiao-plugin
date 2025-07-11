@@ -325,8 +325,6 @@ export class inv extends plugin {
     } else {
       // 其他类型物品，默认一次性使用指定数量
       const realUse = Math.min(useCount, invData[userId][itemId]);
-      invData[userId][itemId] -= realUse;
-      if (invData[userId][itemId] <= 0) delete invData[userId][itemId];
       effectMsg = `你使用了${realUse}个【${shopItem.name}】，但该物品暂不可使用或无效果。`;
       fs.writeFileSync(invDataPath, yaml.stringify(invData));
       fs.writeFileSync(userDataPath, yaml.stringify(userData));

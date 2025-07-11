@@ -119,3 +119,14 @@
     type: diaoyu_bait_top
     value: 1
   max_per_day: -1
+
+- id: ruantang
+  name: 软糖等身娃娃
+  price: 1314520
+  desc: 香香的，软软的，可以亲可以抱，还可以超(?)
+  category: special
+  only_once: true
+  use:
+    type: ruantang
+    value: 1
+  max_per_day: -1
