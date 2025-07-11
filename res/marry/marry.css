@@ -11,12 +11,11 @@
   --message-text-color: #666;
   --footer-color: #ff6f91;
   --font-family: 'LcCute', 'Microsoft YaHei', 'Comic Sans MS', 'Segoe UI', sans-serif;
-  height: 700px;
 }
 
 body {
   margin: 0;
-  padding: 20px;
+  padding: 50px;
   background: var(--bg-color);
   font-family: var(--font-family);
   width: 100vw;
