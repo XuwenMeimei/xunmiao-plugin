@@ -172,9 +172,11 @@ export class marry extends plugin {
             return e.reply([segment.at(userId), ' 唔...你在想什么呢!你已经和', atUserName, '结婚了哦~ ']);
         }
 
-        let atUserTargetId = marryData[userId].target
-        let atUserTargetInfo = await Bot.pickGroup(groupId).pickMember(atUserTargetId).getInfo();
-        let atUserTargetName = atUserTargetInfo?.card || atUserInfo?.nickname;
+        if (marryData[userId].target) {
+            let atUserTargetId = marryData[userId].target
+            let atUserTargetInfo = await Bot.pickGroup(groupId).pickMember(atUserTargetId).getInfo();
+            let atUserTargetName = atUserTargetInfo?.card || atUserInfo?.nickname;
+        }
 
         if (marryData[atUserId]?.married) {
             return e.reply([segment.at(userId), ' 唔...对方已经和', atUserTargetName, '结婚了哦~ ']);
