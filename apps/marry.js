@@ -163,7 +163,8 @@ export class marry extends plugin {
             return e.reply([segment.at(userId), ' 唔...你在想什么呢!你已经和', atUserName, '结婚了哦~ ']);
         }
 
-        let atUserTargetInfo = await Bot.pickGroup(groupId).pickMember(marryData[userId].target).getInfo();
+        let atUserTargetID = marryData[userId].target
+        let atUserTargetInfo = await Bot.pickGroup(groupId).pickMember(atUserTargetID).getInfo();
         let atUserTargetName = atUserTargetInfo?.card || atUserInfo?.nickname;
 
         if (marryData[atUserId]?.married) {
