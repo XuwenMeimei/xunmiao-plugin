@@ -7,7 +7,7 @@
     type: stamina
     value: 10
   max_per_day: -1
-  max_per_user_per_day: 100
+  max_per_user_per_day: 300
 
 - id: fish_big_dry
   name: 大包小鱼干
@@ -18,7 +18,7 @@
     type: stamina
     value: 30
   max_per_day: -1
-  max_per_user_per_day: 50
+  max_per_user_per_day: 100
 
 - id: glove_moyu
   name: 摸鱼手套
