@@ -51,7 +51,7 @@ export class marry extends plugin {
         allMarryData[groupId] = allMarryData[groupId] || {};
         const marryData = allMarryData[groupId];
 
-        initMarryData(marryData, userId, atUserId);
+        initMarryData(marryData, userId);
 
         if (!marryData[userId].married) {
             return e.reply([segment.at(userId), ' 你还没有结婚哦~ ']);
@@ -76,7 +76,7 @@ export class marry extends plugin {
         allMarryData[groupId] = allMarryData[groupId] || {};
         const marryData = allMarryData[groupId];
 
-        initMarryData(marryData, userId, atUserId);
+        initMarryData(marryData, userId);
 
         if (!marryData[userId].married) {
             return e.reply([segment.at(userId), ' 你还没有结婚哦~ ']);
