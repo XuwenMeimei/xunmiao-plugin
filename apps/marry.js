@@ -43,12 +43,15 @@ export class marry extends plugin {
     async marryhug(e) {
         if (!e.isGroup) return e.reply('这个功能仅支持群聊使用哦~');
 
+
         const allMarryData = getMarryData();
         const groupId = String(e.group_id);
         const userId = this.normalizeId(e.user_id);
         
         allMarryData[groupId] = allMarryData[groupId] || {};
         const marryData = allMarryData[groupId];
+
+        initMarryData(marryData, userId, atUserId);
 
         if (!marryData[userId].married) {
             return e.reply([segment.at(userId), ' 你还没有结婚哦~ ']);
@@ -73,6 +76,8 @@ export class marry extends plugin {
         allMarryData[groupId] = allMarryData[groupId] || {};
         const marryData = allMarryData[groupId];
 
+        initMarryData(marryData, userId, atUserId);
+
         if (!marryData[userId].married) {
             return e.reply([segment.at(userId), ' 你还没有结婚哦~ ']);
         }
@@ -93,6 +98,8 @@ export class marry extends plugin {
 
         allMarryData[groupId] = allMarryData[groupId] || {};
         const marryData = allMarryData[groupId];
+
+        initMarryData(marryData, userId, atUserId);
 
         if (!cfg.masterQQ.includes(e.user_id)) {
             return e.reply('只有我的主人才能使用哦~', false, { at: true });
@@ -127,6 +134,8 @@ export class marry extends plugin {
 
         allMarryData[groupId] = allMarryData[groupId] || {};
         const marryData = allMarryData[groupId];
+
+        initMarryData(marryData, userId, atUserId);
 
         let userInfo = await Bot.pickGroup(groupId).pickMember(userId).getInfo();
         let userName = userInfo?.card || userInfo?.nickname;
@@ -163,9 +172,9 @@ export class marry extends plugin {
             return e.reply([segment.at(userId), ' 唔...你在想什么呢!你已经和', atUserName, '结婚了哦~ ']);
         }
 
-        let atUserTargetID = marryData[userId].target
-        let atUserTargetInfo = await Bot.pickGroup(groupId).pickMember(atUserTargetID).getInfo();
-        let atUserTargetName = atUserTargetInfo?.card || aatUserTargetInfo?.nickname;
+        let atUserTargetId = marryData[userId].target
+        let atUserTargetInfo = await Bot.pickGroup(groupId).pickMember(atUserTargetId).getInfo();
+        let atUserTargetName = atUserTargetInfo?.card || atUserInfo?.nickname;
 
         if (marryData[atUserId]?.married) {
             return e.reply([segment.at(userId), ' 唔...对方已经和', atUserTargetName, '结婚了哦~ ']);
@@ -221,6 +230,8 @@ export class marry extends plugin {
         const atUserId = this.normalizeId(e.at);
         const message = e.message;
 
+        initMarryData(marryData, userId, atUserId);
+
         if (message.some(item => item.qq === '2582312528')) {
             return e.reply([segment.at(userId), ' 你在想什么呀! ']);
         }
@@ -259,6 +270,8 @@ export class marry extends plugin {
         const atUserId = this.normalizeId(e.at);
         const message = e.message;
 
+        initMarryData(marryData, userId, atUserId);
+
         if (message.some(item => item.qq === '2582312528')) {
             return e.reply([segment.at(userId), ' 你在想什么呀! ']);
         }
@@ -294,6 +307,8 @@ export class marry extends plugin {
         const userId = this.normalizeId(e.user_id);
         const atUserId = this.normalizeId(e.at);
         const message = e.message;
+
+        initMarryData(marryData, userId, atUserId);
 
         if (!atUserId) return e.reply([segment.at(userId), ' 请@你想要离婚的人哦~ ']);
         if (userId === atUserId) return e.reply([segment.at(userId), ' 你@自己干嘛呀? ']);
@@ -342,4 +357,22 @@ async function getBase64FromUrl(url) {
   const base64 = Buffer.from(response.data, 'binary').toString('base64');
   const mime = response.headers['content-type'] || 'image/png';
   return `data:${mime};base64,${base64}`;
+}
+
+async function initMarryData(marryData, userId, atUserId) {
+  if (!marryData[userId]) {
+    marryData[userId] = {
+      wait: false,
+      married: false,
+      target: null
+    };
+  }
+
+  if (atUserId && !marryData[atUserId]) {
+    marryData[atUserId] = {
+      wait: false,
+      married: false,
+      target: null
+    };
+  }
 }
