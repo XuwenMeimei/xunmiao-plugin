@@ -198,7 +198,7 @@ export class marry extends plugin {
         });
 
         return await e.reply([
-            segment.at(userId),segment.at(userId),
+            segment.at(atUserId),
             base64
         ]);
     }
