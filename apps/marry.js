@@ -213,6 +213,10 @@ export class marry extends plugin {
         const atUserId = this.normalizeId(e.at);
         const message = e.message;
 
+        if (message.some(item => item.qq === '2582312528')) {
+            return e.reply([segment.at(userId), ' 你在想什么呀! ']);
+        }
+
         if (!atUserId) return e.reply([segment.at(userId), ' 请@你想要同意的人哦~ ']);
         if (userId === atUserId) return e.reply([segment.at(userId), ' 你@自己干嘛呀? ']);
 
@@ -222,10 +226,6 @@ export class marry extends plugin {
 
         if (marryData[userId].married || marryData[atUserId].married) {
             return e.reply([segment.at(userId), ' 你或对方已经结婚了哦~ ']);
-        }
-
-        if (message.some(item => item.qq === '2582312528')) {
-            return e.reply([segment.at(userId), ' 你在想什么呀! ']);
         }
 
         if (marryData[userId].target === atUserId && marryData[atUserId].target === userId) {
@@ -251,6 +251,10 @@ export class marry extends plugin {
         const atUserId = this.normalizeId(e.at);
         const message = e.message;
 
+        if (message.some(item => item.qq === '2582312528')) {
+            return e.reply([segment.at(userId), ' 你在想什么呀! ']);
+        }
+
         if (!atUserId) return e.reply([segment.at(userId), ' 请@你想要拒绝的人哦~ ']);
         if (userId === atUserId) return e.reply([segment.at(userId), ' 你@自己干嘛呀? ']);
 
@@ -260,10 +264,6 @@ export class marry extends plugin {
 
         if (marryData[userId].married || marryData[atUserId].married) {
             return e.reply([segment.at(userId), ' 你或对方已经结婚了哦~ ']);
-        }
-
-        if (message.some(item => item.qq === '2582312528')) {
-            return e.reply([segment.at(userId), ' 你在想什么呀! ']);
         }
 
         if (marryData[userId].target === atUserId && marryData[atUserId].target === userId) {
