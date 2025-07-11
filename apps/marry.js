@@ -137,13 +137,6 @@ export class marry extends plugin {
 
         initMarryData(marryData, userId, atUserId);
 
-        let userInfo = await Bot.pickGroup(groupId).pickMember(userId).getInfo();
-        let userName = userInfo?.card || userInfo?.nickname;
-
-        let atUserInfo = await Bot.pickGroup(groupId).pickMember(atUserId).getInfo();
-        let atUserName = atUserInfo?.card || atUserInfo?.nickname;
-
-
         if (message.some(item => item.qq === 'all')) {
             return e.reply([segment.at(userId), ' 不可以这样！']);
         }
@@ -155,7 +148,7 @@ export class marry extends plugin {
         if (message.some(item => item.qq === '2582312528')) {
             return e.reply([segment.at(userId), ' 啊嘞?这...这样不行啦~(害羞) ']);
         }
-
+        
         if (!atUserId) {
             return e.reply([segment.at(userId), ' 请@你想要结婚的人哦~ ']);
         }
@@ -163,6 +156,12 @@ export class marry extends plugin {
         if (userId === atUserId) {
             return e.reply([segment.at(userId), ' 嗯?你不能和自己结婚哦~ ']);
         }
+
+        let userInfo = await Bot.pickGroup(groupId).pickMember(userId).getInfo();
+        let userName = userInfo?.card || userInfo?.nickname;
+
+        let atUserInfo = await Bot.pickGroup(groupId).pickMember(atUserId).getInfo();
+        let atUserName = atUserInfo?.card || atUserInfo?.nickname;
 
         if (marryData[userId].target == atUserId) {
             return e.reply([segment.at(userId), ' 你已经和', atUserName, '结婚了哦~'])
