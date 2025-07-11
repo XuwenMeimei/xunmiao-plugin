@@ -128,6 +128,12 @@ export class marry extends plugin {
         allMarryData[groupId] = allMarryData[groupId] || {};
         const marryData = allMarryData[groupId];
 
+        let userInfo = await Bot.pickGroup(groupId).pickMember(userId).getInfo();
+        let userName = userInfo?.card || userInfo?.nickname;
+
+        let atUserInfo = await Bot.pickGroup(groupId).pickMember(atUserId).getInfo();
+        let atUserName = atUserInfo?.card || atUserInfo?.nickname;
+
 
         if (message.some(item => item.qq === 'all')) {
             return e.reply([segment.at(userId), ' 不可以这样！']);
@@ -150,7 +156,7 @@ export class marry extends plugin {
         }
 
         if (marryData[userId].target == atUserId) {
-            return e.reply([segment.at(userId), ' 你们已经结婚了哦~'])
+            return e.reply([segment.at(userId), ' 你们已经和',atUserName, '结婚了哦~'])
         }
 
         if (marryData[userId]?.married) {
@@ -166,12 +172,6 @@ export class marry extends plugin {
         marryData[userId] = { wait: true, married: false, target: atUserId };
         marryData[atUserId] = { wait: true, married: false, target: userId };
         saveMarryData(allMarryData);
-
-        let userInfo = await Bot.pickGroup(groupId).pickMember(userId).getInfo();
-        let userName = userInfo?.card || userInfo?.nickname;
-
-        let atUserInfo = await Bot.pickGroup(groupId).pickMember(atUserId).getInfo();
-        let atUserName = atUserInfo?.card || atUserInfo?.nickname;
 
         let userImgUrl = Bot.pickUser(userId).getAvatarUrl();
         let userImg = '';
