@@ -156,7 +156,7 @@ export class marry extends plugin {
         }
 
         if (marryData[userId].target == atUserId) {
-            return e.reply([segment.at(userId), ' 你们已经和',atUserName, '结婚了哦~'])
+            return e.reply([segment.at(userId), ' 你们已经和', atUserName, '结婚了哦~'])
         }
 
         if (marryData[userId]?.married) {
