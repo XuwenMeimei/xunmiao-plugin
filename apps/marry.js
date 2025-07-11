@@ -169,9 +169,9 @@ export class marry extends plugin {
         let atUserInfo = await Bot.pickGroup(groupId).pickMember(atUserId).getInfo();
         let atUserName = atUserInfo?.card || atUserInfo?.nickname;
 
-        let userImgUrl = Bot.pickUser(this.userId).getAvatarUrl();
+        let userImgUrl = Bot.pickUser(userId).getAvatarUrl();
         let userImg = '';
-        let atUserImgUrl = Bot.pickUser(this.atUserId).getAvatarUrl();
+        let atUserImgUrl = Bot.pickUser(atUserId).getAvatarUrl();
         let atUserImg = '';
 
         try {
@@ -188,8 +188,6 @@ export class marry extends plugin {
             atUserImg,
             she_he
         }
-    
-        console.log(data)
 
         const base64 = await puppeteer.screenshot('xunmiao-plugin', {
             saveId: 'marry',
