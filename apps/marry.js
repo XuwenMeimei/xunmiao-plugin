@@ -160,11 +160,14 @@ export class marry extends plugin {
         }
 
         if (marryData[userId]?.married) {
-            return e.reply([segment.at(userId), ' 唔...你在想什么呢!你已经结婚了哦~ ']);
+            return e.reply([segment.at(userId), ' 唔...你在想什么呢!你已经和', atUserName, '结婚了哦~ ']);
         }
 
+        let atUserTargetInfo = await Bot.pickGroup(groupId).pickMember(marryData[userId].target).getInfo();
+        let atUserTargetName = atUserTargetInfo?.card || atUserInfo?.nickname;
+
         if (marryData[atUserId]?.married) {
-            return e.reply([segment.at(userId), ' 唔...对方已经结婚了哦~ ']);
+            return e.reply([segment.at(userId), ' 唔...对方已经和', atUserTargetName, '结婚了哦~ ']);
         }
 
         const she_he = await this.people(e, 'sex', userId);
