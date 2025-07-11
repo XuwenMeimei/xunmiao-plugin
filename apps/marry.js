@@ -3,6 +3,7 @@ import fs from 'fs';
 import yaml from 'yaml';
 import cfg from '../../../lib/config/config.js';
 import puppeteer from '../../../lib/puppeteer/puppeteer.js';
+import axios from 'axios';
 
 const _path = process.cwd().replace(/\\/g, '/');
 const marryDataPath = `${_path}/plugins/xunmiao-plugin/data/marry_data.yaml`;
@@ -168,8 +169,17 @@ export class marry extends plugin {
         let atUserInfo = await Bot.pickGroup(groupId).pickMember(atUserId).getInfo();
         let atUserName = atUserInfo?.card || atUserInfo?.nickname;
 
-        let userImg = 'https://q1.qlogo.cn/g?b=qq&s=0&nk='+userId;
-        let atUserImg = 'https://q1.qlogo.cn/g?b=qq&s=0&nk='+atUserId;
+        let userImgUrl = Bot.pickUser(this.userId).getAvatarUrl();
+        let userImg = '';
+        let atUserImgUrl = Bot.pickUser(this.atUserId).getAvatarUrl();
+        let atUserImg = '';
+
+        try {
+            userImg = await getBase64FromUrl(userImgUrl);
+            atUserImg = await getBase64FromUrl(atUserImgUrl);
+        } catch(e) {
+            console.error('头像获取失败', e);
+        }
 
         const data = {
             userName,
@@ -319,4 +329,11 @@ export class marry extends plugin {
             return lp.card !== '' ? lp.card : lp.nickname;
         }
     }
+}
+
+async function getBase64FromUrl(url) {
+  const response = await axios.get(url, { responseType: 'arraybuffer' });
+  const base64 = Buffer.from(response.data, 'binary').toString('base64');
+  const mime = response.headers['content-type'] || 'image/png';
+  return `data:${mime};base64,${base64}`;
 }
