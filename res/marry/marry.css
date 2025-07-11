@@ -3,14 +3,15 @@
   --card-bg: #fff;
   --card-shadow-outer: rgba(179, 198, 255, 0.6);
   --card-shadow-inner: #e0eaff;
-  --highlight-color: #4e7cff;
+  --highlight-color: #ff6f91;
   --nickname-color: #ff6f91;
   --img-border-color-light: #ffd6e7;
   --img-border-color-dark: #ff6f91;
   --message-bg: linear-gradient(135deg, #ffe9f3, #ffd6e7);
   --message-text-color: #666;
-  --footer-color: #4e7cff;
+  --footer-color: #ff6f91;
   --font-family: 'LcCute', 'Microsoft YaHei', 'Comic Sans MS', 'Segoe UI', sans-serif;
+  height: 120vw;
 }
 
 body {
