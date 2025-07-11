@@ -239,12 +239,12 @@ export class marry extends plugin {
         if (!atUserId) return e.reply([segment.at(userId), ' 请@你想要同意的人哦~ ']);
         if (userId === atUserId) return e.reply([segment.at(userId), ' 你@自己干嘛呀? ']);
 
-        if (!marryData[userId]?.wait || !marryData[atUserId]?.wait) {
-            return e.reply([segment.at(userId), ' 没有人向你求婚哦~ 或者对方没有向你求婚哦~ ']);
-        }
-
         if (marryData[userId].married || marryData[atUserId].married) {
             return e.reply([segment.at(userId), ' 你或对方已经结婚了哦~ ']);
+        }
+
+        if (!marryData[userId]?.wait || !marryData[atUserId]?.wait) {
+            return e.reply([segment.at(userId), ' 没有人向你求婚哦~ 或者对方没有向你求婚哦~ ']);
         }
 
         if (marryData[userId].target === atUserId && marryData[atUserId].target === userId) {
@@ -279,12 +279,12 @@ export class marry extends plugin {
         if (!atUserId) return e.reply([segment.at(userId), ' 请@你想要拒绝的人哦~ ']);
         if (userId === atUserId) return e.reply([segment.at(userId), ' 你@自己干嘛呀? ']);
 
-        if (!marryData[userId]?.wait || !marryData[atUserId]?.wait) {
-            return e.reply([segment.at(userId), ' 没有人向你求婚哦~ 或者对方没有向你求婚哦~ ']);
-        }
-
         if (marryData[userId].married || marryData[atUserId].married) {
             return e.reply([segment.at(userId), ' 你或对方已经结婚了哦~ ']);
+        }
+
+        if (!marryData[userId]?.wait || !marryData[atUserId]?.wait) {
+            return e.reply([segment.at(userId), ' 没有人向你求婚哦~ 或者对方没有向你求婚哦~ ']);
         }
 
         if (marryData[userId].target === atUserId && marryData[atUserId].target === userId) {
