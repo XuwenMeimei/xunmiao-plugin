@@ -146,15 +146,15 @@ export class marry extends plugin {
         }
 
         if (userId === atUserId) {
-            return e.reply([segment.at(userId), ' 你不能和自己结婚哦~ ']);
+            return e.reply([segment.at(userId), ' 嗯?你不能和自己结婚哦~ ']);
         }
 
         if (marryData[userId]?.married) {
-            return e.reply([segment.at(userId), ' 你已经结婚了哦~ ']);
+            return e.reply([segment.at(userId), ' 唔...你在想什么呢!你已经结婚了哦~ ']);
         }
 
         if (marryData[atUserId]?.married) {
-            return e.reply([segment.at(userId), ' 对方已经结婚了哦~ ']);
+            return e.reply([segment.at(userId), ' 唔...对方已经结婚了哦~ ']);
         }
 
         const she_he = await this.people(e, 'sex', userId);
