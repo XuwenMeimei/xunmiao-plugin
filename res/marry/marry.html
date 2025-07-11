@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="{{pluginResources}}" />
+  <title>结婚页面</title>
+</head>
+<body>
+  <div class="card">
+    <div class="title">💕 喵喵情书 💕</div>
+    <div class="avatars">
+      <div class="avatar">
+        <img src="{{data.userImg}}" />
+        <div class="nickname">{{data.userName}}</div>
+      </div>
+      <div class="avatar">
+        <img src="{{data.atUserImg}}" />
+        <div class="nickname">{{data.atUserName}}</div>
+      </div>
+    </div>
+        <div class="message">
+        <div class="align-left">
+            亲爱的 <strong>{{data.atUserName}}</strong>：
+        </div>
+        <div class="text-paragraph">
+            &emsp;&emsp;在茫茫人海中，能够与<strong>{{data.atUserName}}</strong>相遇相知相恋，我深感幸福，守护你是我今生的选择，我想有个自己的家，一个有你的家，嫁给我好吗？<br/>
+            &emsp;&emsp;那么<strong>{{data.atUserName}}</strong>你愿意嫁给我吗？
+        </div>
+        </div>
+    <div class="footer">at并发送【我愿意】或者【我拒绝】，回应{{data.she_he}}哦！</div>
+  </div>
+</body>
+</html>

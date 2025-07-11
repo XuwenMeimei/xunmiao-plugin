@@ -1,0 +1,87 @@
+:root {
+  --bg-color: #fff0f6;
+  --card-bg: #ffffff;
+  --card-shadow: rgba(255, 105, 180, 0.3);
+  --highlight-color: #ff69b4;
+  --nickname-color: #ff1493;
+  --img-border-color: #ffb6c1;
+  --message-bg: #ffe4ec;
+  --message-text-color: #c71585;
+  --footer-color: #888;
+  --font-family: "Comic Sans MS", "Segoe UI", sans-serif;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg-color);
+  font-family: var(--font-family);
+}
+
+.card {
+  width: 600px;
+  border-radius: 20px;
+  background: var(--card-bg);
+  box-shadow: 0 0 15px var(--card-shadow);
+  margin: 40px auto;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.title {
+  text-align: center;
+  font-size: 28px;
+  color: var(--highlight-color);
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.avatars {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin: 20px 0;
+}
+
+.avatar {
+  text-align: center;
+}
+
+.avatar img {
+  border-radius: 50%;
+  border: 4px solid var(--img-border-color);
+  width: 120px;
+  height: 120px;
+}
+
+.nickname {
+  margin-top: 10px;
+  font-size: 16px;
+  color: var(--nickname-color);
+}
+
+.message {
+  background: var(--message-bg);
+  border-radius: 15px;
+  padding: 15px;
+  font-size: 16px;
+  color: var(--message-text-color);
+  line-height: 1.8;
+}
+
+.message .align-left {
+  text-align: left;
+  margin-bottom: 10px;
+}
+
+.footer {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 14px;
+  color: var(--footer-color);
+}
+
+.text-paragraph {
+  line-height: 1.8;
+  white-space: normal;
+}

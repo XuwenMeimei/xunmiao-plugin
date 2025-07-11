@@ -2,6 +2,7 @@ import plugin from '../../../lib/plugins/plugin.js';
 import fs from 'fs';
 import yaml from 'yaml';
 import cfg from '../../../lib/config/config.js';
+import puppeteer from '../../../lib/puppeteer/puppeteer.js';
 
 const _path = process.cwd().replace(/\\/g, '/');
 const marryDataPath = `${_path}/plugins/xunmiao-plugin/data/marry_data.yaml`;
@@ -161,19 +162,34 @@ export class marry extends plugin {
         marryData[atUserId] = { wait: true, married: false, target: userId };
         saveMarryData(allMarryData);
 
+        let userInfo = await Bot.pickGroup(groupId).pickMember(userId).getInfo();
+        let userName = userInfo?.card || userInfo?.nickname;
+
         let atUserInfo = await Bot.pickGroup(groupId).pickMember(atUserId).getInfo();
         let atUserName = atUserInfo?.card || atUserInfo?.nickname;
 
-        return e.reply([
-            segment.at(atUserId), "\n",
-            segment.image(`https://q1.qlogo.cn/g?b=qq&s=0&nk=${atUserId}`), "\n",
-            segment.at(userId), "\n",
-            segment.image(`https://q1.qlogo.cn/g?b=qq&s=0&nk=${userId}`), "\n",
-            `向你求婚：“亲爱的${atUserName}您好！`, "\n",
-            `在茫茫人海中，能够与${atUserName}相遇相知相恋，我深感幸福，守护你是我今生的选择，我想有个自己的家，一个有你的家,嫁给我好吗？”`, "\n",
-            segment.at(atUserId), "\n",
-            `那么${atUserName}，你愿意嫁给${she_he}吗？at并发送【我愿意】或者【我拒绝】，回应${she_he}哦！`
-        ]);
+        let userImg = 'https://q1.qlogo.cn/g?b=qq&s=0&nk=${userId}'
+        let atUserImg = 'https://q1.qlogo.cn/g?b=qq&s=0&nk=${atUserId}';
+
+        const data = {
+            userName,
+            atUserName,
+            userImg,
+            atUserImg,
+            she_he
+        }
+    
+        console.log(data)
+
+        const base64 = await puppeteer.screenshot('xunmiao-plugin', {
+            saveId: 'marry',
+            imgType: 'png',
+            tplFile: `${_path}/plugins/xunmiao-plugin/res/marry/marry.html`,
+            pluginResources: `${_path}/plugins/xunmiao-plugin/res/marry/marry.css`,
+            data: data
+        });
+
+        return await e.reply([segment.at(userId)], ' ',[segment.at(atUserId)], base64)
     }
 
     async acceptmarry(e) {
