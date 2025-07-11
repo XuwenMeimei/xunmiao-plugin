@@ -149,6 +149,10 @@ export class marry extends plugin {
             return e.reply([segment.at(userId), ' 嗯?你不能和自己结婚哦~ ']);
         }
 
+        if (marryData[userId].target == atUserId) {
+            return e.reply([segment.at(userId), ' 你们已经结婚了哦~'])
+        }
+
         if (marryData[userId]?.married) {
             return e.reply([segment.at(userId), ' 唔...你在想什么呢!你已经结婚了哦~ ']);
         }
