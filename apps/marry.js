@@ -175,7 +175,7 @@ export class marry extends plugin {
         if (marryData[atUserId]?.married) {
             let atUserTargetId = marryData[atUserId].target
             let atUserTargetInfo = await Bot.pickGroup(groupId).pickMember(atUserTargetId).getInfo();
-            let atUserTargetName = atUserTargetInfo?.card || atUserInfo?.nickname;
+            let atUserTargetName = atUserTargetInfo?.card || atUserTargetInfo?.nickname;
             return e.reply([segment.at(userId), ' 唔...对方已经和', atUserTargetName, '结婚了哦~ ']);
         }
 
