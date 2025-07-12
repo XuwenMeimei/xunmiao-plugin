@@ -97,7 +97,9 @@ export class marry extends plugin {
 
         initMarryData(marryData, userId);
 
-        const she_he = await this.people(e, 'sex', userId);
+        const targetUserId = marryData[userId].target;
+
+        const she_he = await this.people(e, 'sex', targetUserId);
 
         if (hugCooldowns[userId]) {
             const timePassed = now - hugCooldowns[userId];
@@ -116,7 +118,7 @@ export class marry extends plugin {
         let targetName = targetMemberInfo?.card || targetMemberInfo?.nickname || she_he;
 
         marryData[userId].favor += 5;
-        marryData[marryData[userId].target].favor += 5;
+        marryData[targetUserId].favor += 5;
         saveMarryData(allMarryData);
 
         hugCooldowns[userId] = now;
@@ -141,7 +143,9 @@ export class marry extends plugin {
 
         initMarryData(marryData, userId);
 
-        const she_he = await this.people(e, 'sex', userId);
+        const targetUserId = marryData[userId].target;
+
+        const she_he = await this.people(e, 'sex', targetUserId);
 
         if (kissCooldowns[userId]) {
             const timePassed = now - kissCooldowns[userId];
@@ -160,7 +164,7 @@ export class marry extends plugin {
         let targetName = targetMemberInfo?.card || targetMemberInfo?.nickname || she_he;
 
         marryData[userId].favor += 10;
-        marryData[marryData[userId].target].favor += 10;
+        marryData[targetUserId].favor += 10;
         saveMarryData(allMarryData);
 
         kissCooldowns[userId] = now;
