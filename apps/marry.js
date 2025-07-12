@@ -70,7 +70,7 @@ export class marry extends plugin {
             const timeLeft = cooldownTime - timePassed;
             if (timeLeft > 0) {
                 const secondsLeft = Math.ceil(timeLeft / 1000);
-                return e.reply([segment.at(),'你们刚才抱过', she_he, '了哦~', secondsLeft, '秒后再抱抱吧~']);
+                return e.reply([segment.at(userId),'你们刚才抱过', she_he, '了哦~', secondsLeft, '秒后再抱抱吧~']);
             }
         }
 
@@ -87,8 +87,9 @@ export class marry extends plugin {
 
         hugCooldowns[userId] = now;
 
-        return e.reply([segment.at(userId), ' 你抱了抱' + targetName + '，感受到了温暖和幸福~', '\n',
-            '好感度+5 ', '当前好感度：' + marryData[userId].favor
+        return e.reply([segment.at(userId),
+            ' 你抱了抱', targetName, '感受到了温暖和幸福~', '\n',
+            '好感度+5 ', '当前好感度：', marryData[userId].favor
         ]);
     }
 
@@ -113,7 +114,7 @@ export class marry extends plugin {
             const timeLeft = cooldownTime - timePassed;
             if (timeLeft > 0) {
                 const secondsLeft = Math.ceil(timeLeft / 1000);
-                return e.reply([segment.at(),'你刚才亲过', she_he, '了哦~', secondsLeft, '秒后再亲吧~']);
+                return e.reply([segment.at(userId),'你刚才亲过', she_he, '了哦~', secondsLeft, '秒后再亲吧~']);
             }
         }
 
