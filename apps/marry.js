@@ -70,7 +70,7 @@ export class marry extends plugin {
             const timeLeft = cooldownTime - timePassed;
             if (timeLeft > 0) {
                 const secondsLeft = Math.ceil(timeLeft / 1000);
-                return e.reply([segment.at(userId),'你刚才抱过', she_he, '了哦~', secondsLeft, '秒后再抱抱吧~']);
+                return e.reply([segment.at(userId),' 你刚才抱过', she_he, '了哦~', secondsLeft, '秒后再抱抱吧~']);
             }
         }
 
@@ -114,7 +114,7 @@ export class marry extends plugin {
             const timeLeft = cooldownTime - timePassed;
             if (timeLeft > 0) {
                 const secondsLeft = Math.ceil(timeLeft / 1000);
-                return e.reply([segment.at(userId),'你刚才亲过', she_he, '了哦~', secondsLeft, '秒后再亲吧~']);
+                return e.reply([segment.at(userId),' 你刚才亲过', she_he, '了哦~', secondsLeft, '秒后再亲吧~']);
             }
         }
 
