@@ -17,6 +17,10 @@ function saveMarryData(data) {
     fs.writeFileSync(marryDataPath, yaml.stringify(data));
 }
 
+const hugCooldowns = {};
+const kissCooldowns = {};
+const cooldownTime = 60 * 1000;
+
 export class marry extends plugin {
     constructor() {
         super({
@@ -31,7 +35,8 @@ export class marry extends plugin {
                 { reg: '^#离婚$', fnc: 'divorce' },
                 { reg: '^#强娶$', fnc: 'marryadmin' },
                 { reg: '^#抱抱$', fnc: 'marryhug'},
-                { reg: '^#亲亲$', fnc: 'marrykiss'}
+                { reg: '^#亲亲$', fnc: 'marrykiss'},
+                { reg: '[\\s\\S]*', fnc: 'marryat'}
             ]
         });
     }
@@ -40,9 +45,14 @@ export class marry extends plugin {
         return id != null ? String(id) : null;
     }
 
+    async marryat(e) {
+        if (!e.isGroup) return
+    }
+
     async marryhug(e) {
         if (!e.isGroup) return e.reply('这个功能仅支持群聊使用哦~');
 
+        const now = Date.now();
 
         const allMarryData = getMarryData();
         const groupId = String(e.group_id);
@@ -53,17 +63,33 @@ export class marry extends plugin {
 
         initMarryData(marryData, userId);
 
+        const she_he = await this.people(e, 'sex', userId);
+
+        if (hugCooldowns[userId]) {
+            const timePassed = now - hugCooldowns[userId];
+            const timeLeft = cooldownTime - timePassed;
+            if (timeLeft > 0) {
+                const secondsLeft = Math.ceil(timeLeft / 1000);
+                return e.reply([segment.at(),'你们刚才抱过', she_he, '了哦~', secondsLeft, '秒后再抱抱吧~']);
+            }
+        }
+
         if (!marryData[userId].married) {
             return e.reply([segment.at(userId), ' 你还没有结婚哦~ ']);
         }
 
-        const she_he = await this.people(e, 'sex', userId);
-
         let targetMemberInfo = await Bot.pickGroup(groupId).pickMember(marryData[userId].target).getInfo();
         let targetName = targetMemberInfo?.card || targetMemberInfo?.nickname || she_he;
 
-        return e.reply([segment.at(userId), ' 你抱了抱' + targetName + '，感受到了温暖和幸福~']);
+        marryData[userId].favor += 5;
+        marryData[marryData[userId].target].favor += 5;
+        saveMarryData(allMarryData);
 
+        hugCooldowns[userId] = now;
+
+        return e.reply([segment.at(userId), ' 你抱了抱' + targetName + '，感受到了温暖和幸福~', '\n',
+            '好感度+5 ', '当前好感度：' + marryData[userId].favor
+        ]);
     }
 
     async marrykiss(e) {
@@ -78,16 +104,33 @@ export class marry extends plugin {
 
         initMarryData(marryData, userId);
 
+        const she_he = await this.people(e, 'sex', userId);
+
+        if (kissCooldowns[userId]) {
+            const timePassed = now - kissCooldowns[userId];
+            const timeLeft = cooldownTime - timePassed;
+            if (timeLeft > 0) {
+                const secondsLeft = Math.ceil(timeLeft / 1000);
+                return e.reply([segment.at(),'你刚才亲过', she_he, '了哦~', secondsLeft, '秒后再亲吧~']);
+            }
+        }
+
         if (!marryData[userId].married) {
             return e.reply([segment.at(userId), ' 你还没有结婚哦~ ']);
         }
-
-        const she_he = await this.people(e, 'sex', userId);
         
         let targetMemberInfo = await Bot.pickGroup(groupId).pickMember(marryData[userId].target).getInfo();
         let targetName = targetMemberInfo?.card || targetMemberInfo?.nickname || she_he;
 
-        return e.reply([segment.at(userId), ' 你亲吻了' + targetName + '，感受到了甜蜜和幸福~']);
+        marryData[userId].favor += 10;
+        marryData[marryData[userId].target].favor += 10;
+        saveMarryData(allMarryData);
+
+        kissCooldowns[userId] = now;
+
+        return e.reply([segment.at(userId), ' 你亲吻了' + targetName + '，感受到了甜蜜和幸福~', '\n',
+            '好感度+10 ', '当前好感度：' + marryData[userId].favor
+        ]);
     }
 
     async marryadmin(e) {
@@ -362,15 +405,21 @@ async function initMarryData(marryData, userId, atUserId) {
     marryData[userId] = {
       wait: false,
       married: false,
-      target: null
+      target: null,
+      favor: 0
     };
+  } else if (marryData[userId].favor == null) {
+    marryData[userId].favor = 0;
   }
 
   if (atUserId && !marryData[atUserId]) {
     marryData[atUserId] = {
       wait: false,
       married: false,
-      target: null
+      target: null,
+      favor: 0
     };
+  } else if (atUserId && marryData[atUserId].favor == null) {
+    marryData[atUserId].favor = 0;
   }
 }
