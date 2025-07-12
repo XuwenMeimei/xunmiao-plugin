@@ -4,7 +4,6 @@ import yaml from 'yaml';
 import cfg from '../../../lib/config/config.js';
 import puppeteer from '../../../lib/puppeteer/puppeteer.js';
 import axios from 'axios';
-import { use } from 'react';
 
 const _path = process.cwd().replace(/\\/g, '/');
 const marryDataPath = `${_path}/plugins/xunmiao-plugin/data/marry_data.yaml`;
