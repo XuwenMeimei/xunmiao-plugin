@@ -36,8 +36,7 @@ export class marry extends plugin {
                 { reg: '^#离婚$', fnc: 'divorce' },
                 { reg: '^#强娶$', fnc: 'marryadmin' },
                 { reg: '^#抱抱$', fnc: 'marryhug'},
-                { reg: '^#亲亲$', fnc: 'marrykiss'},
-                { reg: '[\\s\\S]*', fnc: 'marryat'}
+                { reg: '^#亲亲$', fnc: 'marrykiss'}
             ]
         });
     }
@@ -46,7 +45,7 @@ export class marry extends plugin {
         return id != null ? String(id) : null;
     }
 
-    async marryat(e) {
+    async marryat() {
         if (!e.isGroup) return
 
         const now = Date.now();
