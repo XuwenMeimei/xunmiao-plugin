@@ -95,6 +95,8 @@ export class marry extends plugin {
     async marrykiss(e) {
         if (!e.isGroup) return e.reply('这个功能仅支持群聊使用哦~');
 
+        const now = Date.now();
+
         const allMarryData = getMarryData();
         const groupId = String(e.group_id);
         const userId = this.normalizeId(e.user_id);
