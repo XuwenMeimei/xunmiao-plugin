@@ -4,6 +4,7 @@ import yaml from 'yaml';
 import cfg from '../../../lib/config/config.js';
 import puppeteer from '../../../lib/puppeteer/puppeteer.js';
 import axios from 'axios';
+import { use } from 'react';
 
 const _path = process.cwd().replace(/\\/g, '/');
 const marryDataPath = `${_path}/plugins/xunmiao-plugin/data/marry_data.yaml`;
@@ -19,6 +20,7 @@ function saveMarryData(data) {
 
 const hugCooldowns = {};
 const kissCooldowns = {};
+const atCooldowns = {};
 const cooldownTime = 60 * 1000;
 
 export class marry extends plugin {
@@ -47,6 +49,39 @@ export class marry extends plugin {
 
     async marryat(e) {
         if (!e.isGroup) return
+
+        const now = Date.now();
+
+        const allMarryData = getMarryData();
+        const groupId = String(e.group_id);
+        const userId = this.normalizeId(e.user_id);
+        const atUserId = this.normalizeId(e.at);
+        
+        allMarryData[groupId] = allMarryData[groupId] || {};
+        const marryData = allMarryData[groupId];
+
+        initMarryData(marryData, userId);
+
+        if (atCooldowns[userId]) {
+            const timePassed = now - atCooldowns[userId];
+            const timeLeft = cooldownTime - timePassed;
+            if (timeLeft > 0) {
+                return;
+            }
+        }
+
+        if (!marryData[userId].married) {
+            return;
+        }
+
+        if (atUserId == marryData[userId].target) {
+            marryData[userId].favor += 3;
+            marryData[marryData[userId].target].favor += 3;
+            saveMarryData(allMarryData);
+
+            atCooldowns[userId] = now;
+        }        
+        
     }
 
     async marryhug(e) {
