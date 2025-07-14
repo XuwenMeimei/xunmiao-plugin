@@ -37,51 +37,12 @@ export class marry extends plugin {
                 { reg: '^#强娶$', fnc: 'marryadmin' },
                 { reg: '^#抱抱$', fnc: 'marryhug'},
                 { reg: '^#亲亲$', fnc: 'marrykiss'},
-                //{ reg: '[\\s\\S]*', fnc: 'marryat'}
             ]
         });
     }
 
     normalizeId(id) {
         return id != null ? String(id) : null;
-    }
-
-    async marryat(e) {
-        return
-        if (!e.isGroup) return
-
-        const now = Date.now();
-
-        const allMarryData = getMarryData();
-        const groupId = String(e.group_id);
-        const userId = this.normalizeId(e.user_id);
-        const atUserId = this.normalizeId(e.at);
-        
-        allMarryData[groupId] = allMarryData[groupId] || {};
-        const marryData = allMarryData[groupId];
-
-        initMarryData(marryData, userId);
-
-        if (atCooldowns[userId]) {
-            const timePassed = now - atCooldowns[userId];
-            const timeLeft = cooldownTime - timePassed;
-            if (timeLeft > 0) {
-                return;
-            }
-        }
-
-        if (!marryData[userId].married) {
-            return;
-        }
-
-        if (atUserId == marryData[userId].target) {
-            marryData[userId].favor += 3;
-            marryData[marryData[userId].target].favor += 3;
-            saveMarryData(allMarryData);
-
-            atCooldowns[userId] = now;
-        }        
-        
     }
 
     async marryhug(e) {
@@ -118,15 +79,15 @@ export class marry extends plugin {
         let targetMemberInfo = await Bot.pickGroup(groupId).pickMember(marryData[userId].target).getInfo();
         let targetName = targetMemberInfo?.card || targetMemberInfo?.nickname || she_he;
 
-        marryData[userId].favor += 5;
-        marryData[targetUserId].favor += 5;
+        marryData[userId].favor += 3;
+        marryData[targetUserId].favor += 3;
         saveMarryData(allMarryData);
 
         hugCooldowns[userId] = now;
 
         return e.reply([segment.at(userId),
             ' 你抱了抱', targetName, '感受到了温暖和幸福~', '\n',
-            '好感度+5 ', '当前好感度：', marryData[userId].favor
+            '好感度+3 ', '当前好感度：', marryData[userId].favor
         ]);
     }
 
@@ -164,14 +125,14 @@ export class marry extends plugin {
         let targetMemberInfo = await Bot.pickGroup(groupId).pickMember(marryData[userId].target).getInfo();
         let targetName = targetMemberInfo?.card || targetMemberInfo?.nickname || she_he;
 
-        marryData[userId].favor += 10;
-        marryData[targetUserId].favor += 10;
+        marryData[userId].favor += 5;
+        marryData[targetUserId].favor += 5;
         saveMarryData(allMarryData);
 
         kissCooldowns[userId] = now;
 
         return e.reply([segment.at(userId), ' 你亲吻了' + targetName + '，感受到了甜蜜和幸福~', '\n',
-            '好感度+10 ', '当前好感度：' + marryData[userId].favor
+            '好感度+5 ', '当前好感度：' + marryData[userId].favor
         ]);
     }
 
