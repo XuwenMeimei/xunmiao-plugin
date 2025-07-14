@@ -20,6 +20,8 @@ export class status extends plugin {
         let BotQQ = Bot.uin || '获取失败';
         let BotName = Bot.nickname || '获取失败';
 
+        console.log(BotQQ, '\n', BotName)
+
         if (e.isGroup) {
             return e.reply([segment.at[e.user_id], '\n',
             '寻喵ID: ', BotQQ, '\n',
