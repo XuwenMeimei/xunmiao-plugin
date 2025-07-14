@@ -17,10 +17,16 @@ export class status extends plugin {
     }
 
     async nekostatus(e) {
-        let BotQQ = e.bot_id;
-        let BotName = e.bot_name;
+        let BotQQ = this.e.bot_id;
+        let BotName = this.e.bot_name;
 
-        return e.reply([segment.at[e.user_id], '\n',
+        if (!e.isGroup) {
+            return e.reply([segment.at[e.user_id], '\n',
+            '寻喵ID: ', BotQQ, '\n',
+            '寻喵名称: ', BotName
+            ])
+        }
+        return e.reply(
             '寻喵ID: ', BotQQ, '\n',
             '寻喵名称: ', BotName
         ])
