@@ -23,7 +23,7 @@ export class rank extends plugin {
       rule: [
         {
           // 支持 #排行榜  喵喵币 这种中间有空格的写法
-          reg: /^#排行榜\s*(喵喵币|好感度|摸鱼次数|连续签到)?\s*$/,
+          reg: /^#排行榜\s*(喵喵币|好感度|摸鱼次数|签到次数|连续签到)?\s*$/,
           fnc: 'showRank'
         }
       ]
@@ -32,7 +32,7 @@ export class rank extends plugin {
 
   async showRank(e) {
     let type = '喵喵币';
-    const match = e.msg.match(/^#排行榜\s*(喵喵币|好感度|摸鱼次数|连续签到)?\s*$/);
+    const match = e.msg.match(/^#排行榜\s*(喵喵币|好感度|摸鱼次数|签到次数|连续签到)?\s*$/);
     if (match && match[1]) type = match[1].trim();
 
     const { key, label } = rankTypes[type] || rankTypes['喵喵币'];
@@ -101,6 +101,8 @@ export class rank extends plugin {
       summary = `一共有${totalFavorability}点好感度`;
     } else if (type === '摸鱼次数') {
       summary = `一共摸了${totalCatchFish}次鱼`;
+    } else if (type === '签到次数') {
+      summary = ``;
     } else if (type === '连续签到') {
       summary = ``;
     }
