@@ -19,7 +19,6 @@ function saveMarryData(data) {
 
 const hugCooldowns = {};
 const kissCooldowns = {};
-const atCooldowns = {};
 const cooldownTime = 60 * 1000;
 
 export class marry extends plugin {
