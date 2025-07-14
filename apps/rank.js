@@ -32,7 +32,7 @@ export class rank extends plugin {
 
   async showRank(e) {
     let type = '喵喵币';
-    const match = e.msg.match(/^#排行榜\s*(喵喵币|好感度|摸鱼次数)?\s*$/);
+    const match = e.msg.match(/^#排行榜\s*(喵喵币|好感度|摸鱼次数|连续签到)?\s*$/);
     if (match && match[1]) type = match[1].trim();
 
     const { key, label } = rankTypes[type] || rankTypes['喵喵币'];
