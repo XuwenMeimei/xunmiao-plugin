@@ -20,6 +20,9 @@ export class status extends plugin {
         let BotQQ = e.bot_id;
         let BotName = e.bot_name;
 
-        return e.reply('当前登录',BotQQ,'\n','账号名称',BotName,false,{at: true})
+        return e.reply([segment.at[e.user_id], '\n',
+            '寻喵ID: ', BotQQ, '\n',
+            '寻喵名称: ', BotName
+        ])
     }
 }
