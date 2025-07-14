@@ -17,8 +17,8 @@ export class status extends plugin {
     }
 
     async nekostatus(e) {
-        let BotQQ = Bot.uin || 获取失败;
-        let BotName = BotQQ.nickname || 获取失败;
+        let BotQQ = Bot.uin || '获取失败';
+        let BotName = Bot.nickname || '获取失败';
 
         if (e.isGroup) {
             return e.reply([segment.at[e.user_id], '\n',
