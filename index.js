@@ -102,8 +102,6 @@ if (!fs.existsSync(userDailyBuyPath)) {
 logger.info('---------^_^---------')
 logger.info('主人！寻喵酱打卡上班啦！')
 logger.info('---------------------')
-logger.info('当前连接: ', qq)
-
 
 const files = fs.readdirSync('./plugins/xunmiao-plugin/apps').filter(file => file.endsWith('.js'))
 
