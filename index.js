@@ -1,6 +1,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import plugin from '../../lib/plugins/plugin.js'
 
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -99,9 +100,12 @@ if (!fs.existsSync(userDailyBuyPath)) {
   }
 }
 
+let qq = e.bot
+
 logger.info('---------^_^---------')
 logger.info('主人！寻喵酱打卡上班啦！')
 logger.info('---------------------')
+logger.info('当前连接: ', qq)
 
 
 const files = fs.readdirSync('./plugins/xunmiao-plugin/apps').filter(file => file.endsWith('.js'))
