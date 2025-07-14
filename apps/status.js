@@ -29,6 +29,6 @@ export class status extends plugin {
         return e.reply(
             '寻喵ID: ', BotQQ, '\n',
             '寻喵名称: ', BotName
-        ])
+        )
     }
 }
