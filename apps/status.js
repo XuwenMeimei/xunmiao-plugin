@@ -17,8 +17,8 @@ export class status extends plugin {
     }
 
     async nekostatus(e) {
-        let BotQQ = Bot.uin || '获取失败';
-        let BotName = Bot.nickname || '获取失败';
+        const BotQQ = Bot.uin[1] || '获取失败';
+        const BotName = Bot.nickname || '获取失败';
 
         console.log(BotQQ, '\n', BotName)
 
