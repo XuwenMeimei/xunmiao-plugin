@@ -20,7 +20,7 @@ export class status extends plugin {
         let BotQQ = this.e.bot_id;
         let BotName = this.e.bot_name;
 
-        if (!e.isGroup) {
+        if (e.isGroup) {
             return e.reply([segment.at[e.user_id], '\n',
             '寻喵ID: ', BotQQ, '\n',
             '寻喵名称: ', BotName
