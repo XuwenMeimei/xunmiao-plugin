@@ -10,6 +10,7 @@ const rankTypes = {
   '喵喵币': { key: 'coins', label: '喵喵币' },
   '好感度': { key: 'favorability', label: '好感度' },
   '摸鱼次数': { key: 'catchFishCount', label: '摸鱼次数' },
+  '签到次数': { key: 'totalSignCount', label: '签到次数' },
   '连续签到': { key: 'continueSignCount', label: '连续签到' }
 };
 
