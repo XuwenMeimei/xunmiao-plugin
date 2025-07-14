@@ -9,7 +9,8 @@ const dataPath = `${_path}/plugins/xunmiao-plugin/data/user_data.yaml`;
 const rankTypes = {
   '喵喵币': { key: 'coins', label: '喵喵币' },
   '好感度': { key: 'favorability', label: '好感度' },
-  '摸鱼次数': { key: 'catchFishCount', label: '摸鱼次数' }
+  '摸鱼次数': { key: 'catchFishCount', label: '摸鱼次数' },
+  '连续签到': { key: 'continueSignCount', label: '连续签到' }
 };
 
 export class rank extends plugin {
@@ -22,7 +23,7 @@ export class rank extends plugin {
       rule: [
         {
           // 支持 #排行榜  喵喵币 这种中间有空格的写法
-          reg: /^#排行榜\s*(喵喵币|好感度|摸鱼次数)?\s*$/,
+          reg: /^#排行榜\s*(喵喵币|好感度|摸鱼次数|连续签到)?\s*$/,
           fnc: 'showRank'
         }
       ]
@@ -100,6 +101,8 @@ export class rank extends plugin {
       summary = `一共有${totalFavorability}点好感度`;
     } else if (type === '摸鱼次数') {
       summary = `一共摸了${totalCatchFish}次鱼`;
+    } else if (type === '连续签到') {
+      summary = ``;
     }
 
     const data = {
