@@ -46,7 +46,30 @@ export class marry extends plugin {
     }
 
     async dolove(e) {
-        e.reply('这个功能还在开发哦', false, { at:true })
+        const allMarryData = getMarryData();
+        const groupId = String(e.group_id);
+        const userId = this.normalizeId(e.user_id);
+
+        allMarryData[groupId] = allMarryData[groupId] || {};
+        const marryData = allMarryData[groupId];
+
+        initMarryData(marryData, userId);
+
+        const targetUserId = marryData[userId].target;
+
+        const she_he = await this.people(e, 'sex', targetUserId);
+
+        if (!marryData[userId].married) {
+            return e.reply([segment.at(userId), ' 你还没有结婚哦~ ']);
+        }
+
+        let MemberInfo = await Bot.pickGroup(groupId).pickMember(userId).getInfo();
+        let Name = MemberInfo?.card || MemberInfo?.nickname || she_he;
+
+        return e.reply([
+            segment.at[targetUserId], '\n',
+            Name, '想和你进行涩涩'
+        ])
     }
 
     async marryhug(e) {
