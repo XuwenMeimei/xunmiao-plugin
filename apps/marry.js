@@ -67,7 +67,7 @@ export class marry extends plugin {
         let Name = MemberInfo?.card || MemberInfo?.nickname || she_he;
 
         return e.reply([segment.at(targetUserId), '\n',
-            Name, '想和你进行涩涩,要同意嘛?'
+            Name, ' 想和你涩涩,要同意嘛?'
         ])
     }
 
