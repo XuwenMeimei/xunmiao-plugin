@@ -66,9 +66,8 @@ export class marry extends plugin {
         let MemberInfo = await Bot.pickGroup(groupId).pickMember(userId).getInfo();
         let Name = MemberInfo?.card || MemberInfo?.nickname || she_he;
 
-        return e.reply([
-            segment.at[targetUserId], '\n',
-            Name, '想和你进行涩涩'
+        return e.reply([segment.at(targetUserId), '\n',
+            Name, '想和你进行涩涩,要同意嘛?'
         ])
     }
 
