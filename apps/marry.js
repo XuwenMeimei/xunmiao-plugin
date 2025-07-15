@@ -36,12 +36,17 @@ export class marry extends plugin {
                 { reg: '^#强娶$', fnc: 'marryadmin' },
                 { reg: '^#抱抱$', fnc: 'marryhug'},
                 { reg: '^#亲亲$', fnc: 'marrykiss'},
+                { reg: '^#涩涩$', fnc: 'dolove'}
             ]
         });
     }
 
     normalizeId(id) {
         return id != null ? String(id) : null;
+    }
+
+    async dolove(e) {
+        e.reply('这个功能还在开发哦', false, { at:true })
     }
 
     async marryhug(e) {
