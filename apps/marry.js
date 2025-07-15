@@ -7,6 +7,15 @@ import axios from 'axios';
 
 const _path = process.cwd().replace(/\\/g, '/');
 const marryDataPath = `${_path}/plugins/xunmiao-plugin/data/marry_data.yaml`;
+const BotPath = `${_path}/plugins/xunmiao-plugin/config/bot.yaml`;
+
+function getBotData() {
+    if (!fs.existsSync(BotPath)) fs.writeFileSync(BotPath, yaml.stringify({}));
+    return yaml.parse(fs.readFileSync(BotPath, 'utf8')) || {};
+}
+
+const BotData = getBotData();
+const BotQQ = BotData[BotQQ];
 
 function getMarryData() {
     if (!fs.existsSync(marryDataPath)) fs.writeFileSync(marryDataPath, yaml.stringify({}));
@@ -217,7 +226,7 @@ export class marry extends plugin {
             return e.reply([segment.at(userId), ' 不能同时和两个人结婚哦~ ']);
         }
 
-        if (message.some(item => item.qq === '2582312528')) {
+        if (message.some(item => item.qq == BotQQ)) {
             return e.reply([segment.at(userId), ' 啊嘞?这...这样不行啦~(害羞) ']);
         }
         
@@ -302,7 +311,7 @@ export class marry extends plugin {
 
         initMarryData(marryData, userId, atUserId);
 
-        if (message.some(item => item.qq === '2582312528')) {
+        if (message.some(item => item.qq == BotQQ)) {
             return e.reply([segment.at(userId), ' 你在想什么呀! ']);
         }
 
@@ -342,7 +351,7 @@ export class marry extends plugin {
 
         initMarryData(marryData, userId, atUserId);
 
-        if (message.some(item => item.qq === '2582312528')) {
+        if (message.some(item => item.qq == BotQQ)) {
             return e.reply([segment.at(userId), ' 你在想什么呀! ']);
         }
 
@@ -391,7 +400,7 @@ export class marry extends plugin {
             return e.reply([segment.at(userId), ' 你们并没有结婚哦~ ']);
         }
 
-        if (message.some(item => item.qq === '2582312528')) {
+        if (message.some(item => item.qq == BotQQ)) {
             return e.reply([segment.at(userId), ' 你在想什么呀! ']);
         }
 

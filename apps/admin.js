@@ -5,6 +5,12 @@ import cfg from '../../../lib/config/config.js'
 
 const _path = process.cwd().replace(/\\/g, "/");
 const dataPath = `${_path}/plugins/xunmiao-plugin/data/user_data.yaml`;
+const BotPath = `${_path}/plugins/xunmiao-plugin/config/bot.yaml`;
+
+function getBotData() {
+    if (!fs.existsSync(BotPath)) fs.writeFileSync(BotPath, yaml.stringify({}));
+    return yaml.parse(fs.readFileSync(BotPath, 'utf8')) || {};
+}
 
 export class admin extends plugin {
     constructor() {
@@ -29,10 +35,37 @@ export class admin extends plugin {
           {
             reg: '^#设置体力(.*)$',
             fnc: 'setStamina'
+          },
+          {
+            reg: '^#设置BotQQ(.*)$',
+            fnc: 'setBotQQ'
           }
         ]
       })
     }
+    
+    async setBotQQ(e) {
+    if (!cfg.masterQQ.includes(e.user_id)) {
+        return e.reply('只有我的主人可以使用哦~', false, { at: true });
+    }
+
+    const match = e.msg.match(/^#设置BotQQ\s*(\d+)/);
+    if (!match || !match[1]) {
+        return e.reply('格式错误，请使用 #设置BotQQ QQ号，例如：#设置BotQQ 123456789', false, { at: true });
+    }
+
+    const newQQ = match[1];
+
+    // 读取已有配置
+    let botData = getBotData();
+    botData.BotQQ = newQQ;
+
+    // 写入配置文件
+    fs.writeFileSync(BotPath, yaml.stringify(botData), 'utf8');
+
+    return e.reply(`已将BotQQ设置为：${newQQ}`, false, { at: true });
+}
+
 
     async check(e) {
         if (!cfg.masterQQ.includes(e.user_id)) {

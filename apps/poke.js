@@ -1,4 +1,16 @@
 import plugin from '../../../lib/plugins/plugin.js'
+import fs from 'fs';
+import yaml from 'yaml';
+
+const BotPath = `${_path}/plugins/xunmiao-plugin/config/bot.yaml`;
+
+function getBotData() {
+    if (!fs.existsSync(BotPath)) fs.writeFileSync(BotPath, yaml.stringify({}));
+    return yaml.parse(fs.readFileSync(BotPath, 'utf8')) || {};
+}
+
+const BotData = getBotData();
+const BotQQ = BotData[BotQQ];
 
 export class nekopoke extends plugin {
     constructor() {
@@ -17,7 +29,7 @@ export class nekopoke extends plugin {
     } 
 
     async nekopoke(e) {
-        const botqq = '2582312528';
+        const botqq = BotQQ;
         console.log(e.target_id);
         console.log(botqq);
         if (e.target_id == botqq) {

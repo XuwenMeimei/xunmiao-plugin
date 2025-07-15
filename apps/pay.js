@@ -4,6 +4,15 @@ import yaml from 'yaml';
 
 const _path = process.cwd().replace(/\\/g, "/");
 const dataPath = `${_path}/plugins/xunmiao-plugin/data/user_data.yaml`;
+const BotPath = `${_path}/plugins/xunmiao-plugin/config/bot.yaml`;
+
+function getBotData() {
+    if (!fs.existsSync(BotPath)) fs.writeFileSync(BotPath, yaml.stringify({}));
+    return yaml.parse(fs.readFileSync(BotPath, 'utf8')) || {};
+}
+
+const BotData = getBotData();
+const BotQQ = BotData[BotQQ];
 
 const cooldowns = {};
 
@@ -58,7 +67,7 @@ export class duel extends plugin {
           return e.reply('不能同时转给两个人哦~', false, { at: true });
         }
 
-        if (message.some(item => item.qq === '2582312528')) {
+        if (message.some(item => item.qq == BotQQ)) {
             return e.reply('难道你要给我钱嘛?~', false, { at: true });
         }
 
