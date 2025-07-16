@@ -82,7 +82,7 @@ export class duel extends plugin {
           return e.reply('不能同时与多个人决斗哦~', false, { at: true });
         }
 
-        if (message.some(item => item.qq == BotQQ)) {
+        if (message.some(item => item.qq === BotQQ)) {
             return e.reply('你不能与我进行决斗哦~', false, { at: true });
         }
 

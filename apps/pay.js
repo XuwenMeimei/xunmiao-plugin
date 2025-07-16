@@ -67,7 +67,7 @@ export class duel extends plugin {
           return e.reply('不能同时转给两个人哦~', false, { at: true });
         }
 
-        if (message.some(item => item.qq == BotQQ)) {
+        if (message.some(item => item.qq === BotQQ)) {
             return e.reply('难道你要给我钱嘛?~', false, { at: true });
         }
 
