@@ -15,7 +15,7 @@ function getBotData() {
 }
 
 const BotData = getBotData();
-const BotQQ = BotData[BotQQ];
+const BotQQ = BotData.BotQQ;
 
 function getMarryData() {
     if (!fs.existsSync(marryDataPath)) fs.writeFileSync(marryDataPath, yaml.stringify({}));

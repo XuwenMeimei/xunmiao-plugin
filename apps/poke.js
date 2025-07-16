@@ -10,7 +10,7 @@ function getBotData() {
 }
 
 const BotData = getBotData();
-const BotQQ = BotData[BotQQ];
+const BotQQ = BotData.BotQQ;
 
 export class nekopoke extends plugin {
     constructor() {
