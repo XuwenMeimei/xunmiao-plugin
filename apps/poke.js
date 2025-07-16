@@ -33,7 +33,7 @@ export class nekopoke extends plugin {
         const botqq = BotQQ;
         console.log(e.target_id);
         console.log(botqq);
-        if (e.target_id === botqq) {
+        if (e.target_id == botqq) {
             const shouldReply = Math.random() < 0.5 ;
             if (shouldReply) {
                 const replies = ['别戳了~', '要戳坏掉了~', '你欺负人，呜呜~', '别戳了!!!', '不准戳了！！！', '再戳就坏了~'];  
