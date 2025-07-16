@@ -227,6 +227,7 @@ export class marry extends plugin {
         }
 
         if (message.some(item => item.qq == BotQQ)) {
+            console.log(BotQQ)
             return e.reply([segment.at(userId), ' 啊嘞?这...这样不行啦~(害羞) ']);
         }
         
