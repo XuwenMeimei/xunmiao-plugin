@@ -2,6 +2,7 @@ import plugin from '../../../lib/plugins/plugin.js'
 import fs from 'fs';
 import yaml from 'yaml';
 
+const _path = process.cwd().replace(/\\/g, "/");
 const BotPath = `${_path}/plugins/xunmiao-plugin/config/bot.yaml`;
 
 function getBotData() {
