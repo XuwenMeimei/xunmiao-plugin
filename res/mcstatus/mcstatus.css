@@ -16,7 +16,7 @@ body, html {
 }
 
 .card {
-  background: #f6eaf3; /* 原为 #ffffff，改为淡紫灰色，稍微暗一些 */
+  background: #fbe8f4; /* 更加粉亮，提升明度 */
   border-radius: 24px;
   padding: 32px;
   margin: 32px auto;
@@ -61,9 +61,8 @@ body, html {
 
 .motd-row {
   display: flex;
-  align-items: center;
-  justify-content: center; /* 让favicon和标题整体居中 */
-  gap: 24px;               /* 增大间距更美观 */
+  justify-content: center;  /* 整体居中 */
+  gap: 28px;                /* 增大间距更美观 */
   margin-bottom: 18px;
 }
 
@@ -74,12 +73,12 @@ body, html {
 }
 
 .mc-favicon {
-  height: 2.5em;      /* 明显大于标题字号，且自适应 */
-  width: 2.5em;
-  min-width: 40px;
-  min-height: 40px;
-  max-width: 64px;
-  max-height: 64px;
+  height: 2em;      /* 跟随标题字号自适应，且与文字中线对齐 */
+  width: 2em;
+  min-width: 48px;
+  min-height: 48px;
+  max-width: 72px;
+  max-height: 72px;
   border-radius: 16px;
   box-shadow: 0 2px 8px #ffd6eb, 0 0 0 4px #ffeaf5 inset;
   background: #fff8fb;
@@ -87,9 +86,17 @@ body, html {
   object-fit: contain;
   vertical-align: middle;
   transition: transform 0.2s;
+  margin-right: 0; /* 保证和gap配合 */
 }
 
-.mc-favicon:hover {
-  transform: scale(1.08) rotate(-8deg);
-  box-shadow: 0 6px 18px #ffb6c1aa, 0 0 0 6px #ffeaf5 inset;
+.motd-title {
+  margin: 0;
+  font-size: 2em;
+  font-weight: bold;
+  line-height: 1.2;
+  color: #ff70a6;
+  text-shadow: 0 2px 8px #ffd6eb;
+  letter-spacing: 2px;
+  display: flex;
+  align-items: center; /* 让多行MOTD也能和图标中线对齐 */
 }
