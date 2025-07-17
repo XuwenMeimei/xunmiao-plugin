@@ -6,12 +6,13 @@
   </head>
   <body>
     <div class="card">
-      <div class="favicon-wrapper">
-        <img class="mc-favicon" src="{{data.favicon}}" alt="服务器图标" />
+      <div class="motd-row">
+        <span class="favicon-wrapper">
+          <img class="mc-favicon" src="{{data.favicon}}" alt="服务器图标" />
+        </span>
+        <h2 class="motd-title">{{@data.motd}}</h2>
       </div>
-      <h2>Minecraft 服务器状态</h2>
       <p><strong>地址：</strong> {{data.address}}</p>
-      <p><strong>MOTD：</strong> {{@data.motd}}</p>
       <p><strong>版本：</strong> {{data.version}} ({{data.protocol}})</p>
       <p><strong>在线人数：</strong> {{data.players}}</p>
       <p><strong>延迟(CN-上海)：</strong> {{data.ping_cn}} ms</p>
