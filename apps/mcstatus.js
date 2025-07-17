@@ -143,7 +143,7 @@ function parseMotdToHtml(motd) {
 async function getMotdJson(host, port) {
   const execFilePromise = util.promisify(execFile);
   try {
-    const { stdout } = await execFilePromise('python', [
+    const { stdout } = await execFilePromise('python3', [
       `${_path}/plugins/xunmiao-plugin/apps/motd_json.py`, host, port
     ]);
     return JSON.parse(stdout);
