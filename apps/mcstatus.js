@@ -52,8 +52,6 @@ export class mcstatus extends plugin {
       ping_cn: ping_cn !== null ? ping_cn : 'N/A',
     };
 
-    console.log(data);
-
     const base64 = await puppeteer.screenshot('xunmiao-plugin', {
       saveId: 'mcstatus',
       imgType: 'png',
