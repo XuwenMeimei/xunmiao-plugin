@@ -16,7 +16,7 @@ body, html {
 }
 
 .card {
-  background: #ffffff;
+  background: #f6eaf3; /* 原为 #ffffff，改为淡紫灰色，稍微暗一些 */
   border-radius: 24px;
   padding: 32px;
   margin: 32px auto;
@@ -69,21 +69,22 @@ body, html {
 .favicon-wrapper {
   display: flex;
   align-items: center;
+  height: 100%;
 }
 
 .mc-favicon {
-  width: 48px;
-  height: 48px;
+  height: 1.6em; /* 跟随标题字号自适应 */
+  width: 1.6em;
+  min-width: 32px;
+  min-height: 32px;
+  max-width: 48px;
+  max-height: 48px;
   border-radius: 12px;
   box-shadow: 0 2px 8px #ffd6eb, 0 0 0 4px #ffeaf5 inset;
   background: #fff8fb;
   border: 2px solid #ffc8dd;
   object-fit: contain;
-}
-
-.mc-favicon:hover {
-  transform: scale(1.08) rotate(-8deg);
-  box-shadow: 0 6px 18px #ffb6c1aa, 0 0 0 6px #ffeaf5 inset;
+  vertical-align: middle;
 }
 
 .motd-title {
