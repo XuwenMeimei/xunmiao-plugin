@@ -3,11 +3,14 @@ import json
 from mcstatus import JavaServer
 
 def get_motd_json(host, port):
-    server = JavaServer(host, int(port))
-    status = server.status()
-    # motd 是一个 MinecraftText 对象，包含原始 JSON
-    motd_json = status.raw['description']
-    print(json.dumps(motd_json, ensure_ascii=False))
+    try:
+        server = JavaServer(host, int(port))
+        status = server.status()
+        motd_json = status.raw['description']
+        print(json.dumps(motd_json, ensure_ascii=False))
+    except Exception as e:
+        print(json.dumps({"error": str(e)}))
+        sys.exit(1)
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:
