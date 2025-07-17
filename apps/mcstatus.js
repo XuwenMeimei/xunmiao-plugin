@@ -156,7 +156,11 @@ async function getMotdJson(host, port) {
 
 // 递归解析motd JSON为HTML（支持渐变色）
 function motdJsonToHtml(motdObj) {
-  if (typeof motdObj === 'string') return motdObj;
+  if (!motdObj) return '';
+  if (typeof motdObj === 'string') {
+    // 这里可以用 parseMotdToHtml 处理§代码字符串
+    return parseMotdToHtml(motdObj);
+  }
   let html = '';
   let style = '';
   if (motdObj.color) {
