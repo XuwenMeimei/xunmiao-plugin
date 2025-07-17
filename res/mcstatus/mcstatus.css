@@ -62,8 +62,9 @@ body, html {
 .motd-row {
   display: flex;
   align-items: center;
-  gap: 16px;
-  margin-bottom: 12px;
+  justify-content: center; /* 让favicon和标题整体居中 */
+  gap: 24px;               /* 增大间距更美观 */
+  margin-bottom: 18px;
 }
 
 .favicon-wrapper {
@@ -73,23 +74,22 @@ body, html {
 }
 
 .mc-favicon {
-  height: 1.6em; /* 跟随标题字号自适应 */
-  width: 1.6em;
-  min-width: 32px;
-  min-height: 32px;
-  max-width: 48px;
-  max-height: 48px;
-  border-radius: 12px;
+  height: 2.5em;      /* 明显大于标题字号，且自适应 */
+  width: 2.5em;
+  min-width: 40px;
+  min-height: 40px;
+  max-width: 64px;
+  max-height: 64px;
+  border-radius: 16px;
   box-shadow: 0 2px 8px #ffd6eb, 0 0 0 4px #ffeaf5 inset;
   background: #fff8fb;
-  border: 2px solid #ffc8dd;
+  border: 2.5px solid #ffc8dd;
   object-fit: contain;
   vertical-align: middle;
+  transition: transform 0.2s;
 }
 
-.motd-title {
-  margin: 0;
-  font-size: 1.3em;
-  font-weight: bold;
-  line-height: 1.2;
+.mc-favicon:hover {
+  transform: scale(1.08) rotate(-8deg);
+  box-shadow: 0 6px 18px #ffb6c1aa, 0 0 0 6px #ffeaf5 inset;
 }
