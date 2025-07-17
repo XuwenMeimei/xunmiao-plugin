@@ -46,6 +46,7 @@ export class mcstatus extends plugin {
       version: result.version.name,
       players: `${result.players.online} / ${result.players.max}`,
       motd: result.motd.html,
+      protocol: result.version.protocol,
       ping_us: result.roundTripLatency,
       ping_cn: ping_cn !== null ? ping_cn : 'N/A'
     };
