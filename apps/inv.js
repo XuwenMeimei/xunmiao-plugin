@@ -304,6 +304,14 @@ export class inv extends plugin {
     recoverStamina(userData[userId]);
 
     let effectMsg = '';
+    if (shopItem.id === 'ruantang') {
+      // 软糖等身娃娃特殊效果
+      invData[userId][itemId] -= useCount;
+      if (invData[userId][itemId] <= 0) delete invData[userId][itemId];
+      fs.writeFileSync(invDataPath, yaml.stringify(invData));
+      fs.writeFileSync(userDataPath, yaml.stringify(userData));
+      return e.reply('你抱了抱软糖娃娃，好舒服', false, { at: true });
+    }
     if (shopItem.use && shopItem.use.type === 'stamina') {
       const before = userData[userId].stamina || 0;
       if (before >= MAX_STAMINA_OVERFLOW) {
