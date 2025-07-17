@@ -62,6 +62,7 @@ export class mcstatus extends plugin {
 
     return e.reply(base64);
   } catch (err) {
+    console.error('获取服务器状态时出错:', err);
     return e.reply('无法获取服务器状态，请确认地址是否正确或服务器是否在线。');
   }
 }
