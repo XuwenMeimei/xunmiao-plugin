@@ -451,8 +451,8 @@ export class marry extends plugin {
             return e.reply([segment.at(userId), ' 你在想什么呀! ']);
         }
 
-        marryData[userId] = { wait: false, married: false, target: null };
-        marryData[atUserId] = { wait: false, married: false, target: null };
+        marryData[userId] = { wait: false, married: false, target: null, favor: 0 };      // 清空好感度
+        marryData[atUserId] = { wait: false, married: false, target: null, favor: 0 };    // 清空好感度
         saveMarryData(allMarryData);
 
         return e.reply([
