@@ -42,6 +42,7 @@ export class mcstatus extends plugin {
     const result = await status(host, parseInt(port), { timeout: 5000, enableSRV: true });
 
     // 颜色处理
+    console.log(result.motd.raw);
     const motd = parseMotdToHtml(result.motd.raw);
 
     const data = {
