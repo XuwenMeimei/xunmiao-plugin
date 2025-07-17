@@ -45,7 +45,10 @@ export class mcstatus extends plugin {
     // 用python获取motd
     const motdJson = await getMotdJson(host, port);
     let motd = '未知';
-    if (motdJson) motd = motdJsonToHtml(motdJson);
+    if (motdJson) {
+      const motdSection = motdJsonToSectionStr(motdJson);
+      motd = parseMotdToHtml(motdSection);
+    }
 
     // 其他信息还是用js库
     const result = await status(host, parseInt(port), { timeout: 5000, enableSRV: true });
@@ -176,4 +179,32 @@ function motdJsonToHtml(motdObj) {
   if (motdObj.text) html += `<span style="${style}">${motdObj.text.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</span>`;
   if (motdObj.extra) html += motdObj.extra.map(motdJsonToHtml).join('');
   return html;
+}
+
+// 递归解析motd JSON为§代码字符串（支持渐变色）
+function motdJsonToSectionStr(motdObj) {
+  if (!motdObj) return '';
+  let section = '';
+  // 颜色
+  if (motdObj.color) {
+    if (motdObj.color.startsWith('#') && motdObj.color.length === 7) {
+      // 渐变色 §x§R§R§G§G§B§B
+      section += '§x' + motdObj.color.slice(1).split('').map(c => '§' + c).join('');
+    } else {
+      // 普通颜色
+      const colorCode = Object.entries(mcColorMap).find(([k, v]) => v === motdObj.color)?.[0];
+      if (colorCode) section += '§' + colorCode;
+    }
+  }
+  // 样式
+  if (motdObj.bold) section += '§l';
+  if (motdObj.italic) section += '§o';
+  if (motdObj.underlined) section += '§n';
+  if (motdObj.strikethrough) section += '§m';
+  if (motdObj.obfuscated) section += '§k';
+  // 文本
+  if (motdObj.text) section += motdObj.text;
+  // 递归extra
+  if (Array.isArray(motdObj.extra)) section += motdObj.extra.map(motdJsonToSectionStr).join('');
+  return section;
 }
