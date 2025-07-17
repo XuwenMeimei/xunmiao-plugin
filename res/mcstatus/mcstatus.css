@@ -58,3 +58,25 @@ body, html {
 .card p strong {
   color: #ff6699;
 }
+
+.favicon-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.mc-favicon {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px #ffd6eb, 0 0 0 4px #ffeaf5 inset;
+  background: #fff8fb;
+  border: 2.5px solid #ffc8dd;
+  object-fit: contain;
+  transition: transform 0.2s;
+}
+.mc-favicon:hover {
+  transform: scale(1.08) rotate(-8deg);
+  box-shadow: 0 6px 18px #ffb6c1aa, 0 0 0 6px #ffeaf5 inset;
+}

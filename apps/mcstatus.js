@@ -47,8 +47,9 @@ export class mcstatus extends plugin {
       players: `${result.players.online} / ${result.players.max}`,
       motd: result.motd.html,
       protocol: result.version.protocol,
-      ping_us: result.roundTripLatency,
-      ping_cn: ping_cn !== null ? ping_cn : 'N/A'
+      ping_us: result.roundTripLatency !== null ? result.roundTripLatency : 'N/A',
+      ping_cn: ping_cn !== null ? ping_cn : 'N/A',
+      favicon: result.favicon
     };
 
     const base64 = await puppeteer.screenshot('xunmiao-plugin', {
