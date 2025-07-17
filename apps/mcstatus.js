@@ -1,6 +1,8 @@
 import plugin from '../../../lib/plugins/plugin.js';
 import puppeteer from '../../../lib/puppeteer/puppeteer.js';
 import { status } from 'minecraft-server-util';
+import { execFile } from 'child_process';
+import util from 'util';
 
 const _path = process.cwd().replace(/\\/g, "/");
 
@@ -39,11 +41,14 @@ export class mcstatus extends plugin {
     }
 
   try {
-    const result = await status(host, parseInt(port), { timeout: 5000, enableSRV: true });
+    // const result = await status(host, parseInt(port), { timeout: 5000, enableSRV: true });
+    // 用python获取motd
+    const motdJson = await getMotdJson(host, port);
+    let motd = '未知';
+    if (motdJson) motd = motdJsonToHtml(motdJson);
 
-    // 颜色处理
-    console.log(result.motd.raw);
-    const motd = parseMotdToHtml(result.motd.raw);
+    // 其他信息还是用js库
+    const result = await status(host, parseInt(port), { timeout: 5000, enableSRV: true });
 
     const data = {
       favicon: result.favicon,
@@ -131,5 +136,39 @@ function parseMotdToHtml(motd) {
   }
   // 关闭所有未闭合标签
   while (openTags.length) html += openTags.pop();
+  return html;
+}
+
+// 获取motd JSON（通过python脚本）
+async function getMotdJson(host, port) {
+  const execFilePromise = util.promisify(execFile);
+  try {
+    const { stdout } = await execFilePromise('python', [
+      `${_path}/plugins/xunmiao-plugin/apps/motd_json.py`, host, port
+    ]);
+    return JSON.parse(stdout);
+  } catch (err) {
+    console.error('motd获取失败:', err);
+    return null;
+  }
+}
+
+// 递归解析motd JSON为HTML（支持渐变色）
+function motdJsonToHtml(motdObj) {
+  if (typeof motdObj === 'string') return motdObj;
+  let html = '';
+  let style = '';
+  if (motdObj.color) {
+    // 处理标准颜色和16进制
+    if (motdObj.color.startsWith('#')) style += `color:${motdObj.color};`;
+    else if (mcColorMap[motdObj.color]) style += `color:${mcColorMap[motdObj.color]};`;
+  }
+  if (motdObj.bold) style += 'font-weight:bold;';
+  if (motdObj.italic) style += 'font-style:italic;';
+  if (motdObj.underlined) style += 'text-decoration:underline;';
+  if (motdObj.strikethrough) style += 'text-decoration:line-through;';
+  if (motdObj.obfuscated) style += 'filter: blur(2px);';
+  if (motdObj.text) html += `<span style="${style}">${motdObj.text.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</span>`;
+  if (motdObj.extra) html += motdObj.extra.map(motdJsonToHtml).join('');
   return html;
 }
