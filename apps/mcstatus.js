@@ -42,6 +42,7 @@ export class mcstatus extends plugin {
     const result = await status(host, parseInt(port), { timeout: 5000, enableSRV: true });
 
     const data = {
+      favicon: result.favicon,
       address: `${host}:${port}`,
       version: result.version.name,
       players: `${result.players.online} / ${result.players.max}`,
@@ -49,8 +50,9 @@ export class mcstatus extends plugin {
       protocol: result.version.protocol,
       ping_us: result.roundTripLatency !== null ? result.roundTripLatency : 'N/A',
       ping_cn: ping_cn !== null ? ping_cn : 'N/A',
-      favicon: result.favicon
     };
+
+    console.log(data);
 
     const base64 = await puppeteer.screenshot('xunmiao-plugin', {
       saveId: 'mcstatus',
