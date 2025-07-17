@@ -4,7 +4,8 @@ from mcstatus import JavaServer
 
 def get_motd_json(host, port):
     try:
-        server = JavaServer(host, int(port))
+        # enable_srv=True 显式开启SRV记录解析
+        server = JavaServer.lookup(f"{host}:{port}", enable_srv=True)
         status = server.status()
         motd_json = status.raw['description']
         print(json.dumps(motd_json, ensure_ascii=False))
