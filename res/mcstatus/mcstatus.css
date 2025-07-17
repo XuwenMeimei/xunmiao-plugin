@@ -8,7 +8,8 @@
 body, html {
   margin: 0;
   padding: 32px;
-  width: 1200px;
+  width: 100%;      /* 宽度自适应 */
+  min-width: 340px; /* 保证最小宽度 */
   height: auto;
   background: linear-gradient(135deg, #fff1f9 0%, #e6f0ff 100%);
   font-family: 'LcCute', 'Microsoft YaHei', sans-serif;
@@ -20,7 +21,9 @@ body, html {
   border-radius: 24px;
   padding: 32px;
   margin: 32px auto;
-  width: 90%;
+  width: auto;           /* 宽度自适应内容 */
+  max-width: 90%;        /* 最大宽度不超过容器 */
+  min-width: 340px;      /* 给个最小宽度防止太窄 */
   box-shadow:
     0 2px 6px rgba(255, 192, 203, 0.3),
     0 8px 20px rgba(173, 216, 230, 0.4),
@@ -61,8 +64,9 @@ body, html {
 
 .motd-row {
   display: flex;
-  justify-content: center;  /* 整体居中 */
-  gap: 28px;                /* 增大间距更美观 */
+  align-items: center;
+  justify-content: flex-start; /* 靠左排列 */
+  gap: 24px;
   margin-bottom: 18px;
 }
 
@@ -73,8 +77,8 @@ body, html {
 }
 
 .mc-favicon {
-  height: 2em;      /* 跟随标题字号自适应，且与文字中线对齐 */
-  width: 2em;
+  height: 2.5em;
+  width: 2.5em;
   min-width: 48px;
   min-height: 48px;
   max-width: 72px;
@@ -86,7 +90,6 @@ body, html {
   object-fit: contain;
   vertical-align: middle;
   transition: transform 0.2s;
-  margin-right: 0; /* 保证和gap配合 */
 }
 
 .motd-title {
@@ -98,5 +101,6 @@ body, html {
   text-shadow: 0 2px 8px #ffd6eb;
   letter-spacing: 2px;
   display: flex;
-  align-items: center; /* 让多行MOTD也能和图标中线对齐 */
+  align-items: center;
+  text-align: left;
 }
