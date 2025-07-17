@@ -28,6 +28,7 @@ function saveMarryData(data) {
 
 const hugCooldowns = {};
 const kissCooldowns = {};
+const jggCooldowns = {};
 const cooldownTime = 5 * 60 * 1000;
 
 export class marry extends plugin {
@@ -45,7 +46,8 @@ export class marry extends plugin {
                 { reg: '^#强娶$', fnc: 'marryadmin' },
                 { reg: '^#抱抱$', fnc: 'marryhug'},
                 { reg: '^#亲亲$', fnc: 'marrykiss'},
-                { reg: '^#涩涩$', fnc: 'dolove'}
+                { reg: '^#涩涩$', fnc: 'dolove'},
+                { reg: '^#举高高$', fnc: 'marryjgg'}
             ]
         });
     }
@@ -78,6 +80,51 @@ export class marry extends plugin {
         return e.reply([segment.at(targetUserId), '\n',
             Name, ' 想和你涩涩,要同意嘛?'
         ])
+    }
+
+    async marryjgg(e) {
+        if (!e.isGroup) return e.reply('这个功能仅支持群聊使用哦~');
+
+        const now = Date.now();
+        const allMarryData = getMarryData();
+        const groupId = String(e.group_id);
+        const userId = this.normalizeId(e.user_id);
+
+        allMarryData[groupId] = allMarryData[groupId] || {};
+        const marryData = allMarryData[groupId];
+
+        initMarryData(marryData, userId);
+
+        const targetUserId = marryData[userId].target;
+
+        const she_he = await this.people(e, 'sex', targetUserId);
+
+        if (jggCooldowns[userId]) {
+            const timePassed = now - jggCooldowns[userId];
+            const timeLeft = cooldownTime - timePassed;
+            if (timeLeft > 0) {
+                const secondsLeft = Math.ceil(timeLeft / 1000);
+                return e.reply([segment.at(userId),' 你刚才和', she_he, '举高高过了哦~', secondsLeft, '秒后再举高高吧~']);
+            }
+        }
+
+        if (!marryData[userId].married) {
+            return e.reply([segment.at(userId), ' 你还没有结婚哦~ ']);
+        }
+
+        let targetMemberInfo = await Bot.pickGroup(groupId).pickMember(marryData[userId].target).getInfo();
+        let targetName = targetMemberInfo?.card || targetMemberInfo?.nickname || she_he;
+
+        marryData[userId].favor += 5;
+        marryData[targetUserId].favor += 5;
+        saveMarryData(allMarryData);
+
+        jggCooldowns[userId] = now;
+
+        return e.reply([segment.at(userId),
+            ' 你和', targetName, '举高高了,感受到了快乐和幸福~', '\n',
+            '好感度+5 ', '当前好感度：', marryData[userId].favor
+        ]);
     }
 
     async marryhug(e) {
