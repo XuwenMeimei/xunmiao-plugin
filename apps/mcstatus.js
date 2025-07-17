@@ -106,7 +106,7 @@ function parseMotdToHtml(motd) {
         openTags.push('</span>');
         continue;
       }
-      let code = motd[i + 1].toLowerCase();
+      let code = motd[i + 1]?.toLowerCase();
       if (mcColorMap[code]) {
         if (code === 'r') {
           // 重置
@@ -124,6 +124,7 @@ function parseMotdToHtml(motd) {
           openTags.push('</span>');
         }
       }
+      // 无论是否识别，遇到§都跳过2位，防止原样输出
       i += 2;
       continue;
     }
