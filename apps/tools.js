@@ -4,10 +4,10 @@ import puppeteer from '../../../lib/puppeteer/puppeteer.js'
 export class tools extends plugin {
   constructor() {
     super({
-      name: '网页截图',
-      dsc: '网页截图工具',
+      name: '寻喵工具',
+      dsc: '寻喵工具相关功能',
       event: 'message',
-      priority: 5000,
+      priority: 0,
       rule: [
         {
           reg: '^#网页截图\\s*(https?://\\S+)$',
