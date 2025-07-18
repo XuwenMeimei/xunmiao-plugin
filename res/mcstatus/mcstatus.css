@@ -28,6 +28,10 @@ body, html {
   border: 3px solid #ffc8dd;
   box-sizing: border-box;
   transition: transform 0.2s ease;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: space-between;
 }
 
 .card:hover {
@@ -41,11 +45,13 @@ body, html {
   margin-bottom: 24px;
   text-shadow: 0 2px 8px #ffd6eb;
   letter-spacing: 2px;
+  width: 100%;
 }
 
 .card p {
+  flex: 0 1 calc(50% - 12px);
   font-size: 22px;
-  margin: 12px 0;
+  margin: 0;
   line-height: 1.6;
   color: #555;
   padding-left: 12px;
@@ -53,6 +59,7 @@ body, html {
   background: #fff8fb;
   border-radius: 6px;
   box-shadow: 0 1px 2px rgba(255, 192, 203, 0.2) inset;
+  box-sizing: border-box;
 }
 
 .card p strong {
