@@ -15,7 +15,7 @@ export class tools extends plugin {
             priority: 5000,
             rule: [
                 {
-                    reg: '^#ping(.*)$',
+                    reg: '^#ping\\s+(.+)$',
                     fnc: 'ping'
                 }
             ]
@@ -23,32 +23,57 @@ export class tools extends plugin {
     }
 
     async ping(e) {
-        const input = e.msg.match(/^#ping\s*(.*)$/)?.[1].trim();
+        const input = e.msg.match(/^#ping\s+(.+)$/)?.[1].trim();
         if (!input) return e.reply('请提供服务器地址，例如：#ping mc.hypixel.net');
 
-        if (isIPv6(input)) {
-            return e.reply('还不支持ipv6哦~');
+        // 仅允许字母、数字、点、短横线，防止注入或非法字符
+        if (!/^[a-zA-Z0-9.\-]+$/.test(input)) {
+            return e.reply('服务器地址格式不正确哦~');
         }
 
-        const command = `ping -c 4 ${input}`;
+        if (isIPv6(input)) {
+            return e.reply('还不支持 IPv6 地址哦~');
+        }
 
-        exec(command, async (err, stdout, stderr) => {
+        // 兼容 Windows 和 Linux/macOS 的 ping 命令格式
+        const isWin = process.platform === 'win32';
+        const command = isWin ? `ping -n 4 "${input}"` : `ping -c 4 "${input}"`;
+
+        exec(command, (err, stdout, stderr) => {
             if (err || stderr) {
                 return e.reply(`Ping 失败：${stderr || err.message}`);
             }
 
             const lines = stdout.trim().split('\n');
-            const ipMatch = lines[0].match(/PING\s.+\s\(([\d.]+)\)/);
+
+            // 匹配 IP 地址 (Linux/macOS 和 Windows 的 ping 输出格式不同，简单兼容)
+            let ipMatch = lines[0].match(/PING\s.+\s\(([\d.]+)\)/);
+            if (!ipMatch && isWin) {
+                // Windows ping 输出首行示例：Pinging live.bilibili.com [123.456.789.0] with 32 bytes of data:
+                ipMatch = lines[0].match(/\[([\d.]+)\]/);
+            }
             const ip = ipMatch?.[1] || input;
 
             const isIPv4 = /^(\d{1,3}\.){3}\d{1,3}$/.test(input);
             const targetDisplay = isIPv4 ? ip : `${input} [${ip}]`;
 
-            const replyLines = lines.filter(line => line.includes('bytes from'));
+            // 根据不同系统过滤回复行
+            const replyLines = lines.filter(line => {
+                if (isWin) return line.includes('字节='); // Windows 返回字节=xxx
+                else return line.includes('bytes from'); // Linux/macOS 返回 bytes from
+            });
 
             const timesAndTTL = replyLines.map(line => {
-                const timeMatch = line.match(/time=([\d.]+)/);
-                const ttlMatch = line.match(/ttl=(\d+)/i);
+                // 兼容 Linux/macOS
+                let timeMatch = line.match(/time=([\d.]+) ?ms/);
+                let ttlMatch = line.match(/ttl=(\d+)/i);
+
+                // 兼容 Windows
+                if (!timeMatch && isWin) {
+                    timeMatch = line.match(/时间[=<]([\d]+)ms/);
+                    ttlMatch = line.match(/TTL=(\d+)/i);
+                }
+
                 return {
                     time: timeMatch ? Math.round(parseFloat(timeMatch[1])) : null,
                     ttl: ttlMatch ? parseInt(ttlMatch[1]) : null
