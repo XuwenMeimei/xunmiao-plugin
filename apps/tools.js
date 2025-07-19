@@ -1,6 +1,11 @@
 import plugin from '../../../lib/plugins/plugin.js';
 import { exec } from 'child_process';
 
+function isIPv6(address) {
+    const ipv6Regex = /^(?:([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|(::)|((?:[0-9a-fA-F]{1,4}:){1,7}:)|((?:[0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4})|((?:[0-9a-fA-F]{1,4}:){1,5}(?::[0-9a-fA-F]{1,4}){1,2})|((?:[0-9a-fA-F]{1,4}:){1,4}(?::[0-9a-fA-F]{1,4}){1,3})|((?:[0-9a-fA-F]{1,4}:){1,3}(?::[0-9a-fA-F]{1,4}){1,4})|((?:[0-9a-fA-F]{1,4}:){1,2}(?::[0-9a-fA-F]{1,4}){1,5})|([0-9a-fA-F]{1,4}:(?::[0-9a-fA-F]{1,4}){1,6})|(::(?:[0-9a-fA-F]{1,4}:){0,5}[0-9a-fA-F]{1,4}))$/;
+    return ipv6Regex.test(address);
+}
+
 export class tools extends plugin {
     constructor() {
         super({
@@ -21,6 +26,10 @@ export class tools extends plugin {
         const input = e.msg.match(/^#ping\s*(.*)$/)?.[1].trim();
         if (!input) return e.reply('请提供服务器地址，例如：#ping mc.hypixel.net');
 
+        if (isIPv6(input)) {
+            return e.reply('还不支持ipv6哦~');
+        }
+
         const command = `ping -c 4 ${input}`;
 
         exec(command, async (err, stdout, stderr) => {
@@ -32,10 +41,11 @@ export class tools extends plugin {
             const ipMatch = lines[0].match(/PING\s.+\s\(([\d.]+)\)/);
             const ip = ipMatch?.[1] || input;
 
-            // 筛选包含回复的行（linux ping 格式一般包含 'bytes from'）
+            const isIPv4 = /^(\d{1,3}\.){3}\d{1,3}$/.test(input);
+            const targetDisplay = isIPv4 ? ip : `${input} [${ip}]`;
+
             const replyLines = lines.filter(line => line.includes('bytes from'));
 
-            // 解析时间和TTL
             const timesAndTTL = replyLines.map(line => {
                 const timeMatch = line.match(/time=([\d.]+)/);
                 const ttlMatch = line.match(/ttl=(\d+)/i);
@@ -45,14 +55,12 @@ export class tools extends plugin {
                 };
             }).filter(item => item.time !== null && item.ttl !== null);
 
-            // 统计
             const sent = 4;
             const received = timesAndTTL.length;
             const lost = sent - received;
             const lossRate = Math.round((lost / sent) * 100);
 
-            // 构造回复
-            let msg = `正在 Ping ${input} [${ip}] 具有 32 字节的数据:\n`;
+            let msg = `正在 Ping ${targetDisplay} 具有 32 字节的数据:\n`;
 
             timesAndTTL.forEach(({ time, ttl }) => {
                 msg += `来自 ${ip} 的回复: 字节=32 时间=${time}ms TTL=${ttl}\n`;
