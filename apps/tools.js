@@ -15,7 +15,7 @@ export class tools extends plugin {
             priority: 5000,
             rule: [
                 {
-                    reg: '^#ping\\s+(.+)$',
+                    reg: '^#ping\\s*(.*)$',
                     fnc: 'ping'
                 }
             ]
@@ -23,21 +23,25 @@ export class tools extends plugin {
     }
 
     async ping(e) {
-        const input = e.msg.match(/^#ping\s+(.+)$/)?.[1].trim();
+        // 从消息中提取地址参数，去掉 #ping
+        const input = e.msg.match(/^#ping\s+(.*)$/)?.[1].trim();
         if (!input) return e.reply('请提供服务器地址，例如：#ping mc.hypixel.net');
 
-        // 仅允许字母、数字、点、短横线，防止注入或非法字符
-        if (!/^[a-zA-Z0-9.\-]+$/.test(input)) {
-            return e.reply('服务器地址格式不正确哦~');
+        // 校验输入，尝试构造URL，防止非法输入导致崩溃
+        let url;
+        try {
+            url = new URL('https://' + input);
+        } catch (err) {
+            return e.reply(`无效的地址: ${input}`);
         }
 
-        if (isIPv6(input)) {
-            return e.reply('还不支持 IPv6 地址哦~');
+        // 目前不支持ipv6
+        if (isIPv6(url.hostname)) {
+            return e.reply('还不支持ipv6哦~');
         }
 
-        // 兼容 Windows 和 Linux/macOS 的 ping 命令格式
-        const isWin = process.platform === 'win32';
-        const command = isWin ? `ping -n 4 "${input}"` : `ping -c 4 "${input}"`;
+        const target = url.hostname;
+        const command = `ping -c 4 ${target}`;
 
         exec(command, (err, stdout, stderr) => {
             if (err || stderr) {
@@ -45,35 +49,14 @@ export class tools extends plugin {
             }
 
             const lines = stdout.trim().split('\n');
+            const ipMatch = lines[0].match(/PING\s.+\s\(([\d.]+)\)/);
+            const ip = ipMatch?.[1] || target;
 
-            // 匹配 IP 地址 (Linux/macOS 和 Windows 的 ping 输出格式不同，简单兼容)
-            let ipMatch = lines[0].match(/PING\s.+\s\(([\d.]+)\)/);
-            if (!ipMatch && isWin) {
-                // Windows ping 输出首行示例：Pinging live.bilibili.com [123.456.789.0] with 32 bytes of data:
-                ipMatch = lines[0].match(/\[([\d.]+)\]/);
-            }
-            const ip = ipMatch?.[1] || input;
-
-            const isIPv4 = /^(\d{1,3}\.){3}\d{1,3}$/.test(input);
-            const targetDisplay = isIPv4 ? ip : `${input} [${ip}]`;
-
-            // 根据不同系统过滤回复行
-            const replyLines = lines.filter(line => {
-                if (isWin) return line.includes('字节='); // Windows 返回字节=xxx
-                else return line.includes('bytes from'); // Linux/macOS 返回 bytes from
-            });
+            const replyLines = lines.filter(line => line.includes('bytes from'));
 
             const timesAndTTL = replyLines.map(line => {
-                // 兼容 Linux/macOS
-                let timeMatch = line.match(/time=([\d.]+) ?ms/);
-                let ttlMatch = line.match(/ttl=(\d+)/i);
-
-                // 兼容 Windows
-                if (!timeMatch && isWin) {
-                    timeMatch = line.match(/时间[=<]([\d]+)ms/);
-                    ttlMatch = line.match(/TTL=(\d+)/i);
-                }
-
+                const timeMatch = line.match(/time=([\d.]+)/);
+                const ttlMatch = line.match(/ttl=(\d+)/i);
                 return {
                     time: timeMatch ? Math.round(parseFloat(timeMatch[1])) : null,
                     ttl: ttlMatch ? parseInt(ttlMatch[1]) : null
@@ -85,7 +68,7 @@ export class tools extends plugin {
             const lost = sent - received;
             const lossRate = Math.round((lost / sent) * 100);
 
-            let msg = `正在 Ping ${targetDisplay} 具有 32 字节的数据:\n`;
+            let msg = `正在 Ping ${target} 具有 32 字节的数据:\n`;
 
             timesAndTTL.forEach(({ time, ttl }) => {
                 msg += `来自 ${ip} 的回复: 字节=32 时间=${time}ms TTL=${ttl}\n`;
