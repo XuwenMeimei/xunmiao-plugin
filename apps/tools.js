@@ -12,7 +12,7 @@ export class tools extends plugin {
             name: '寻喵工具',
             dsc: '寻喵工具功能',
             event: 'message',
-            priority: 5000,
+            priority: 0,
             rule: [
                 {
                     reg: '^#ping\\s+(.+)$',
