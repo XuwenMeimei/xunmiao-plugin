@@ -1,6 +1,7 @@
 import plugin from '../../../lib/plugins/plugin.js';
 import { exec } from 'child_process';
 import punycode from 'punycode';
+import dns from 'dns/promises';
 
 function isIPv6(address) {
   const ipv6Regex = /^(?:([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|(::)|((?:[0-9a-fA-F]{1,4}:){1,7}:)|((?:[0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4})|((?:[0-9a-fA-F]{1,4}:){1,5}(?::[0-9a-fA-F]{1,4}){1,2})|((?:[0-9a-fA-F]{1,4}:){1,4}(?::[0-9a-fA-F]{1,4}){1,3})|((?:[0-9a-fA-F]{1,4}:){1,3}(?::[0-9a-fA-F]{1,4}){1,4})|((?:[0-9a-fA-F]{1,4}:){1,2}(?::[0-9a-fA-F]{1,4}){1,5})|([0-9a-fA-F]{1,4}:(?::[0-9a-fA-F]{1,4}){1,6})|(::(?:[0-9a-fA-F]{1,4}:){0,5}[0-9a-fA-F]{1,4}))$/;
@@ -37,9 +38,20 @@ export class tools extends plugin {
 
     let asciiInput;
     try {
-      asciiInput = punycode.toASCII(input); // 中文域名转 punycode
+      asciiInput = punycode.toASCII(input);
     } catch {
       return e.reply('域名转换失败，请检查输入');
+    }
+
+    // 获取 CNAME 指向的原始域名（如果存在）
+    let cnameTarget = asciiInput;
+    try {
+      const cnameRes = await dns.resolveCname(asciiInput);
+      if (cnameRes?.length > 0) {
+        cnameTarget = punycode.toASCII(cnameRes[0].replace(/\.$/, '')); // 去除尾部点
+      }
+    } catch {
+      // 无 CNAME，使用原始 asciiInput
     }
 
     const isWin = process.platform === 'win32';
@@ -52,31 +64,25 @@ export class tools extends plugin {
 
       const lines = stdout.trim().split('\n');
 
-      // 获取返回的 IP 地址
       let ipMatch = lines[0].match(/PING\s.+\s\(([\d.]+)\)/);
       if (!ipMatch && isWin) {
         ipMatch = lines[0].match(/\[([\d.]+)\]/);
       }
       const ip = ipMatch?.[1] || asciiInput;
 
-      // 检查是否是 IPv4 地址
       const isIPv4 = /^(\d{1,3}\.){3}\d{1,3}$/.test(input);
 
-      // 显示目标地址（使用 punycode 域名 + IP）
-      const targetDisplay = isIPv4 ? ip : `${asciiInput} [${ip}]`;
+      const targetDisplay = isIPv4 ? ip : `${cnameTarget} [${ip}]`;
 
-      // 解析返回的每一条 ping 响应
       const replyLines = lines.filter(line => {
         if (isWin) return line.includes('字节=');
         else return line.includes('bytes from');
       });
 
       const timesAndTTL = replyLines.map(line => {
-        // Linux/macOS
         let timeMatch = line.match(/time=([\d.]+) ?ms/);
         let ttlMatch = line.match(/ttl=(\d+)/i);
 
-        // Windows
         if ((!timeMatch || !ttlMatch) && isWin) {
           timeMatch = line.match(/时间[=<]?([\d]+)ms/);
           ttlMatch = line.match(/TTL=(\d+)/i);
@@ -91,11 +97,8 @@ export class tools extends plugin {
 
         if (!timeMatch || !ttlMatch) return null;
 
-        const timeVal = parseFloat(timeMatch[1]);
-        const timeDisplay = Math.round(timeVal); // 显示整数
-
         return {
-          time: timeDisplay,
+          time: Math.round(parseFloat(timeMatch[1])),
           ttl: parseInt(ttlMatch[1])
         };
       }).filter(item => item !== null);
