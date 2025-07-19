@@ -32,28 +32,31 @@ export class tools extends plugin {
             const ipMatch = stdout.match(/PING\s[^(]+\(([\d.]+)\)/);
             const ip = ipMatch ? ipMatch[1] : input;
 
-            // 提取每条回复（来自 x.x.x.x：icmp_seq=1 ttl=xx time=xx ms）
+            // 提取每条回应
             const replyLines = [];
-            const replyRegex = /^(\d+ bytes from .+?time=([\d.]+) ms)/gm;
+            const replyRegex = /^(\d+)\s+bytes from [^(]*\(([\d.]+)\): icmp_seq=\d+ ttl=(\d+) time=([\d.]+) ms$/gm;
             let match;
             while ((match = replyRegex.exec(stdout)) !== null) {
-                const line = match[1];
-                const time = match[2];
-                replyLines.push(`来自 ${ip} 的回复: 字节=32 时间=${time}ms TTL=??`);
+                const bytes = match[1];
+                const ttl = match[3];
+                const time = Math.round(parseFloat(match[4]));
+                replyLines.push(`来自 ${ip} 的回复: 字节=${bytes} 时间=${time}ms TTL=${ttl}`);
             }
 
             // 提取统计信息
             const statMatch = stdout.match(/(\d+) packets transmitted, (\d+) received.*?(\d+)% packet loss/);
-            const minAvgMaxMatch = stdout.match(/rtt.*?=\s*([\d.]+)\/([\d.]+)\/([\d.]+)\/([\d.]+)\s*ms/);
+            const timeStatsMatch = stdout.match(/rtt.*?=\s*([\d.]+)\/([\d.]+)\/([\d.]+)\/([\d.]+)\s*ms/);
 
-            if (!statMatch || !minAvgMaxMatch) {
+            if (!statMatch || !timeStatsMatch) {
                 return e.reply(`ping 完成，但无法提取统计信息：\n${stdout}`);
             }
 
             const sent = statMatch[1];
             const received = statMatch[2];
             const loss = statMatch[3];
-            const [min, avg, max] = [minAvgMaxMatch[1], minAvgMaxMatch[2], minAvgMaxMatch[3]];
+            const min = Math.round(parseFloat(timeStatsMatch[1]));
+            const avg = Math.round(parseFloat(timeStatsMatch[2]));
+            const max = Math.round(parseFloat(timeStatsMatch[3]));
 
             const result = [
                 `正在 Ping ${input} [${ip}] 具有 32 字节的数据:`,
