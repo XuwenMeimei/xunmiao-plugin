@@ -27,7 +27,6 @@ export class tools extends plugin {
         const input = e.msg.match(/^#ping\s+(.+)$/)?.[1].trim();
         if (!input) return e.reply('请提供服务器地址，例如：#ping mc.hypixel.net');
 
-        // 仅允许字母、数字、点、短横线，防止注入或非法字符（允许中文域名，后面转换）
         if (!/^[a-zA-Z0-9.\-\u4e00-\u9fa5]+$/.test(input)) {
             return e.reply('服务器地址格式不正确哦~');
         }
@@ -36,7 +35,6 @@ export class tools extends plugin {
             return e.reply('还不支持 IPv6 地址哦~');
         }
 
-        // 转换域名为 punycode，保留原输入用于检测是否纯IP
         let asciiInput;
         try {
             asciiInput = punycode.toASCII(input);
@@ -54,41 +52,30 @@ export class tools extends plugin {
 
             const lines = stdout.trim().split('\n');
 
-            // 匹配 IP 地址
             let ipMatch = lines[0].match(/PING\s.+\s\(([\d.]+)\)/);
             if (!ipMatch && isWin) {
                 ipMatch = lines[0].match(/\[([\d.]+)\]/);
             }
             const ip = ipMatch?.[1] || asciiInput;
 
-            // 判断输入是否为 IPv4
             const isIPv4 = /^(\d{1,3}\.){3}\d{1,3}$/.test(input);
+            const targetDisplay = isIPv4 ? ip : `${input} [${ip}]`;
 
-            // 构造显示的目标字符串，纯 IPv4 显示IP，否则显示 punycode [IP]
-            const targetDisplay = isIPv4 ? ip : `${asciiInput} [${ip}]`;
-
-            // 过滤出有效的响应行
             const replyLines = lines.filter(line => {
                 if (isWin) return line.includes('字节=');
                 else return line.includes('bytes from');
             });
 
             const timesAndTTL = replyLines.map(line => {
-                // Linux/macOS
                 let timeMatch = line.match(/time=([\d.]+) ?ms/);
                 let ttlMatch = line.match(/ttl=(\d+)/i);
 
-                // Windows
                 if ((!timeMatch || !ttlMatch) && isWin) {
-                    timeMatch = line.match(/时间([=<])([\d]+)ms/);
+                    timeMatch = line.match(/时间[=<]?([\d]+)ms/);
                     ttlMatch = line.match(/TTL=(\d+)/i);
                     if (timeMatch && ttlMatch) {
-                        // Windows 0ms 可能为 <1ms，但正则只捕获数字，单独判断显示
-                        const symbol = timeMatch[1]; // = 或 <
-                        const val = parseInt(timeMatch[2]);
-                        const timeDisplay = symbol === '<' ? '<1' : val;
                         return {
-                            time: timeDisplay,
+                            time: parseInt(timeMatch[1]),
                             ttl: parseInt(ttlMatch[1])
                         };
                     }
@@ -97,20 +84,13 @@ export class tools extends plugin {
 
                 if (!timeMatch || !ttlMatch) return null;
 
-                // Linux/macOS 时间四舍五入，0视为 <1ms
                 let timeVal = parseFloat(timeMatch[1]);
-                let timeDisplay;
-                if (timeVal === 0 || timeVal < 1) {
-                    timeDisplay = '<1';
-                    timeVal = 1; // 用于平均值计算
-                } else {
-                    timeDisplay = Math.round(timeVal);
-                }
-
+                let timeDisplay = Math.round(timeVal);
 
                 return {
                     time: timeDisplay,
-                    ttl: parseInt(ttlMatch[1])
+                    ttl: parseInt(ttlMatch[1]),
+                    _timeVal: timeDisplay
                 };
             }).filter(item => item !== null);
 
@@ -122,8 +102,7 @@ export class tools extends plugin {
             let msg = `正在 Ping ${targetDisplay} 具有 32 字节的数据:\n`;
 
             timesAndTTL.forEach(({ time, ttl }) => {
-                const timeStr = time === '<1' ? '<1ms' : `${time}ms`;
-                msg += `来自 ${ip} 的回复: 字节=32 时间=${timeStr} TTL=${ttl}\n`;
+                msg += `来自 ${ip} 的回复: 字节=32 时间=${time}ms TTL=${ttl}\n`;
             });
 
             if (received === 0) {
@@ -131,7 +110,7 @@ export class tools extends plugin {
             }
 
             if (received > 0) {
-                const numericTimes = timesAndTTL.map(t => (typeof t.time === 'string' && t.time === '<1') ? 1 : t._timeVal || t.time);
+                const numericTimes = timesAndTTL.map(t => t._timeVal || t.time);
                 const min = Math.min(...numericTimes);
                 const max = Math.max(...numericTimes);
                 const avg = Math.round(numericTimes.reduce((a, b) => a + b, 0) / numericTimes.length);
