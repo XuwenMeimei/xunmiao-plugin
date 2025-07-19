@@ -27,7 +27,6 @@ export class tools extends plugin {
     if (!input) return e.reply('请提供服务器地址，例如：#ping mc.hypixel.net');
 
     // 允许中文、字母、数字、点、短横线，防止注入或非法字符
-    // 中文范围：\u4e00-\u9fa5，支持简单中文域名
     if (!/^[a-zA-Z0-9.\-\u4e00-\u9fa5]+$/.test(input)) {
         return e.reply('服务器地址格式不正确哦~');
     }
@@ -36,7 +35,6 @@ export class tools extends plugin {
         return e.reply('还不支持 IPv6 地址哦~');
     }
 
-    // 转换中文域名为 ASCII（punycode）
     let asciiInput;
     try {
         asciiInput = new URL('http://' + input).hostname;
@@ -54,20 +52,17 @@ export class tools extends plugin {
 
         const lines = stdout.trim().split('\n');
 
-        // 匹配 IP 地址
         let ipMatch = lines[0].match(/PING\s.+\s\(([\d.]+)\)/);
         if (!ipMatch && isWin) {
             ipMatch = lines[0].match(/\[([\d.]+)\]/);
         }
         const ip = ipMatch?.[1] || asciiInput;
 
-        // 判断输入是否是纯 IPv4 地址
         const isIPv4 = /^(\d{1,3}\.){3}\d{1,3}$/.test(input);
 
-        // 显示用户输入的域名（中文域名）而非 punycode，IP地址依然显示IP
-        const targetDisplay = isIPv4 ? ip : input;
+        // 这里改成显示punycode格式的域名
+        const targetDisplay = isIPv4 ? ip : asciiInput;
 
-        // 过滤回复行
         const replyLines = lines.filter(line => {
             if (isWin) return line.includes('字节=');
             else return line.includes('bytes from');
@@ -132,5 +127,6 @@ export class tools extends plugin {
         e.reply(msg);
     });
 }
+
 
 }
