@@ -1,24 +1,10 @@
 import plugin from '../../../lib/plugins/plugin.js';
 import { exec } from 'child_process';
+import punycode from 'punycode';
 
 function isIPv6(address) {
     const ipv6Regex = /^(?:([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|(::)|((?:[0-9a-fA-F]{1,4}:){1,7}:)|((?:[0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4})|((?:[0-9a-fA-F]{1,4}:){1,5}(?::[0-9a-fA-F]{1,4}){1,2})|((?:[0-9a-fA-F]{1,4}:){1,4}(?::[0-9a-fA-F]{1,4}){1,3})|((?:[0-9a-fA-F]{1,4}:){1,3}(?::[0-9a-fA-F]{1,4}){1,4})|((?:[0-9a-fA-F]{1,4}:){1,2}(?::[0-9a-fA-F]{1,4}){1,5})|([0-9a-fA-F]{1,4}:(?::[0-9a-fA-F]{1,4}){1,6})|(::(?:[0-9a-fA-F]{1,4}:){0,5}[0-9a-fA-F]{1,4}))$/;
     return ipv6Regex.test(address);
-}
-
-// 处理域名，提取 SRV 前部分
-function extractDomainForDisplay(domain) {
-    // 例如 _minecraft._tcp.example.com 取 example.com
-    // 只要不是 IP，就尝试去除开头的 _xxx._xxx. 部分
-    if (/^\d{1,3}(\.\d{1,3}){3}$/.test(domain)) return domain; // IPv4
-    if (isIPv6(domain)) return domain;
-
-    const parts = domain.split('.');
-    // 如果开头是 _开头的子域，则去掉这两个部分
-    if (parts.length > 2 && parts[0].startsWith('_') && parts[1].startsWith('_')) {
-        return parts.slice(2).join('.');
-    }
-    return domain;
 }
 
 export class tools extends plugin {
@@ -38,32 +24,28 @@ export class tools extends plugin {
     }
 
     async ping(e) {
-        const inputRaw = e.msg.match(/^#ping\s+(.+)$/)?.[1].trim();
-        if (!inputRaw) return e.reply('请提供服务器地址，例如：#ping mc.hypixel.net');
+        const input = e.msg.match(/^#ping\s+(.+)$/)?.[1].trim();
+        if (!input) return e.reply('请提供服务器地址，例如：#ping mc.hypixel.net');
 
-        // 只允许字母、数字、点、短横线和中文
-        if (!/^[a-zA-Z0-9.\-\u4e00-\u9fa5]+$/.test(inputRaw)) {
+        // 仅允许字母、数字、点、短横线，防止注入或非法字符（允许中文域名，后面转换）
+        if (!/^[a-zA-Z0-9.\-\u4e00-\u9fa5]+$/.test(input)) {
             return e.reply('服务器地址格式不正确哦~');
         }
 
-        if (isIPv6(inputRaw)) {
+        if (isIPv6(input)) {
             return e.reply('还不支持 IPv6 地址哦~');
         }
 
-        // 转punycode处理中文域名显示（需要 Node 16+ 环境支持 URL 类）
-        let punycodeDomain;
+        // 转换域名为 punycode，保留原输入用于检测是否纯IP
+        let asciiInput;
         try {
-            punycodeDomain = new URL(`http://${inputRaw}`).hostname;
+            asciiInput = punycode.toASCII(input);
         } catch {
-            // 不是标准域名时，直接用原始
-            punycodeDomain = inputRaw;
+            return e.reply('域名转换失败，请检查输入');
         }
 
-        // 显示用域名，去除SRV前缀
-        const displayDomain = extractDomainForDisplay(punycodeDomain);
-
         const isWin = process.platform === 'win32';
-        const command = isWin ? `ping -n 4 "${inputRaw}"` : `ping -c 4 "${inputRaw}"`;
+        const command = isWin ? `ping -n 4 "${asciiInput}"` : `ping -c 4 "${asciiInput}"`;
 
         exec(command, (err, stdout, stderr) => {
             if (err || stderr) {
@@ -72,40 +54,65 @@ export class tools extends plugin {
 
             const lines = stdout.trim().split('\n');
 
-            // 获取IP地址（IPv4）
+            // 匹配 IP 地址
             let ipMatch = lines[0].match(/PING\s.+\s\(([\d.]+)\)/);
             if (!ipMatch && isWin) {
                 ipMatch = lines[0].match(/\[([\d.]+)\]/);
             }
-            const ip = ipMatch?.[1] || inputRaw;
+            const ip = ipMatch?.[1] || asciiInput;
 
-            // 用于显示的目标格式
-            const targetDisplay = /^[\d.]+$/.test(inputRaw) ? ip : `${displayDomain} [${ip}]`;
+            // 判断输入是否为 IPv4
+            const isIPv4 = /^(\d{1,3}\.){3}\d{1,3}$/.test(input);
 
-            // 过滤有效回复行
+            // 构造显示的目标字符串，纯 IPv4 显示IP，否则显示 punycode [IP]
+            const targetDisplay = isIPv4 ? ip : `${asciiInput} [${ip}]`;
+
+            // 过滤出有效的响应行
             const replyLines = lines.filter(line => {
                 if (isWin) return line.includes('字节=');
                 else return line.includes('bytes from');
             });
 
-            // 提取time和ttl，time为数字或0时显示<1ms
             const timesAndTTL = replyLines.map(line => {
+                // Linux/macOS
                 let timeMatch = line.match(/time=([\d.]+) ?ms/);
                 let ttlMatch = line.match(/ttl=(\d+)/i);
 
-                if (!timeMatch && isWin) {
-                    timeMatch = line.match(/时间[=<]([\d]+)ms/);
+                // Windows
+                if ((!timeMatch || !ttlMatch) && isWin) {
+                    timeMatch = line.match(/时间([=<])([\d]+)ms/);
                     ttlMatch = line.match(/TTL=(\d+)/i);
+                    if (timeMatch && ttlMatch) {
+                        // Windows 0ms 可能为 <1ms，但正则只捕获数字，单独判断显示
+                        const symbol = timeMatch[1]; // = 或 <
+                        const val = parseInt(timeMatch[2]);
+                        const timeDisplay = symbol === '<' ? '<1' : val;
+                        return {
+                            time: timeDisplay,
+                            ttl: parseInt(ttlMatch[1])
+                        };
+                    }
+                    return null;
                 }
 
-                let timeVal = timeMatch ? parseFloat(timeMatch[1]) : null;
-                if (timeVal === 0) timeVal = '<1';
+                if (!timeMatch || !ttlMatch) return null;
+
+                // Linux/macOS 时间四舍五入，0视为 <1ms
+                let timeVal = parseFloat(timeMatch[1]);
+                let timeDisplay;
+                if (timeVal === 0 || timeVal < 1) {
+                    timeDisplay = '<1';
+                    timeVal = 1; // 用于平均值计算
+                } else {
+                    timeDisplay = Math.round(timeVal);
+                }
+
 
                 return {
-                    time: timeVal,
-                    ttl: ttlMatch ? parseInt(ttlMatch[1]) : null
+                    time: timeDisplay,
+                    ttl: parseInt(ttlMatch[1])
                 };
-            }).filter(item => item.time !== null && item.ttl !== null);
+            }).filter(item => item !== null);
 
             const sent = 4;
             const received = timesAndTTL.length;
@@ -115,7 +122,7 @@ export class tools extends plugin {
             let msg = `正在 Ping ${targetDisplay} 具有 32 字节的数据:\n`;
 
             timesAndTTL.forEach(({ time, ttl }) => {
-                const timeStr = time === '<1' ? '<1ms' : `${Math.round(time)}ms`;
+                const timeStr = time === '<1' ? '<1ms' : `${time}ms`;
                 msg += `来自 ${ip} 的回复: 字节=32 时间=${timeStr} TTL=${ttl}\n`;
             });
 
@@ -124,8 +131,7 @@ export class tools extends plugin {
             }
 
             if (received > 0) {
-                // 数字计算时用 1 代替 <1
-                const numericTimes = timesAndTTL.map(t => (t.time === '<1' ? 1 : t.time));
+                const numericTimes = timesAndTTL.map(t => (typeof t.time === 'string' && t.time === '<1') ? 1 : t._timeVal || t.time);
                 const min = Math.min(...numericTimes);
                 const max = Math.max(...numericTimes);
                 const avg = Math.round(numericTimes.reduce((a, b) => a + b, 0) / numericTimes.length);
@@ -133,7 +139,7 @@ export class tools extends plugin {
                 msg += `\n${ip} 的 Ping 统计信息:\n`;
                 msg += `    数据包: 已发送 = ${sent}，已接收 = ${received}，丢失 = ${lost} (${lossRate}% 丢失)，\n`;
                 msg += `往返行程的估计时间(以毫秒为单位):\n`;
-                msg += `    最短 = ${min === 1 ? '<1' : min}ms，最长 = ${max}ms，平均 = ${avg}ms`;
+                msg += `    最短 = ${min}ms，最长 = ${max}ms，平均 = ${avg}ms`;
             } else {
                 msg += `\n${ip} 的 Ping 统计信息:\n`;
                 msg += `    数据包: 已发送 = ${sent}，已接收 = 0，丢失 = 4 (100% 丢失)，`;
