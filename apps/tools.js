@@ -59,9 +59,7 @@ export class tools extends plugin {
         const ip = ipMatch?.[1] || asciiInput;
 
         const isIPv4 = /^(\d{1,3}\.){3}\d{1,3}$/.test(input);
-
-        // 这里改成显示punycode格式的域名
-        const targetDisplay = isIPv4 ? ip : asciiInput;
+        const targetDisplay = isIPv4 ? ip : `${asciiInput} [${ip}]`;
 
         const replyLines = lines.filter(line => {
             if (isWin) return line.includes('字节=');
