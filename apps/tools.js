@@ -33,7 +33,7 @@ export class tools extends plugin {
       name: '寻喵工具',
       dsc: '寻喵工具功能',
       event: 'message',
-      priority: 5000,
+      priority: 0,
       rule: [
         {
           reg: '^#ping\\s+(.*)$',
@@ -59,15 +59,12 @@ export class tools extends plugin {
       }
       const lines = stdout.trim().split('\n');
 
-      // 解析首行：PING i.w.bilicdn1.com (23.236.97.62) 56(84) bytes of data.
       const headerMatch = lines[0].match(/^PING\s+([^\s]+)\s+\(([\d.]+)\)/);
       const host = headerMatch ? headerMatch[1] : input;
       const ip = headerMatch ? headerMatch[2] : input;
 
-      // 解析每个回复行
       const replyLines = lines.filter(line => line.includes('bytes from'));
       const replies = replyLines.map(line => {
-        // 64 bytes from mx97-62.bustlingpersonnel.com (23.236.97.62): icmp_seq=1 ttl=54 time=0.755 ms
         const m = line.match(/bytes from [^(]+\(([\d.]+)\): icmp_seq=(\d+) ttl=(\d+) time=([\d.]+) ms/);
         if (!m) return null;
         return {
@@ -77,12 +74,6 @@ export class tools extends plugin {
           time: parseFloat(m[4])
         };
       }).filter(x => x);
-
-      // 解析统计信息部分
-      // --- i.w.bilicdn1.com ping statistics ---
-      // 4 packets transmitted, 4 received, 0% packet loss, time 3003ms
-      // rtt min/avg/max/mdev = 0.740/0.812/0.974/0.094 ms
-
       const statLineIndex = lines.findIndex(line => line.includes('packets transmitted'));
       const statLine = statLineIndex >= 0 ? lines[statLineIndex] : '';
       const lossMatch = statLine.match(/(\d+) packets transmitted, (\d+) received, (\d+)% packet loss/);
