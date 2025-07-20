@@ -128,7 +128,7 @@ export class tools extends plugin {
       }
 
       // 构造合并转发消息
-      const forwardMsg = await e.bot.makeForwardMsg(forwardList.map(msg => ({
+      const forwardMsg = await e.makeForwardMsg(forwardList.map(msg => ({
         user_id: e.bot.uin[1],
         nickname: 'Ping',
         message: msg
