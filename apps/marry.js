@@ -97,7 +97,7 @@ export class marry extends plugin {
         doloveCooldowns[targetUserId] = now;
         doloveCooldowns[userId] = now;
 
-        return e.reply([segment.at(userId), '\n',
+        return e.reply([segment.at(userId),
             '你和', Name, '进行了涩涩~', '\n',
             '好感度+20 ', '当前好感度：', marryData[userId].favor + 20
         ]);
