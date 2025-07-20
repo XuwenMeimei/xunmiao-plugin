@@ -94,6 +94,7 @@ export class marry extends plugin {
         marryData[targetUserId].favor += 20;
         saveMarryData(allMarryData);
 
+        doloveCooldowns[targetUserId] = now;
         doloveCooldowns[userId] = now;
 
         return e.reply([segment.at(userId), '\n',
@@ -141,6 +142,7 @@ export class marry extends plugin {
         marryData[targetUserId].favor += 5;
         saveMarryData(allMarryData);
 
+        jggCooldowns[targetUserId] = now;
         jggCooldowns[userId] = now;
 
         return e.reply([segment.at(userId),
@@ -187,6 +189,8 @@ export class marry extends plugin {
         marryData[targetUserId].favor += 3;
         saveMarryData(allMarryData);
 
+
+        hugCooldowns[targetUserId] = now;
         hugCooldowns[userId] = now;
 
         return e.reply([segment.at(userId),
