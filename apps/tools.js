@@ -1,7 +1,7 @@
-import plugin from '../../../lib/plugins/plugin.js';
-import { exec } from 'child_process';
-import punycode from 'punycode';
-import dns from 'dns/promises';
+import plugin from '../../../lib/plugins/plugin.js'
+import { exec } from 'child_process'
+import punycode from 'punycode'
+import dns from 'dns/promises'
 
 function isIPv6(address) {
   const ipv6Regex = /^(?:([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|(::)|((?:[0-9a-fA-F]{1,4}:){1,7}:)|((?:[0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4})|((?:[0-9a-fA-F]{1,4}:){1,5}(?::[0-9a-fA-F]{1,4}){1,2})|((?:[0-9a-fA-F]{1,4}:){1,4}(?::[0-9a-fA-F]{1,4}){1,3})|((?:[0-9a-fA-F]{1,4}:){1,3}(?::[0-9a-fA-F]{1,4}){1,4})|((?:[0-9a-fA-F]{1,4}:){1,2}(?::[0-9a-fA-F]{1,4}){1,5})|([0-9a-fA-F]{1,4}:(?::[0-9a-fA-F]{1,4}){1,6})|(::(?:[0-9a-fA-F]{1,4}:){0,5}[0-9a-fA-F]{1,4}))$/;
@@ -49,7 +49,9 @@ export class tools extends plugin {
       if (cnameRes?.length > 0) {
         cnameTarget = punycode.toASCII(cnameRes[0].replace(/\.$/, ''));
       }
-    } catch {}
+    } catch {
+      // ignore
+    }
 
     const isWin = process.platform === 'win32';
     const command = isWin ? `ping -n 4 "${asciiInput}"` : `ping -c 4 "${asciiInput}"`;
@@ -104,37 +106,39 @@ export class tools extends plugin {
       const lost = sent - received;
       const lossRate = Math.round((lost / sent) * 100);
 
-      const forwardList = [];
+      const msgLines = [];
+      msgLines.push(`正在 Ping ${targetDisplay} 具有 32 字节的数据:`);
 
-      forwardList.push(`正在 Ping ${targetDisplay} 具有 32 字节的数据:`);
+      timesAndTTL.forEach(({ time, ttl }) => {
+        msgLines.push(`来自 ${ip} 的回复: 字节=32 时间=${time}ms TTL=${ttl}`);
+      });
 
       if (received === 0) {
-        forwardList.push(`请求超时。`);
-      } else {
-        timesAndTTL.forEach(({ time, ttl }) => {
-          forwardList.push(`来自 ${ip} 的回复: 字节=32 时间=${time}ms TTL=${ttl}`);
-        });
+        msgLines.push(`请求超时。`);
       }
 
-      forwardList.push(`\n${ip} 的 Ping 统计信息:`);
-      forwardList.push(`数据包: 已发送 = ${sent}，已接收 = ${received}，丢失 = ${lost}（${lossRate}% 丢失）`);
+      msgLines.push('');
+      msgLines.push(`${ip} 的 Ping 统计信息:`);
+      msgLines.push(`    数据包: 已发送 = ${sent}，已接收 = ${received}，丢失 = ${lost} (${lossRate}% 丢失)`);
 
       if (received > 0) {
         const numericTimes = timesAndTTL.map(t => t.time);
         const min = Math.min(...numericTimes);
         const max = Math.max(...numericTimes);
         const avg = Math.round(numericTimes.reduce((a, b) => a + b, 0) / numericTimes.length);
-        forwardList.push(`往返行程时间（毫秒）: 最短 = ${min}ms，最长 = ${max}ms，平均 = ${avg}ms`);
+        msgLines.push(`往返行程的估计时间(以毫秒为单位):`);
+        msgLines.push(`    最短 = ${min}ms，最长 = ${max}ms，平均 = ${avg}ms`);
       }
 
-      // 构造合并转发消息
-      const forwardMsg = await e.makeForwardMsg(forwardList.map(msg => ({
-        user_id: e.bot.uin[1],
-        nickname: 'Ping',
-        message: msg
-      })));
-
-      e.reply(forwardMsg);
+      // 使用锅巴封装的合并转发（群聊）或普通文本（私聊）
+      if (e.isGroup) {
+        const forward = await makeForwardMsg(e, msgLines);
+        await e.reply(forward);
+      } else {
+        for (const line of msgLines) {
+          await e.reply(line);
+        }
+      }
     });
   }
 }
