@@ -25,12 +25,12 @@ export class tools extends plugin {
   }
 
   async ping(e) {
-    const input = e.msg.match(/^#ping\s+(.+)$/)?.[1].trim();
-    if (!input) return e.reply('请提供服务器地址，例如：#ping mc.hypixel.net');
-
     if (!/^[a-zA-Z0-9.\-\u4e00-\u9fa5]+$/.test(input)) {
       return e.reply('服务器地址格式不正确哦~');
     }
+
+    const input = e.msg.match(/^#ping\s+(.+)$/)?.[1].trim();
+    if (!input) return e.reply('请提供服务器地址，例如：#ping mc.hypixel.net');
 
     if (isIPv6(input)) {
       return e.reply('还不支持 IPv6 地址哦~');
