@@ -29,6 +29,8 @@ function saveMarryData(data) {
 const hugCooldowns = {};
 const kissCooldowns = {};
 const jggCooldowns = {};
+const doloveCooldowns = {};
+const doloveCooldownTime = 60 * 60 * 1000;
 const cooldownTime = 5 * 60 * 1000;
 
 export class marry extends plugin {
@@ -61,6 +63,8 @@ export class marry extends plugin {
         const groupId = String(e.group_id);
         const userId = this.normalizeId(e.user_id);
 
+        const now = Date.now();
+
         allMarryData[groupId] = allMarryData[groupId] || {};
         const marryData = allMarryData[groupId];
 
@@ -70,16 +74,34 @@ export class marry extends plugin {
 
         const she_he = await this.people(e, 'sex', targetUserId);
 
+        if (doloveCooldowns[userId]) {
+            const timePassed = now - doloveCooldowns[userId];
+            const timeLeft = doloveCooldownTime - timePassed;
+            if (timeLeft > 0) {
+                const secondsLeft = Math.ceil(timeLeft / 1000);
+                return e.reply([segment.at(userId), ' 你刚才和', she_he, '涩涩过了~让', she_he, '休息', secondsLeft, '秒吧~']);
+            }
+        }
+
         if (!marryData[userId].married) {
             return e.reply([segment.at(userId), ' 你还没有结婚哦~ ']);
         }
 
-        let MemberInfo = await Bot.pickGroup(groupId).pickMember(userId).getInfo();
-        let Name = MemberInfo?.card || MemberInfo?.nickname || she_he;
+        let targetInfo = await Bot.pickGroup(groupId).pickMember(targetUserId).getInfo();
+        let Name = targetInfo?.card || targetInfo?.nickname || she_he;
 
-        return e.reply([segment.at(targetUserId), '\n',
-            Name, ' 想和你涩涩,要同意嘛?'
-        ])
+        marryData[userId].favor += 20;
+        marryData[targetUserId].favor += 20;
+        saveMarryData(allMarryData);
+
+        doloveCooldowns[userId] = now;
+
+        return e.reply([segment.at(userId), '\n',
+            '你和', Name, '进行了涩涩~', '\n',
+            '好感度+20 ', '当前好感度：', marryData[userId].favor + 20
+        ]);
+
+
     }
 
     async marryjgg(e) {
