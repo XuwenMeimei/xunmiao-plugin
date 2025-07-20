@@ -43,21 +43,18 @@ export class tools extends plugin {
       return e.reply('域名转换失败，请检查输入');
     }
 
-    // 获取 CNAME 指向的原始域名（如果存在）
     let cnameTarget = asciiInput;
     try {
       const cnameRes = await dns.resolveCname(asciiInput);
       if (cnameRes?.length > 0) {
-        cnameTarget = punycode.toASCII(cnameRes[0].replace(/\.$/, '')); // 去除尾部点
+        cnameTarget = punycode.toASCII(cnameRes[0].replace(/\.$/, ''));
       }
-    } catch {
-      // 无 CNAME，使用原始 asciiInput
-    }
+    } catch {}
 
     const isWin = process.platform === 'win32';
     const command = isWin ? `ping -n 4 "${asciiInput}"` : `ping -c 4 "${asciiInput}"`;
 
-    exec(command, (err, stdout, stderr) => {
+    exec(command, async (err, stdout, stderr) => {
       if (err || stderr) {
         return e.reply(`Ping 失败：${stderr || err.message}`);
       }
@@ -71,7 +68,6 @@ export class tools extends plugin {
       const ip = ipMatch?.[1] || asciiInput;
 
       const isIPv4 = /^(\d{1,3}\.){3}\d{1,3}$/.test(input);
-
       const targetDisplay = isIPv4 ? ip : `${cnameTarget} [${ip}]`;
 
       const replyLines = lines.filter(line => {
@@ -108,32 +104,37 @@ export class tools extends plugin {
       const lost = sent - received;
       const lossRate = Math.round((lost / sent) * 100);
 
-      let msg = `正在 Ping ${targetDisplay} 具有 32 字节的数据:\n`;
+      const forwardList = [];
 
-      timesAndTTL.forEach(({ time, ttl }) => {
-        msg += `来自 ${ip} 的回复: 字节=32 时间=${time}ms TTL=${ttl}\n`;
-      });
+      forwardList.push(`正在 Ping ${targetDisplay} 具有 32 字节的数据:`);
 
       if (received === 0) {
-        msg += `请求超时。\n`;
+        forwardList.push(`请求超时。`);
+      } else {
+        timesAndTTL.forEach(({ time, ttl }) => {
+          forwardList.push(`来自 ${ip} 的回复: 字节=32 时间=${time}ms TTL=${ttl}`);
+        });
       }
+
+      forwardList.push(`\n${ip} 的 Ping 统计信息:`);
+      forwardList.push(`数据包: 已发送 = ${sent}，已接收 = ${received}，丢失 = ${lost}（${lossRate}% 丢失）`);
 
       if (received > 0) {
         const numericTimes = timesAndTTL.map(t => t.time);
         const min = Math.min(...numericTimes);
         const max = Math.max(...numericTimes);
         const avg = Math.round(numericTimes.reduce((a, b) => a + b, 0) / numericTimes.length);
-
-        msg += `\n${ip} 的 Ping 统计信息:\n`;
-        msg += `    数据包: 已发送 = ${sent}，已接收 = ${received}，丢失 = ${lost} (${lossRate}% 丢失)，\n`;
-        msg += `往返行程的估计时间(以毫秒为单位):\n`;
-        msg += `    最短 = ${min}ms，最长 = ${max}ms，平均 = ${avg}ms`;
-      } else {
-        msg += `\n${ip} 的 Ping 统计信息:\n`;
-        msg += `    数据包: 已发送 = ${sent}，已接收 = 0，丢失 = 4 (100% 丢失)，`;
+        forwardList.push(`往返行程时间（毫秒）: 最短 = ${min}ms，最长 = ${max}ms，平均 = ${avg}ms`);
       }
 
-      e.reply(msg);
+      // 构造合并转发消息
+      const forwardMsg = await e.bot.makeForwardMsg(forwardList.map(msg => ({
+        user_id: e.bot.uin,
+        nickname: 'Ping',
+        message: msg
+      })));
+
+      e.reply(forwardMsg);
     });
   }
 }
